@@ -1,0 +1,25 @@
+<xf:title>
+    <xf:if is="$blog.blog_id">
+        Edit Blog {$blog.blog_title}
+        <xf:else />
+        Create a new Blog
+    </xf:if>
+</xf:title>
+
+
+
+<xf:form action="{{ link('userblogs/save', $blog) }}" class="block" ajax="1">
+    <div class="block-container">
+        <xf:textboxrow name="blog_title" value="{$blog.blog_title}" label="Title" />
+        <xf:textarearow name="blog_description" value="{$blog.blog_description}" label="Blog Description" autosize="true" rows="5" />
+        <xf:uploadrow name="upload"
+                      label="Header Image"
+                      accept=".gif,.jpeg,.jpg,.jpe,.png"
+                      value="{{ $blog.blog_header_image ? $blog.blog_header_image : null }}"
+                      placeholder="{{ phrase('taylorj_blogs_blog_header_upload') }}"
+                      asset="taylorj_blogs_blog_header"
+                      explain="Please keep it below the threshold"
+                      dir="ltr" />
+    </div>
+    <xf:submitrow submit="{{ phrase('save') }}" fa="fa-save" icon="save" />
+</xf:form>

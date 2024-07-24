@@ -1,0 +1,35 @@
+<xf:css src="taylorj_userblogs_blogs_index.less" />
+
+<xf:title>
+    Blogs
+</xf:title>
+
+<xf:pageaction>
+    <xf:button href="{{ link('userblogs/add') }}" fa="fa-plus-square" overlay="true" class="button--cta">Create a Blog
+    </xf:button>
+</xf:pageaction>
+
+<div class="block taylorjBlogs">
+    <xf:foreach loop="{$blogs}" key="$blogs_id" value="$blog">
+        <div class="taylorjBlogs-main">
+            <div class="block-container taylorjBlogs">
+                <div class="block-body taylorjBlogs">
+                    <div class="blog-header-image taylorjBlogs">
+                        <xf:if is="$blog.blog_header_image">
+                            <img src="{$blog.blog_header_image}" alt="Header Image" />
+                        </xf:if>
+                    </div>
+                    <xf:avatar user="$blog.User" size="s" class="avatar taylorjBlogs" />
+                    <div class="taylorjBlogs-blog-container">
+                        <a href="{{ link('userblogs/blog', $blog) }}">
+                            <h1>{$blog.blog_title}</h1>
+                        </a>
+                        <p class="taylorjBlogs-blog-description">{$blog.blog_description}</p>
+                        <hr />
+                        Created by: {$blog.User.username}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </xf:foreach>
+</div>
