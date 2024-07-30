@@ -1,0 +1,58 @@
+<xf:css src="taylorj_userblogs_blog_view.less" />
+
+<xf:title>
+    {$blog.blog_title}
+</xf:title>
+
+<div class="taylorjUserBlogs-blog-description">
+    <span>
+        {$blog.blog_description}
+    </span>
+</div>
+
+<xf:pageaction>
+    <xf:button href="{{ link('userblogs/blog/add', $blog) }}" fa="fa-plus-square" class="button--cta">
+        Create a new post
+    </xf:button>
+</xf:pageaction>
+
+<div class="block taylorjUserBlogs-block">
+    <div class="taylorjUserBlogs-blog-posts">
+        <xf:foreach loop="{$blogPosts}" key="$blog_post_id" value="$blogPost">
+            <div class="block-container">
+                <a href="{{ link('userblogs/post', $blogPost) }}">
+                    <h2 class="block-header">{$blogPost.blog_post_title}</h2>
+                </a>
+                <div class="block-body">
+                    <div class="block-row">
+                        <xf:date time="$blogPost.blog_post_date" />
+                        <hr />
+                        {{ snippet($blogPost.blog_post_content, 750, {
+                            'stripQuote': true,
+                            'bbWrapper': true
+                        }) }}
+                        <!-- {{ bb_code($blogPost.blog_post_content, 'taylor_userblogs_post', $blogPost) }} -->
+                        <hr />
+                        <xf:if is="$blogPost.blog_post_last_edit_date">
+                            <span class="u-pullRight">
+                                Last edited
+                                <xf:date time="$blogPost.blog_post_last_edit_date" />
+                            </span>
+                        </xf:if>
+                    </div>
+                </div>
+            </div>
+        </xf:foreach>
+    </div>
+    <div class="taylorjUserBlogs-blog-details">
+        <div class="taylorjBlogs-blog-header-image">
+            <img src="{$blog.blog_header_image}" alt="Header Image" />
+        </div>
+        <div class="taylorJUserBlogs-details-text">
+            <span>Created by: {$blog.User.username}</span>
+            <span>Created on:
+                <xf:date time="$blog.blog_creation_date" />
+            </span>
+        </div>
+    </div>
+</div>
