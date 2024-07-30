@@ -24,6 +24,14 @@
     </ul>
 </xf:description>
 
+<xf:if is="$blogPost.canEdit()">
+<xf:pageaction>
+    <xf:button href="{{ link('userblogs/post/edit', $blogPost) }}" fa="fa-pencil" class="button--cta">
+        Edit Post
+    </xf:button>
+</xf:pageaction>
+</xf:if>
+
 <div class="block">
     <div class="block-container">
         <div class="block-body taylorJUserBlogs-post-content">

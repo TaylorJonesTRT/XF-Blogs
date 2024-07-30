@@ -13,6 +13,9 @@ class Blog extends AbstractController
     public function actionBlog(ParameterBag $params)
     {
         $blog = $this->assertBlogExists($params->blog_id);
+        
+        $test = $this->finder('TaylorJ\UserBlogs:BlogPost')
+            ->where('blog_id', $blog);
 
         $blogPostFinder = $this->finder('TaylorJ\UserBlogs:BlogPost')
             ->where('blog_id', $params->blog_id)
@@ -23,7 +26,11 @@ class Blog extends AbstractController
             'blogPosts' => $blogPostFinder->fetch()
         ];
 
-        return $this->view('TaylorJ\UserBlogs:Blog\Index', 'taylorj_userblogs_blog_view', $viewParams);
+        return $this->view(
+            'TaylorJ\UserBlogs:Blog\Index',
+            'taylorj_userblogs_blog_view',
+            $viewParams
+        );
     }
 
     public function actionBlogAdd(ParameterBag $params)
@@ -53,7 +60,7 @@ class Blog extends AbstractController
             'blogId' => $blogId
         ];
 
-        return $this->view('TaylorJ\UserBlogs:BlogPost\Edit', 'taylorj_userblogs_blog_post_edit', $viewParams);
+        return $this->view('TaylorJ\UserBlogs:BlogPost\NewEdit', 'taylorj_userblogs_blog_post_new_edit', $viewParams);
     }
 
     public function actionBlogSave(ParameterBag $params)

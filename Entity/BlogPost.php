@@ -72,14 +72,14 @@ class BlogPost extends Entity
 	public function canEdit(&$error = null)
 	{
 		$visitor = \XF::visitor();
-		$blogPost = $this->BlogPost;
+		$blogPost = $this;
 
-		if (!$visitor->user_id || !$blogPost)
+		if ($visitor->user_id !== $blogPost->user_id)
 		{
 			return false;
 		}
 
-		return $blogPost->canEdit($error);
+		return true;
 	}
     
     public function isAttachmentEmbedded($attachmentId)
@@ -111,6 +111,16 @@ class BlogPost extends Entity
 
 		// return ($visitor->user_id && $visitor->hasPermission('EWRcarta', 'manageAttachments'));
         return true;
+	}
+
+	public function getBbCodeRenderOptions($context, $type)
+	{
+		return [
+			'entity' => $this,
+			'user' => $this->BlogPost->User,
+			'attachments' => $this->Attachments,
+			'viewAttachments' => $this->BlogPost->canViewAttachments()
+		];
 	}
 
 	public static function getStructure(Structure $structure): Structure
