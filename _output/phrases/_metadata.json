@@ -1,4 +1,10 @@
 {
+    "cron_entry.userblogs.txt": {
+        "global_cache": false,
+        "version_id": 1000010,
+        "version_string": "1.0.0 Alpha",
+        "hash": "4a8427f9e4a1202950a1c9b4223d04fe"
+    },
     "nav.taylorjUserBlogs.txt": {
         "global_cache": false,
         "version_id": 1000010,

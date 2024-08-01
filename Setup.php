@@ -39,7 +39,22 @@ class Setup extends AbstractSetup
             $table->addColumn('blog_post_content', 'text');
             $table->addColumn('blog_post_date', 'int')->setDefault(0);
             $table->addColumn('blog_post_last_edit_date', 'int');
+			$table->addColumn('attach_count', 'int')->setDefault(0);
+			$table->addColumn('embed_metadata', 'blob')->nullable();
+            $table->addColumn('view_count', 'int')->setDefault(0);
         });
 
+    }
+    
+    public function installStep3()
+    {
+        $this->createTable('xf_taylorj_userblogs_blog_post_view', function (\XF\Db\Schema\Create $table)
+        {
+            $table->engine('MEMORY');
+
+            $table->addColumn('blog_post_id', 'int');
+            $table->addColumn('total', 'int');
+            $table->addPrimaryKey('blog_post_id');
+        });
     }
 }

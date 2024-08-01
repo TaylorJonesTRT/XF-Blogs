@@ -13,7 +13,7 @@ class Blog extends AbstractController
     public function actionBlog(ParameterBag $params)
     {
         $blog = $this->assertBlogExists($params->blog_id);
-        
+
         $test = $this->finder('TaylorJ\UserBlogs:BlogPost')
             ->where('blog_id', $blog);
 
@@ -21,9 +21,16 @@ class Blog extends AbstractController
             ->where('blog_id', $params->blog_id)
             ->order('blog_post_date', 'DESC');
 
+        $page = $params->page;
+        $perPage = 5;
+        $blogPostFinder->limitByPage($page, $perPage);
+
         $viewParams = [
             'blog' => $blog,
-            'blogPosts' => $blogPostFinder->fetch()
+            'blogPosts' => $blogPostFinder->fetch(),
+            'page' => $page,
+            'perPage' => $perPage,
+            'total' => $blogPostFinder->total()
         ];
 
         return $this->view(
@@ -67,7 +74,7 @@ class Blog extends AbstractController
     {
         $blogPost = $this->em()->create('TaylorJ\UserBlogs:BlogPost');
 
-        $this->blogPostSaveProcess($blogPost, $params)->run();
+        $this->blogPostSaveProcess($blogPost, $params);
 
         return $this->redirect($this->buildLink('userblogs/post', $blogPost));
     }
@@ -85,11 +92,15 @@ class Blog extends AbstractController
 
         $form = $this->formAction();
         $form->basicEntitySave($blogPost, $input);
+        $form->run();
 
         $hash = $this->filter('attachment_hash', 'str');
         if ($hash && $blogPost->canUploadAndManageAttachments()) {
             $inserter = $this->service('XF:Attachment\Preparer');
-            $associated = $inserter->associateAttachmentsWithContent($hash, 'taylorj_userblogs_post', $blog->blog_id);
+            $associated = $inserter->associateAttachmentsWithContent($hash, 'taylorj_userblogs_post', $blogPost->blog_post_id);
+            if ($associated) {
+                $blogPost->fastUpdate('attach_count', $blogPost->attach_count + $associated);
+            }
         }
 
         return $form;

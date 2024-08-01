@@ -22,10 +22,14 @@
             <div class="block-container">
                 <a href="{{ link('userblogs/post', $blogPost) }}">
                     <h2 class="block-header">{$blogPost.blog_post_title}</h2>
+                    
                 </a>
                 <div class="block-body">
                     <div class="block-row">
                         <xf:date time="$blogPost.blog_post_date" />
+                        <div class="u-pullRight">
+                            Views: {$blogPost.view_count}
+                        </div>
                         <hr />
                         {{ snippet($blogPost.blog_post_content, 750, {
                             'stripQuote': true,
@@ -43,6 +47,8 @@
                 </div>
             </div>
         </xf:foreach>
+        <xf:pagenav page="{$page}" perpage="{$perPage}" total="{$total}"
+            link="userblogs/blog/" data="{$blogPost}" wrapperclass="block-outer block-outer--after" />
     </div>
     <div class="taylorjUserBlogs-blog-details">
         <div class="taylorjBlogs-blog-header-image">

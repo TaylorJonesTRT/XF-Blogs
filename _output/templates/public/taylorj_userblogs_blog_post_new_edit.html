@@ -1,0 +1,24 @@
+<xf:title>Create a new blog post</xf:title>
+<div class="block">
+	<xf:form action="{{ link('userblogs/blog/save', $blogPost) }}" class="block" ajax="true" data-xf-init="attachment-manager">
+		<div class="block-container">
+			<div class="block-body">
+				<xf:textboxrow name="blog_post_title" value="{$blogPost.blog_post_title}" rowtype="fullWidth noLabel"
+					class="input--title" maxlength="40" placeholder="{{ phrase('title...') }}"
+					label="{{ phrase('title') }}" />
+
+				<xf:editorrow name="message" value="{$blogPost.blog_post_content}" label="message"
+					attachments="{{ $attachmentData ? $attachmentData.attachments : [] }}"
+					rowtype="fullWidth noLabel mergePrev"
+					data-preview-url="{{ link('userblogs/blog/add-preview', $blogPost) }}" />
+
+				<xf:formrow>
+					<xf:macro template="helper_attach_upload" name="upload_block"
+						arg-attachmentData="{$attachmentData}" />
+				</xf:formrow>
+			</div>
+		</div>
+		<xf:hiddenval name="blog_id" autocomplete="off">{$blogId}</xf:hiddenval>
+		<xf:submitrow submit="{{ phrase('save') }}" fa="fa-save" icon="save" />
+	</xf:form>
+</div>

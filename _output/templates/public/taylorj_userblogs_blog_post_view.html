@@ -35,11 +35,7 @@
 <div class="block">
     <div class="block-container">
         <div class="block-body taylorJUserBlogs-post-content">
-            {{ bb_code($blogPost.blog_post_content, 'taylorj_userblogs_post', $blogPost) }}
-			<xf:macro template="message_macros" name="attachments"
-				arg-attachments="{$blogPost.Attachments}"
-				arg-message="{$blogPost}"
-				arg-canView="{{ $blogPost.canViewAttachments() }}" />
+            {{ bb_code($blogPost.blog_post_content, 'blog_post_id', $blogPost) }}
         </div>
 <aside class="message-articleUserInfo">
     <div class="message-cell">

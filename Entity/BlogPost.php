@@ -5,6 +5,7 @@ namespace TaylorJ\UserBlogs\Entity;
 use XF\Mvc\Entity\Entity;
 use XF\Mvc\Entity\Structure;
 use XF\Mvc\ParameterBag;
+use XF\BbCode\RenderableContentInterface;
 
 /**
  * COLUMNS
@@ -15,13 +16,16 @@ use XF\Mvc\ParameterBag;
  * @property string $blog_post_content
  * @property int $blog_post_creation_date
  * @property int $blog_post_last_edit_date
+ * @property int $attach_count
+ * @property array|null $embed_metadata
+ * @property int $view_count
  *
  * RELATIONS
  * @property \XF\Entity\User $User
  * @property \TaylorJ\UserBlogs\Entity\Blog $Blog
  * @property \XF\Mvc\Entity\AbstractCollection|\XF\Entity\Attachment[] $Attachments
  */
-class BlogPost extends Entity
+class BlogPost extends Entity implements RenderableContentInterface
 {
     protected function verifyTitle(&$value)
     {
@@ -84,7 +88,7 @@ class BlogPost extends Entity
     
     public function isAttachmentEmbedded($attachmentId)
 	{
-		if (!$this->page_embed)
+		if (!$this->embed_metadata)
 		{
 			return false;
 		}
@@ -94,7 +98,7 @@ class BlogPost extends Entity
 			$attachmentId = $attachmentId->attachment_id;
 		}
 
-		return in_array($attachmentId, $this->page_embed);
+		return in_array($attachmentId, $this->embed_metadata);
 	}
      
     public function canViewAttachments(&$error = null)
@@ -117,10 +121,28 @@ class BlogPost extends Entity
 	{
 		return [
 			'entity' => $this,
-			'user' => $this->BlogPost->User,
+			'user' => $this->User,
 			'attachments' => $this->Attachments,
-			'viewAttachments' => $this->BlogPost->canViewAttachments()
+			'viewAttachments' => $this->canViewAttachments()
 		];
+	}
+	
+	protected function _postSave()
+	{
+		$test = $this;
+        // $hash = $this->filter('attachment_hash', 'str');
+		// $attachments = $this->finder('XF:Attachment')
+		// 	->where('content_type', 'taylorj_userblogs_post')
+		// 	->where('content_id', $this->blog_post_id)
+		// 	->order('attach_date')
+		// 	->fetch();
+        
+		// $metadata = [];
+
+		// if ($attachments)
+		// {
+		// 	$metadata['attachments'] = $attachments;
+		// }
 	}
 
 	public static function getStructure(Structure $structure): Structure
@@ -137,6 +159,9 @@ class BlogPost extends Entity
             'blog_post_content' => ['type' => self::STR, 'required' => true, 'censor' => true],
             'blog_post_date' => ['type' => self::UINT, 'default' => \XF::$time],
             'blog_post_last_edit_date' => ['type' => self::UINT, 'default' => 0],
+			'attach_count' => ['type' => self::UINT, 'max' => 65535, 'forced' => true, 'default' => 0, 'api' => true],
+			'embed_metadata' => ['type' => self::JSON_ARRAY, 'nullable' => true, 'default' => null],
+			'view_count' => ['type' => self::UINT, 'forced' => true, 'default' => 0, 'api' => true],
 		];
 		$structure->relations = [
             'User' => [
