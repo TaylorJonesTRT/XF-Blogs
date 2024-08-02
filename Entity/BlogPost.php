@@ -32,7 +32,7 @@ class BlogPost extends Entity implements RenderableContentInterface
         if (strlen($value) < 10)
         {
 //          the error below needs to be changed to use a phrase rather than hard coded text
-            $this->error('Blog titles need to be at least 10 characters long', 'title');
+            $this->error(\XF::phrase('taylorj_userblogs_blog_post_title_verification_error'), 'title');
             return false;
         }
 
@@ -129,20 +129,6 @@ class BlogPost extends Entity implements RenderableContentInterface
 	
 	protected function _postSave()
 	{
-		$test = $this;
-        // $hash = $this->filter('attachment_hash', 'str');
-		// $attachments = $this->finder('XF:Attachment')
-		// 	->where('content_type', 'taylorj_userblogs_post')
-		// 	->where('content_id', $this->blog_post_id)
-		// 	->order('attach_date')
-		// 	->fetch();
-        
-		// $metadata = [];
-
-		// if ($attachments)
-		// {
-		// 	$metadata['attachments'] = $attachments;
-		// }
 	}
 
 	public static function getStructure(Structure $structure): Structure

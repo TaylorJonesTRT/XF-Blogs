@@ -1,0 +1,6 @@
+{
+    "permission_type": "flag",
+    "interface_group_id": "userblogsPermissions",
+    "display_order": 4,
+    "depend_permission_id": ""
+}

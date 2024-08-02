@@ -1,0 +1,29 @@
+{
+    "blog-canDeleteOwnPost.json": {
+        "hash": "5aa8d377004a748cd73d52529a8f46b6"
+    },
+    "blog-canEditOwnPost.json": {
+        "hash": "474f7b4a97ca2d49a6888aa327e419b3"
+    },
+    "blog-canPost.json": {
+        "hash": "23bfa4b751f9f2a2f6365a36590c78c8"
+    },
+    "blog-canViewPost.json": {
+        "hash": "d9cacf2165bc942e038b128284e32859"
+    },
+    "blogs-canCreate.json": {
+        "hash": "8ad02b2d5386b8044909418da3d3adb6"
+    },
+    "blogs-canDeleteOwn.json": {
+        "hash": "098ea85018a8ee3a3eeb32f94f7bead2"
+    },
+    "blogs-canEditOwn.json": {
+        "hash": "4395d16c74abc8e43d57e22fd48e5ef6"
+    },
+    "blogs-viewAny.json": {
+        "hash": "ff524e1e7b03047f0ec6b03e7bea3423"
+    },
+    "blogs-viewOwn.json": {
+        "hash": "08405d51e520597ee3b5767d55d200cd"
+    }
+}

@@ -10,5 +10,77 @@
         "version_id": 1000010,
         "version_string": "1.0.0 Alpha",
         "hash": "d6b9ea32b921a9f56de32062ba4b94f3"
+    },
+    "permission.blog_canDeleteOwnPost.txt": {
+        "global_cache": false,
+        "version_id": 1000010,
+        "version_string": "1.0.0 Alpha",
+        "hash": "34807077d85700d82b59c3219f727c66"
+    },
+    "permission.blog_canEditOwnPost.txt": {
+        "global_cache": false,
+        "version_id": 1000010,
+        "version_string": "1.0.0 Alpha",
+        "hash": "ea7e380067818ef21679648dfa7a8841"
+    },
+    "permission.blog_canPost.txt": {
+        "global_cache": false,
+        "version_id": 1000010,
+        "version_string": "1.0.0 Alpha",
+        "hash": "24480a70e74381577b80ace5ccd80e58"
+    },
+    "permission.blog_canViewPost.txt": {
+        "global_cache": false,
+        "version_id": 1000010,
+        "version_string": "1.0.0 Alpha",
+        "hash": "fd23efdb195b2b5d73c047fcbfccbb3d"
+    },
+    "permission.blogs_canCreate.txt": {
+        "global_cache": false,
+        "version_id": 1000010,
+        "version_string": "1.0.0 Alpha",
+        "hash": "7a2e97c55b657dc5cd2e55b47a1bb5c0"
+    },
+    "permission.blogs_canDeleteOwn.txt": {
+        "global_cache": false,
+        "version_id": 1000010,
+        "version_string": "1.0.0 Alpha",
+        "hash": "c7267ca0eb1a5eb70923726eb47f421b"
+    },
+    "permission.blogs_canEditOwn.txt": {
+        "global_cache": false,
+        "version_id": 1000010,
+        "version_string": "1.0.0 Alpha",
+        "hash": "4c3fe7d73052de4cf2530caad0c79a7d"
+    },
+    "permission.blogs_viewAny.txt": {
+        "global_cache": false,
+        "version_id": 1000010,
+        "version_string": "1.0.0 Alpha",
+        "hash": "e362cd307fa07bcce51a5e81fa64ea20"
+    },
+    "permission.blogs_viewOwn.txt": {
+        "global_cache": false,
+        "version_id": 1000010,
+        "version_string": "1.0.0 Alpha",
+        "hash": "6ee3778943098e3985d8a0cd4d9fbc1e"
+    },
+    "permission_interface.userblogsPermissions.txt": {
+        "global_cache": false,
+        "version_id": 1000010,
+        "version_string": "1.0.0 Alpha",
+        "hash": "f738dc77bde2d5447f39d9feb81e9e10"
+    },
+    "taylorj_userblogs_blog_post_title_verification_error.txt": {
+        "global_cache": false,
+        "version_id": 1000010,
+        "version_string": "1.0.0 Alpha",
+        "hash": "f5445fb22962ee36f01baf05283ce20c"
+    },
+    "taylorj_userblogs_titile_verification_error.txt": {
+        "global_cache": false,
+        "version_id": 1000010,
+        "version_string": "1.0.0 Alpha",
+        "hash": "f5445fb22962ee36f01baf05283ce20c"
     }
 }

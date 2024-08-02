@@ -67,7 +67,7 @@ class Blog extends AbstractController
             'blogId' => $blogId
         ];
 
-        return $this->view('TaylorJ\UserBlogs:BlogPost\NewEdit', 'taylorj_userblogs_blog_post_new_edit', $viewParams);
+        return $this->view('TaylorJ\UserBlogs:BlogPost\Edit', 'taylorj_userblogs_blog_post_new_edit', $viewParams);
     }
 
     public function actionBlogSave(ParameterBag $params)
@@ -120,12 +120,6 @@ class Blog extends AbstractController
         $creator = $this->service('XF:Thread\Creator', $blog);
 
         $creator->setContent($title, $message);
-
-        // attachments aren't supported in pre-reg actions
-        // if ($forum->canUploadAndManageAttachments())
-        // {
-        // 	$creator->setAttachmentHash($this->filter('attachment_hash', 'str'));
-        // }
 
         return $creator;
     }

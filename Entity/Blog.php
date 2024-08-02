@@ -54,7 +54,7 @@ class Blog extends Entity
         if (strlen($value) < 10)
         {
 //          the error below needs to be changed to use a phrase rather than hard coded text
-            $this->error('Blog titles need to be at least 10 characters long', 'title');
+            $this->error(\XF::phrase('taylorj_userblogs_titile_verification_error'), 'title');
             return false;
         }
 
