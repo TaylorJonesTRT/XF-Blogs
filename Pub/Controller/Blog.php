@@ -106,6 +106,21 @@ class Blog extends AbstractController
         return $form;
     }
 
+    public function actionDelete(ParameterBag $params)
+    {
+        $blog = $this->assertBlogExists($params->blog_id);
+        
+        /** @var \XF\ControllerPlugin\Delete $plugin */
+        $plugin = $this->plugin('XF:Delete');
+        return $plugin->actionDelete(
+            $blog,
+            $this->buildLink('userblogs/blog/delete', $blog),
+            $this->buildLink('userblogs/blog/edit', $blog),
+            $this->buildLink('userblogs'),
+            $blog->blog_post_title
+        );
+    }
+
     /**
      * @param \TaylorJ\UserBlogs\Entity\Blog $blog
      *
