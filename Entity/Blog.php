@@ -25,6 +25,75 @@ use XF\Mvc\ParameterBag;
 class Blog extends Entity
 {
 
+	public function getBreadcrumbs($includeSelf = true, $linkType = 'public')
+	{
+		if ($linkType == 'public')
+		{
+			$link = 'userblogs/blog';
+		}
+		return $this->_getBreadcrumbs($includeSelf, $linkType, $link);
+	}
+
+	public function canView(&$error = null)
+	{
+        $visitor = \XF::visitor();
+        
+        if (!$visitor->hasPermission('blogs', 'viewOwn') || !$visitor->hasPermission('blogs', 'viewAny'))
+        {
+            return false;
+        }
+
+        return true;
+	}
+
+	public function canEdit(&$error = null)
+	{
+		$visitor = \XF::visitor();
+
+		if ($visitor->user_id == $this->user_id)
+		{
+            if (!$visitor->hasPermission('blogs', 'canEditOwn'))
+            {
+                $error = \XF::phrase('taylorj_userblogs_blog_error_edit');
+                return false;
+            }
+		}
+        else
+        {
+            if ($visitor->hasPermission('blogs', 'canEditAny'))
+            {
+                $error = \XF::phrase('taylorj_userblogs_blog_error_edit');
+                return false;
+            }
+        }
+
+		return true;
+	}
+	
+	public function canDelete(&$error = null)
+	{
+		$visitor = \XF::visitor();
+
+		if ($visitor->user_id == $this->user_id)
+		{
+            if (!$visitor->hasPermission('blogs', 'canDeleteOwn'))
+            {
+                $error = \XF::phrase('taylorj_userblogs_blog_error_delete');
+                return false;
+            }
+		}
+        else
+        {
+            if (!$visitor->hasPermission('blogs', 'deleteAny'))
+            {
+                $error = \XF::phrase('taylorj_userblogs_blog_error_delete');
+                return false;
+            }
+        }
+
+		return true;	
+	}
+    
     public function getBlogHeaderImage(bool $canonical = false): string
     {
         $blogHeaderImage = $this->app()->applyExternalDataUrl(
@@ -54,7 +123,7 @@ class Blog extends Entity
         if (strlen($value) < 10)
         {
 //          the error below needs to be changed to use a phrase rather than hard coded text
-            $this->error('Blog titles need to be at least 10 characters long', 'title');
+            $this->error(\XF::phrase('taylorj_userblogs_titile_verification_error'), 'title');
             return false;
         }
 
@@ -79,6 +148,21 @@ class Blog extends Entity
 		return $blogPost;
 	}
 
+	protected function adjustUserBlogCount($amount)
+	{
+		if ($this->user_id
+			&& $this->User
+		)
+		{
+			$this->User->fastUpdate('taylorj_userblogs_blog_count', max(0, $this->User->taylorj_userblogs_blog_count + $amount));
+		}
+	}
+    
+    protected function _postSave()
+    {
+        $this->adjustUserBlogCount(1);
+    }
+
 	public static function getStructure(Structure $structure): Structure
 	{
 		$structure->table = 'xf_taylorj_userblogs_blog';
@@ -92,7 +176,8 @@ class Blog extends Entity
             'blog_description' => ['type' => self::STR, 'maxLength' => 255, 'required' => false, 'censor' => true],
             'blog_creation_date' => ['type' => self::UINT, 'default' => \XF::$time],
             'blog_last_post_date' => ['type' => self::UINT, 'default' => 0],
-            'blog_has_header' => ['type' => self::BOOL, 'default' => false]
+            'blog_has_header' => ['type' => self::BOOL, 'default' => false],
+            'blog_post_count' => ['type' => self::UINT, 'default' => 0],
 		];
 		$structure->relations = [
             'User' => [
@@ -107,6 +192,37 @@ class Blog extends Entity
 		$structure->behaviors = [];
 
 		return $structure;
+	}
+    
+	protected function _getBreadcrumbs($includeSelf, $linkType, $link)
+	{
+		/** @var \XF\Mvc\Router $router */
+		$router = $this->app()->container('router.' . $linkType);
+		$structure = $this->structure();
+
+		$output = [];
+		// if ($this->breadcrumb_data)
+		// {
+		// 	foreach ($this->breadcrumb_data AS $crumb)
+		// 	{
+		// 		$output[] = [
+		// 			'value' => $crumb['title'],
+		// 			'href' => $router->buildLink($link, $crumb),
+		// 			$structure->primaryKey => $crumb[$structure->primaryKey]
+		// 		];
+		// 	}
+		// }
+
+		if ($includeSelf)
+		{
+			$output[] = [
+				'value' => $this->blog_title,
+				'href' => $router->buildLink($link, $this),
+				$structure->primaryKey => $this->{$structure->primaryKey}
+			];
+		}
+
+		return $output;
 	}
 
 }

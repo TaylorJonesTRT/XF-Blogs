@@ -7,17 +7,22 @@
     "public/taylorj_userblogs_blog_post_edit.html": {
         "version_id": 1000010,
         "version_string": "1.0.0 Alpha",
-        "hash": "f7412e580d45382c7f1c9e419bc10b74"
+        "hash": "166b571e57ee1c34d8a31da267e771ec"
+    },
+    "public/taylorj_userblogs_blog_post_new_edit.html": {
+        "version_id": 1000010,
+        "version_string": "1.0.0 Alpha",
+        "hash": "c13f942ff2dad3e61ffa9054b08dc7bd"
     },
     "public/taylorj_userblogs_blog_post_view.html": {
         "version_id": 1000010,
         "version_string": "1.0.0 Alpha",
-        "hash": "95f02245c71cf4329cf522e0499bafc2"
+        "hash": "91394609fd90d25aefccb437fac51f4c"
     },
     "public/taylorj_userblogs_blog_view.html": {
         "version_id": 1000010,
         "version_string": "1.0.0 Alpha",
-        "hash": "3be2db33c99cac8d7be390d77f4ad8d1"
+        "hash": "27edae06fc23f7701285e6e66c9ab5fc"
     },
     "public/taylorj_userblogs_blog_view.less": {
         "version_id": 1000010,
@@ -35,8 +40,8 @@
         "hash": "f5a859026de6d80190a6ae6c8a314d54"
     },
     "public/taylorj_userblogs_blogs_index.less": {
-        "version_id": 1000010,
-        "version_string": "1.0.0 Alpha",
-        "hash": "0bfb1faa39d1d3977ccae8a1aef8a171"
+        "version_id": 1000031,
+        "version_string": "1.0.0 Beta 1",
+        "hash": "4ec63e4af5f5cad260d6eb075ba8080e"
     }
 }

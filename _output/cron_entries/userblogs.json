@@ -1,0 +1,17 @@
+{
+    "cron_class": "TaylorJ\\UserBlogs\\Cron\\BlogPost",
+    "cron_method": "runViewUpdate",
+    "run_rules": {
+        "day_type": "dom",
+        "dom": [
+            -1
+        ],
+        "hours": [
+            -1
+        ],
+        "minutes": [
+            30
+        ]
+    },
+    "active": true
+}

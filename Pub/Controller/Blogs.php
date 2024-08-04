@@ -13,6 +13,18 @@ class Blogs extends AbstractController
 {
     public function actionIndex()
     {
+        if (!\XF::visitor()->hasPermission('blogs', 'viewOwn'))
+        {
+            return $this->noPermission(\XF::phrase('permission.blogs_viewOwn'));
+        }
+
+        $blogFinder = $this->finder('TaylorJ\UserBlogs:Blog');
+        
+        if (!\XF::visitor()->hasPermission('blogs', 'viewAny'))
+        {
+            $blogFinder->where('user_id', \XF::visitor()->user_id);
+        }
+
         $blogFinder = $this->finder('TaylorJ\UserBlogs:Blog')
             ->order('blog_creation_date', 'DESC');
 
@@ -25,6 +37,11 @@ class Blogs extends AbstractController
 
 	public function actionAdd()
     {
+        if (!\XF::visitor()->hasPermission('blogs', 'canCreate'))
+        {
+            return $this->noPermission(\XF::phrase('permission.blogs_canCreate'));
+        }
+
         $blog = $this->em()->create('TaylorJ\UserBlogs:Blog');
         return $this->blogAddEdit($blog);
     }
@@ -32,6 +49,12 @@ class Blogs extends AbstractController
 	public function actionEdit(ParameterBag $params)
     {
         $blog = $this->assertBlogExists($params->blog_id);
+        
+        if (!$blog->canEdit($error))
+        {
+            return $this->noPermission($error);
+        }
+
         return $this->blogAddEdit($blog);
     }
 	
@@ -49,6 +72,11 @@ class Blogs extends AbstractController
         if ($params->id)
         {
             $blog = $this->assertBlogExists($params->blog_id);
+
+            if (!$blog->canEdit($error))
+            {
+                return $this->noPermission($error);
+            }
         }
         else
         {
