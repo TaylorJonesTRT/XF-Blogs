@@ -41,49 +41,52 @@ class BlogPost extends Entity implements RenderableContentInterface
         return true;
     }
 
-	public function canView(&$error = null)
-	{
-		$blogPost = $this->BlogPost;
-
-		if (!$blogPost || !$blogPost->canView($error))
-		{
-			return false;
-		}
-
-		$visitor = \XF::visitor();
-
-		if ($this->message_state == 'moderated')
-		{
-			if (
-				!$blogPost->hasPermission('viewModerated')
-				&& (!$visitor->user_id)
-			)
-			{
-				return false;
-			}
-		}
-		else if ($this->message_state == 'deleted')
-		{
-			if (!$blogPost->hasPermission('viewDeleted'))
-			{
-				return false;
-			}
-		}
-
-		return true;
-	}
-
 	public function canEdit(&$error = null)
 	{
 		$visitor = \XF::visitor();
-		$blogPost = $this;
 
-		if ($visitor->user_id !== $blogPost->user_id)
+		if ($visitor->user_id == $this->user_id)
 		{
-			return false;
+            if (!$visitor->hasPermission('blogPost', 'canEditOwnPost'))
+            {
+                $error = \XF::phrase('taylorj_userblogs_blog_post_error_edit');
+                return false;
+            }
 		}
+        else
+        {
+            if ($visitor->hasPermission('blogs', 'canEditAny'))
+            {
+                $error = \XF::phrase('taylorj_userblogs_blog_post_error_edit');
+                return false;
+            }
+        }
 
 		return true;
+	}
+	
+	public function canDelete(&$error = null)
+	{
+		$visitor = \XF::visitor();
+
+		if ($visitor->user_id == $this->user_id)
+		{
+            if (!$visitor->hasPermission('blogPost', 'canDeleteOwnPost'))
+            {
+                $error = \XF::phrase('taylorj_userblogs_blog_post_error_delete');
+                return false;
+            }
+		}
+        else
+        {
+            if (!$visitor->hasPermission('blogPost', 'deleteAny'))
+            {
+                $error = \XF::phrase('taylorj_userblogs_blog_post_error_delete');
+                return false;
+            }
+        }
+
+		return true;	
 	}
     
     public function isAttachmentEmbedded($attachmentId)

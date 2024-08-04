@@ -7,6 +7,8 @@ use XF\AddOn\StepRunnerInstallTrait;
 use XF\AddOn\StepRunnerUninstallTrait;
 use XF\AddOn\StepRunnerUpgradeTrait;
 
+use XF\Db\Schema\Alter;
+
 class Setup extends AbstractSetup
 {
 	use StepRunnerInstallTrait;
@@ -24,6 +26,7 @@ class Setup extends AbstractSetup
             $table->addColumn('blog_creation_date', 'int')->setDefault(0);
             $table->addColumn('blog_last_post_date', 'int')->setDefault(0);
             $table->addColumn('blog_has_header', 'tinyint')->setDefault(0);
+			$table->addColumn('blog_post_count', 'int')->setDefault(0);
         });
 
     }
@@ -38,7 +41,7 @@ class Setup extends AbstractSetup
             $table->addColumn('blog_post_title', 'varchar', 50);
             $table->addColumn('blog_post_content', 'text');
             $table->addColumn('blog_post_date', 'int')->setDefault(0);
-            $table->addColumn('blog_post_last_edit_date', 'int');
+            $table->addColumn('blog_post_last_edit_date', 'int')->setDefault(0);
 			$table->addColumn('attach_count', 'int')->setDefault(0);
 			$table->addColumn('embed_metadata', 'blob')->nullable();
             $table->addColumn('view_count', 'int')->setDefault(0);
@@ -55,6 +58,14 @@ class Setup extends AbstractSetup
             $table->addColumn('blog_post_id', 'int');
             $table->addColumn('total', 'int');
             $table->addPrimaryKey('blog_post_id');
+        });
+    }
+    
+    public function installStep4()
+    {
+        $this->schemaManager()->alterTable('xf_user', function(Alter $table)
+        {
+            $table->addColumn('taylorj_userblogs_blog_count', 'int')->setDefault(0);
         });
     }
 }

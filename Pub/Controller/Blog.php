@@ -10,12 +10,19 @@ use XF\Mvc\ParameterBag;
  */
 class Blog extends AbstractController
 {
-    public function actionBlog(ParameterBag $params)
+    public function actionIndex(ParameterBag $params)
     {
+        /** @var \TaylorJ\UserBlogs\Entity\Blog $blog */
         $blog = $this->assertBlogExists($params->blog_id);
-
-        $test = $this->finder('TaylorJ\UserBlogs:BlogPost')
-            ->where('blog_id', $blog);
+        
+        if (!$blog->canView() && $blog->user_id == \XF::visitor()->user_id)
+        {
+            return $this->noPermission(\XF::phrase('permission.blogs_viewOwn'));
+        }
+        elseif (!$blog->canView())
+        {
+            return $this->noPermission(\XF::phrase('permission.blogs_viewAny'));
+        }
 
         $blogPostFinder = $this->finder('TaylorJ\UserBlogs:BlogPost')
             ->where('blog_id', $params->blog_id)
@@ -40,19 +47,47 @@ class Blog extends AbstractController
         );
     }
 
-    public function actionBlogAdd(ParameterBag $params)
+    public function actionEdit(ParameterBag $params)
     {
+        $blogFinder = $this->finder('TaylorJ\UserBlogs:Blog')->where('blog_id', $params->blog_id)->fetchOne();
+        return $this->blogEdit($blogFinder, $params->blog_id);
+    }
+
+    public function actionDelete(ParameterBag $params)
+    {
+        $blog = $this->assertBlogExists($params->blog_id);
+        
+        /** @var \XF\ControllerPlugin\Delete $plugin */
+        $plugin = $this->plugin('XF:Delete');
+        return $plugin->actionDelete(
+            $blog,
+            $this->buildLink('userblogs/blog/delete', $blog),
+            $this->buildLink('userblogs/blog/edit', $blog),
+            $this->buildLink('userblogs'),
+            $blog->blog_title
+        );
+    }
+
+    public function actionAddPost(ParameterBag $params)
+    {
+        if (!\XF::visitor()->hasPermission('blogPost', 'canPost'))
+        {
+            return $this->noPermission(\XF::phrase('taylorj_userblogs_blog_post_error_new'));
+        }
         $blogPost = $this->em()->create('TaylorJ\UserBlogs:BlogPost');
-        return $this->blogAddEdit($blogPost, $params->blog_id);
+        return $this->blogPostAdd($blogPost, $params->blog_id);
     }
 
-    public function actionBlogEdit(ParameterBag $params)
+    protected function blogEdit(\TaylorJ\UserBlogs\Entity\Blog $blog)
     {
-        $blogPostFinder = $this->finder('TaylorJ\UserBlogs:BlogPost')->where('blog_post_id', $params->id)->fetchOne();
-        return $this->blogAddEdit($blogPostFinder, $params->blog_id);
+        $viewParams = [
+            'blog' => $blog,
+        ];
+
+        return $this->view('TaylorJ\UserBlogs:Blog\Edit', 'taylorj_userblogs_blog_edit', $viewParams);
     }
 
-    protected function blogAddEdit(\TaylorJ\UserBlogs\Entity\BlogPost $blogPost, $blogId)
+    protected function blogPostAdd(\TaylorJ\UserBlogs\Entity\BlogPost $blogPost, $blog_id)
     {
         /** @var \XF\Repository\Attachment $attachmentRepo */
         $attachmentRepo = $this->repository('XF:Attachment');
@@ -64,13 +99,13 @@ class Blog extends AbstractController
         $viewParams = [
             'blogPost' => $blogPost,
             'attachmentData' => $attachmentData,
-            'blogId' => $blogId
+            'blogId' => $blog_id
         ];
 
         return $this->view('TaylorJ\UserBlogs:BlogPost\Edit', 'taylorj_userblogs_blog_post_new_edit', $viewParams);
     }
 
-    public function actionBlogSave(ParameterBag $params)
+    public function actionPostSave(ParameterBag $params)
     {
         $blogPost = $this->em()->create('TaylorJ\UserBlogs:BlogPost');
 
@@ -104,21 +139,6 @@ class Blog extends AbstractController
         }
 
         return $form;
-    }
-
-    public function actionDelete(ParameterBag $params)
-    {
-        $blog = $this->assertBlogExists($params->blog_id);
-        
-        /** @var \XF\ControllerPlugin\Delete $plugin */
-        $plugin = $this->plugin('XF:Delete');
-        return $plugin->actionDelete(
-            $blog,
-            $this->buildLink('userblogs/blog/delete', $blog),
-            $this->buildLink('userblogs/blog/edit', $blog),
-            $this->buildLink('userblogs'),
-            $blog->blog_post_title
-        );
     }
 
     /**

@@ -1,6 +1,6 @@
 <xf:title>Create a new blog post</xf:title>
 <div class="block">
-	<xf:form action="{{ link('userblogs/blog/save', $blogPost) }}" class="block" ajax="true" data-xf-init="attachment-manager">
+	<xf:form action="{{ link('userblogs/blog/post-save', $blogPost) }}" class="block" ajax="true" data-xf-init="attachment-manager">
 		<div class="block-container">
 			<div class="block-body">
 				<xf:textboxrow name="blog_post_title" value="{$blogPost.blog_post_title}" rowtype="fullWidth noLabel"

@@ -25,6 +25,66 @@ use XF\Mvc\ParameterBag;
 class Blog extends Entity
 {
 
+	public function canView(&$error = null)
+	{
+        $visitor = \XF::visitor();
+        
+        if (!$visitor->hasPermission('blogs', 'viewOwn') || !$visitor->hasPermission('blogs', 'viewAny'))
+        {
+            return false;
+        }
+
+        return true;
+	}
+
+	public function canEdit(&$error = null)
+	{
+		$visitor = \XF::visitor();
+
+		if ($visitor->user_id == $this->user_id)
+		{
+            if (!$visitor->hasPermission('blogs', 'canEditOwn'))
+            {
+                $error = \XF::phrase('taylorj_userblogs_blog_error_edit');
+                return false;
+            }
+		}
+        else
+        {
+            if ($visitor->hasPermission('blogs', 'canEditAny'))
+            {
+                $error = \XF::phrase('taylorj_userblogs_blog_error_edit');
+                return false;
+            }
+        }
+
+		return true;
+	}
+	
+	public function canDelete(&$error = null)
+	{
+		$visitor = \XF::visitor();
+
+		if ($visitor->user_id == $this->user_id)
+		{
+            if (!$visitor->hasPermission('blogs', 'canDeleteOwn'))
+            {
+                $error = \XF::phrase('taylorj_userblogs_blog_error_delete');
+                return false;
+            }
+		}
+        else
+        {
+            if (!$visitor->hasPermission('blogs', 'deleteAny'))
+            {
+                $error = \XF::phrase('taylorj_userblogs_blog_error_delete');
+                return false;
+            }
+        }
+
+		return true;	
+	}
+    
     public function getBlogHeaderImage(bool $canonical = false): string
     {
         $blogHeaderImage = $this->app()->applyExternalDataUrl(
@@ -79,6 +139,21 @@ class Blog extends Entity
 		return $blogPost;
 	}
 
+	protected function adjustUserBlogCount($amount)
+	{
+		if ($this->user_id
+			&& $this->User
+		)
+		{
+			$this->User->fastUpdate('taylorj_userblogs_blog_count', max(0, $this->User->taylorj_userblogs_blog_count + $amount));
+		}
+	}
+    
+    protected function _postSave()
+    {
+        $this->adjustUserBlogCount(1);
+    }
+
 	public static function getStructure(Structure $structure): Structure
 	{
 		$structure->table = 'xf_taylorj_userblogs_blog';
@@ -92,7 +167,8 @@ class Blog extends Entity
             'blog_description' => ['type' => self::STR, 'maxLength' => 255, 'required' => false, 'censor' => true],
             'blog_creation_date' => ['type' => self::UINT, 'default' => \XF::$time],
             'blog_last_post_date' => ['type' => self::UINT, 'default' => 0],
-            'blog_has_header' => ['type' => self::BOOL, 'default' => false]
+            'blog_has_header' => ['type' => self::BOOL, 'default' => false],
+            'blog_post_count' => ['type' => self::UINT, 'default' => 0],
 		];
 		$structure->relations = [
             'User' => [

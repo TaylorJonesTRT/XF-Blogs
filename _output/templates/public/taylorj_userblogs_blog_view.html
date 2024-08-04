@@ -8,13 +8,37 @@
     <span>
         {$blog.blog_description}
     </span>
-</div>
-
 <xf:pageaction>
-    <xf:button href="{{ link('userblogs/blog/add', $blog) }}" fa="fa-plus-square" class="button--cta">
+    <xf:button href="{{ link('userblogs/blog/add-post', $blog) }}" fa="fa-plus-square" class="button--cta">
         Create a new post
     </xf:button>
 </xf:pageaction>
+
+<xf:if contentcheck="true">
+    <div class="u-pullRight buttonGroup-buttonWrapper">
+        <xf:button class="button--link menuTrigger" data-xf-click="menu" aria-expanded="false" aria-haspopup="true"
+            title="{{ phrase('more_options') }}">&#8226;&#8226;&#8226;</xf:button>
+        <div class="menu" data-menu="menu" aria-hidden="true">
+            <div class="menu-content">
+                <h4 class="menu-header">{{ phrase('more_options') }}</h4>
+                <xf:contentcheck>
+                    <!--[XF:thread_tools_menu:top]-->
+                    <xf:if is="$blog.canEdit()">
+                        <a href="{{ link('userblogs/blog/edit', $blog) }}" class="menu-linkRow">{{
+                            phrase('taylorj_userblogs_blog_edit') }}</a>
+                    </xf:if>
+                    <xf:if is="$blog.canDelete()">
+                        <a href="{{ link('userblogs/blog/delete', $blog) }}" data-xf-click="overlay" class="menu-linkRow">{{
+                            phrase('taylorj_userblogs_blog_delete') }}</a>
+                    </xf:if>
+                    <!--[XF:thread_tools_menu:bottom]-->
+                </xf:contentcheck>
+            </div>
+        </div>
+    </div>
+</xf:if>
+</div>
+
 
 <div class="block taylorjUserBlogs-block">
     <div class="taylorjUserBlogs-blog-posts">
@@ -58,6 +82,9 @@
             <span>Created by: {$blog.User.username}</span>
             <span>Created on:
                 <xf:date time="$blog.blog_creation_date" />
+            </span>
+            <span>Total Posts:
+                {$blogPost.Blog.blog_post_count|number}
             </span>
         </div>
     </div>

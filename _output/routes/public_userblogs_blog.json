@@ -7,5 +7,5 @@
     "build_method": "",
     "controller": "TaylorJ\\UserBlogs:Blog",
     "context": "taylorjUserBlogs",
-    "action_prefix": "blog"
+    "action_prefix": ""
 }
