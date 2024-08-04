@@ -25,6 +25,15 @@ use XF\Mvc\ParameterBag;
 class Blog extends Entity
 {
 
+	public function getBreadcrumbs($includeSelf = true, $linkType = 'public')
+	{
+		if ($linkType == 'public')
+		{
+			$link = 'userblogs/blog';
+		}
+		return $this->_getBreadcrumbs($includeSelf, $linkType, $link);
+	}
+
 	public function canView(&$error = null)
 	{
         $visitor = \XF::visitor();
@@ -183,6 +192,37 @@ class Blog extends Entity
 		$structure->behaviors = [];
 
 		return $structure;
+	}
+    
+	protected function _getBreadcrumbs($includeSelf, $linkType, $link)
+	{
+		/** @var \XF\Mvc\Router $router */
+		$router = $this->app()->container('router.' . $linkType);
+		$structure = $this->structure();
+
+		$output = [];
+		// if ($this->breadcrumb_data)
+		// {
+		// 	foreach ($this->breadcrumb_data AS $crumb)
+		// 	{
+		// 		$output[] = [
+		// 			'value' => $crumb['title'],
+		// 			'href' => $router->buildLink($link, $crumb),
+		// 			$structure->primaryKey => $crumb[$structure->primaryKey]
+		// 		];
+		// 	}
+		// }
+
+		if ($includeSelf)
+		{
+			$output[] = [
+				'value' => $this->blog_title,
+				'href' => $router->buildLink($link, $this),
+				$structure->primaryKey => $this->{$structure->primaryKey}
+			];
+		}
+
+		return $output;
 	}
 
 }

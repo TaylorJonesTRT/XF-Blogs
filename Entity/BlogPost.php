@@ -27,6 +27,22 @@ use XF\BbCode\RenderableContentInterface;
  */
 class BlogPost extends Entity implements RenderableContentInterface
 {
+
+	public function getBreadcrumbs($includeSelf = true)
+	{
+		$breadcrumbs = $this->Blog ? $this->Blog->getBreadcrumbs() : [];
+		if ($includeSelf)
+		{
+			$breadcrumbs[] = [
+				'href' => $this->app()->router()->buildLink('userblogs/post', $this),
+				'value' => $this->blog_post_title,
+				'blog_post_id' => $this->blog_post_id
+			];
+		}
+
+		return $breadcrumbs;
+	}
+
     protected function verifyTitle(&$value)
     {
         if (strlen($value) < 10)

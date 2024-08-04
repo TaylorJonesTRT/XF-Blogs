@@ -59,9 +59,8 @@
                             'stripQuote': true,
                             'bbWrapper': true
                         }) }}
-                        <!-- {{ bb_code($blogPost.blog_post_content, 'taylor_userblogs_post', $blogPost) }} -->
-                        <hr />
                         <xf:if is="$blogPost.blog_post_last_edit_date">
+                        <hr />
                             <span class="u-pullRight">
                                 Last edited
                                 <xf:date time="$blogPost.blog_post_last_edit_date" />

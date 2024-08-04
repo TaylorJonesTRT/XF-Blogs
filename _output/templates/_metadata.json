@@ -17,12 +17,12 @@
     "public/taylorj_userblogs_blog_post_view.html": {
         "version_id": 1000010,
         "version_string": "1.0.0 Alpha",
-        "hash": "ac310da1224577730330b4bb31697811"
+        "hash": "91394609fd90d25aefccb437fac51f4c"
     },
     "public/taylorj_userblogs_blog_view.html": {
         "version_id": 1000010,
         "version_string": "1.0.0 Alpha",
-        "hash": "70e7409af08a592df6c9baa24f688be1"
+        "hash": "27edae06fc23f7701285e6e66c9ab5fc"
     },
     "public/taylorj_userblogs_blog_view.less": {
         "version_id": 1000010,
@@ -40,8 +40,8 @@
         "hash": "f5a859026de6d80190a6ae6c8a314d54"
     },
     "public/taylorj_userblogs_blogs_index.less": {
-        "version_id": 1000010,
-        "version_string": "1.0.0 Alpha",
-        "hash": "0bfb1faa39d1d3977ccae8a1aef8a171"
+        "version_id": 1000031,
+        "version_string": "1.0.0 Beta 1",
+        "hash": "4ec63e4af5f5cad260d6eb075ba8080e"
     }
 }
