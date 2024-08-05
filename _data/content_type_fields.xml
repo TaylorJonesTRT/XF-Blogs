@@ -2,4 +2,5 @@
 <content_type_fields>
   <field content_type="taylorj_blogs_blog_post" field_name="attachment_handler_class">TaylorJ\Blogs\Attachment\BlogPost</field>
   <field content_type="taylorj_blogs_blog_post" field_name="entity">TaylorJ\Blogs:BlogPost</field>
+  <field content_type="taylorj_blogs_blog_post" field_name="search_handler_class">TaylorJ\Blogs\Search\BlogPost</field>
 </content_type_fields>

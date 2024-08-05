@@ -11,7 +11,7 @@ use XF\Pub\Controller\AbstractController;
 */
 class Blogs extends AbstractController
 {
-    public function actionIndex()
+    public function actionIndex(ParameterBag $params)
     {
         if (!\XF::visitor()->hasPermission('blogs', 'viewOwn'))
         {
@@ -28,8 +28,15 @@ class Blogs extends AbstractController
         $blogFinder = $this->finder('TaylorJ\Blogs:Blog')
             ->order('blog_creation_date', 'DESC');
 
+        $page = $params->page;
+        $perPage = $this->options()->taylorjBlogsPerPage;
+        $blogFinder->limitByPage($page, $perPage);
+
         $viewParams = [
-            'blogs' => $blogFinder->fetch()
+            'blogs' => $blogFinder->fetch(),
+            'page' => $page,
+            'perPage' => $perPage,
+            'total' => $blogFinder->total()
         ];
 
         return $this->view('TaylorJ\Blogs:Blogs\Index', 'taylorj_blogs_index', $viewParams);

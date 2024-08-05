@@ -1,0 +1,1 @@
+How many blog posts to show per page on the blog view

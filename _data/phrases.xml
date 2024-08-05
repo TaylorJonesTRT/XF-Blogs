@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <phrases>
+  <phrase title="taylorj_blogs_blog" version_id="1000031" version_string="1.0.0 Beta 1"><![CDATA[Blog]]></phrase>
   <phrase title="taylorj_blogs_blog_delete" version_id="1000031" version_string="1.0.0 Beta 1"><![CDATA[Delete blog]]></phrase>
   <phrase title="taylorj_blogs_blog_edit" version_id="1000031" version_string="1.0.0 Beta 1"><![CDATA[Edit blog]]></phrase>
   <phrase title="taylorj_blogs_blog_error_delete" version_id="1000031" version_string="1.0.0 Beta 1"><![CDATA[You do not have permissions to delete this blog]]></phrase>

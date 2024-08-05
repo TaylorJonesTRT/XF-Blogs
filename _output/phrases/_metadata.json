@@ -11,6 +11,42 @@
         "version_string": "1.0.0 Alpha",
         "hash": "d6b9ea32b921a9f56de32062ba4b94f3"
     },
+    "option.taylorjBlogPostsPerPage.txt": {
+        "global_cache": false,
+        "version_id": 1000031,
+        "version_string": "1.0.0 Beta 1",
+        "hash": "6d74e9e0381e0c2f24fd7168ed0d7145"
+    },
+    "option.taylorjBlogsPerPage.txt": {
+        "global_cache": false,
+        "version_id": 1000031,
+        "version_string": "1.0.0 Beta 1",
+        "hash": "d14b255dc5bacf5cab55e4825d9b878e"
+    },
+    "option_explain.taylorjBlogPostsPerPage.txt": {
+        "global_cache": false,
+        "version_id": 1000031,
+        "version_string": "1.0.0 Beta 1",
+        "hash": "ae8ffd0d6a6e14c9190925c789e0980b"
+    },
+    "option_explain.taylorjBlogsPerPage.txt": {
+        "global_cache": false,
+        "version_id": 1000031,
+        "version_string": "1.0.0 Beta 1",
+        "hash": "193491349461b414f8a4cd36b426f4e0"
+    },
+    "option_group.taylorjBlogs.txt": {
+        "global_cache": false,
+        "version_id": 1000031,
+        "version_string": "1.0.0 Beta 1",
+        "hash": "6b435d2d01f17d02abfa533b4778e8a8"
+    },
+    "option_group_description.taylorjBlogs.txt": {
+        "global_cache": false,
+        "version_id": 1000031,
+        "version_string": "1.0.0 Beta 1",
+        "hash": "2b6662ffa29e7c9b57b1bd104a12f6a8"
+    },
     "permission.blogPost_canDeleteOwnPost.txt": {
         "global_cache": false,
         "version_id": 1000010,

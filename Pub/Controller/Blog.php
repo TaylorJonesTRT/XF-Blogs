@@ -29,7 +29,7 @@ class Blog extends AbstractController
             ->order('blog_post_date', 'DESC');
 
         $page = $params->page;
-        $perPage = 5;
+        $perPage = $this->options()->taylorjBlogPostsPerPage;
         $blogPostFinder->limitByPage($page, $perPage);
 
         $viewParams = [
