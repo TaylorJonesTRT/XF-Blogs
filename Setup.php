@@ -1,6 +1,6 @@
 <?php
 
-namespace TaylorJ\UserBlogs;
+namespace TaylorJ\Blogs;
 
 use XF\AddOn\AbstractSetup;
 use XF\AddOn\StepRunnerInstallTrait;
@@ -17,7 +17,7 @@ class Setup extends AbstractSetup
 	
 	public function installStep1()
     {
-        $this->createTable('xf_taylorj_userblogs_blog', function (\XF\Db\Schema\Create $table)
+        $this->createTable('xf_taylorj_blogs_blog', function (\XF\Db\Schema\Create $table)
         {
             $table->addColumn('blog_id', 'int')->autoIncrement();
             $table->addColumn('user_id', 'int')->setDefault(0);
@@ -33,7 +33,7 @@ class Setup extends AbstractSetup
 
     public function installStep2()
     {
-        $this->createTable('xf_taylorj_userblogs_blog_post', function (\XF\Db\Schema\Create $table)
+        $this->createTable('xf_taylorj_blogs_blog_post', function (\XF\Db\Schema\Create $table)
         {
             $table->addColumn('blog_post_id', 'int')->autoIncrement();
             $table->addColumn('blog_id', 'int');
@@ -51,7 +51,7 @@ class Setup extends AbstractSetup
     
     public function installStep3()
     {
-        $this->createTable('xf_taylorj_userblogs_blog_post_view', function (\XF\Db\Schema\Create $table)
+        $this->createTable('xf_taylorj_blogs_blog_post_view', function (\XF\Db\Schema\Create $table)
         {
             $table->engine('MEMORY');
 
@@ -65,7 +65,7 @@ class Setup extends AbstractSetup
     {
         $this->schemaManager()->alterTable('xf_user', function(Alter $table)
         {
-            $table->addColumn('taylorj_userblogs_blog_count', 'int')->setDefault(0);
+            $table->addColumn('taylorj_blogs_blog_count', 'int')->setDefault(0);
         });
     }
 }

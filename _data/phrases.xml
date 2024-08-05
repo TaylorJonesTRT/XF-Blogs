@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<phrases>
+  <phrase title="taylorj_blogs_blog_delete" version_id="1000031" version_string="1.0.0 Beta 1"><![CDATA[Delete blog]]></phrase>
+  <phrase title="taylorj_blogs_blog_edit" version_id="1000031" version_string="1.0.0 Beta 1"><![CDATA[Edit blog]]></phrase>
+  <phrase title="taylorj_blogs_blog_error_delete" version_id="1000031" version_string="1.0.0 Beta 1"><![CDATA[You do not have permissions to delete this blog]]></phrase>
+  <phrase title="taylorj_blogs_blog_error_edit" version_id="1000031" version_string="1.0.0 Beta 1"><![CDATA[You do not have permissions to edit this blog]]></phrase>
+  <phrase title="taylorj_blogs_blog_header_upload" version_id="1000031" version_string="1.0.0 Beta 1"><![CDATA[Choose a header image]]></phrase>
+  <phrase title="taylorj_blogs_blog_post_delete" version_id="1000031" version_string="1.0.0 Beta 1"><![CDATA[Delete blog post]]></phrase>
+  <phrase title="taylorj_blogs_blog_post_edit" version_id="1000031" version_string="1.0.0 Beta 1"><![CDATA[Edit blog post]]></phrase>
+  <phrase title="taylorj_blogs_blog_post_error_edit" version_id="1000031" version_string="1.0.0 Beta 1"><![CDATA[You do not have permissions to edit this blog post]]></phrase>
+  <phrase title="taylorj_blogs_blog_post_error_new" version_id="1000031" version_string="1.0.0 Beta 1"><![CDATA[You do not have permissions to create a new blog post]]></phrase>
+  <phrase title="taylorj_blogs_blog_post_title_verification_error" version_id="1000031" version_string="1.0.0 Beta 1"><![CDATA[Blog titles need to be at least 10 characters long]]></phrase>
+  <phrase title="taylorj_blogs_blogs_total" version_id="1000031" version_string="1.0.0 Beta 1"><![CDATA[Blogs]]></phrase>
+  <phrase title="taylorj_blogs_titile_verification_error" version_id="1000031" version_string="1.0.0 Beta 1"><![CDATA[Blog titles need to be at least 10 characters long]]></phrase>
+</phrases>

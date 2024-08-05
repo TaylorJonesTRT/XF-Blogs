@@ -1,0 +1,5 @@
+{
+    "content_type": "taylorj_blogs_blog_post",
+    "field_name": "search_handler_class",
+    "field_value": "TaylorJ\\Blogs\\Search\\BlogPost"
+}

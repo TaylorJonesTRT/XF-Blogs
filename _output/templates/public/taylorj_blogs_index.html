@@ -1,11 +1,11 @@
-<xf:css src="taylorj_userblogs_blogs_index.less" />
+<xf:css src="taylorj_blogs_index.less" />
 
 <xf:title>
     Blogs
 </xf:title>
 
 <xf:pageaction>
-    <xf:button href="{{ link('userblogs/add') }}" fa="fa-plus-square" overlay="true" class="button--cta">Create a Blog
+    <xf:button href="{{ link('blogs/add') }}" fa="fa-plus-square" overlay="true" class="button--cta">Create a Blog
     </xf:button>
 </xf:pageaction>
 
@@ -21,7 +21,7 @@
                     </div>
                     <xf:avatar user="$blog.User" size="s" class="avatar taylorjBlogs" />
                     <div class="taylorjBlogs-blog-container">
-                        <a href="{{ link('userblogs/blog', $blog) }}">
+                        <a href="{{ link('blogs/blog', $blog) }}">
                             <h1>{$blog.blog_title}</h1>
                         </a>
                         <p class="taylorjBlogs-blog-description">{$blog.blog_description}</p>

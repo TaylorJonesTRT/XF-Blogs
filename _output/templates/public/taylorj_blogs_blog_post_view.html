@@ -1,4 +1,4 @@
-<xf:css src="taylorj_userblogs_blogpost_view.less" />
+<xf:css src="taylorj_blogs_blog_post_view.less" />
 <xf:css src="message.less" />
 
 <xf:breadcrumb source="$blogPost.getBreadcrumbs(true)" />
@@ -19,7 +19,7 @@
                 <xf:fa icon="fa-clock" title="{{ phrase('start_date')|for_attr }}" />
                 <span class="u-srOnly">{{ phrase('start_date') }}</span>
 
-                <a href="{{ link('userblogs/post', $blogPost) }}" class="u-concealed">
+                <a href="{{ link('blogs/post', $blogPost) }}" class="u-concealed">
                     <xf:date time="{$blogPost.blog_post_date}" />
                 </a>
             </li>
@@ -35,13 +35,13 @@
                     <xf:contentcheck>
                         <!--[XF:thread_tools_menu:top]-->
                         <xf:if is="$blogPost.canEdit()">
-                            <a href="{{ link('userblogs/post/edit', $blogPost) }}" class="menu-linkRow">{{
-                                phrase('taylorj_userblogs_blog_post_edit') }}</a>
+                            <a href="{{ link('blogs/post/edit', $blogPost) }}" class="menu-linkRow">{{
+                                phrase('taylorj_blogs_blog_post_edit') }}</a>
                         </xf:if>
                         <xf:if is="$blogPost.canDelete()">
-                            <a href="{{ link('userblogs/post/delete', $blogPost) }}" data-xf-click="overlay"
+                            <a href="{{ link('blogs/post/delete', $blogPost) }}" data-xf-click="overlay"
                                 class="menu-linkRow">{{
-                                phrase('taylorj_userblogs_blog_post_delete') }}</a>
+                                phrase('taylorj_blogs_blog_post_delete') }}</a>
                         </xf:if>
                         <!--[XF:thread_tools_menu:bottom]-->
                     </xf:contentcheck>
@@ -103,8 +103,8 @@
                                 <!--[XF:stats:start]-->
                                 <li>
                                     <dl class="pairs pairs--inline">
-                                        <dt>{{ phrase('taylorj_userblogs_blogs_total') }}</dt>
-                                        <dd>{$blogPost.User.taylorj_userblogs_blog_count|number}</dd>
+                                        <dt>{{ phrase('taylorj_blogs_blogs_total') }}</dt>
+                                        <dd>{$blogPost.User.taylorj_blogs_blog_count|number}</dd>
                                     </dl>
                                 </li>
                                 <!--[XF:stats:after_messages]-->

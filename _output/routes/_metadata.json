@@ -1,4 +1,13 @@
 {
+    "public_blogs_.json": {
+        "hash": "be99f4d6c8112054e82881920ccd2426"
+    },
+    "public_blogs_blog.json": {
+        "hash": "1325cba9033e3406269655d63658b7b6"
+    },
+    "public_blogs_post.json": {
+        "hash": "c128b867d99426ebf285dd6d473b05ab"
+    },
     "public_userblogs_.json": {
         "hash": "a68ea16133759fa4507154013d976668"
     },

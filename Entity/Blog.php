@@ -1,6 +1,6 @@
 <?php
 
-namespace TaylorJ\UserBlogs\Entity;
+namespace TaylorJ\Blogs\Entity;
 
 use XF\Mvc\Entity\Entity;
 use XF\Mvc\Entity\Structure;
@@ -29,7 +29,7 @@ class Blog extends Entity
 	{
 		if ($linkType == 'public')
 		{
-			$link = 'userblogs/blog';
+			$link = 'blogs/blog';
 		}
 		return $this->_getBreadcrumbs($includeSelf, $linkType, $link);
 	}
@@ -54,7 +54,7 @@ class Blog extends Entity
 		{
             if (!$visitor->hasPermission('blogs', 'canEditOwn'))
             {
-                $error = \XF::phrase('taylorj_userblogs_blog_error_edit');
+                $error = \XF::phrase('taylorj_blogs_blog_error_edit');
                 return false;
             }
 		}
@@ -62,7 +62,7 @@ class Blog extends Entity
         {
             if ($visitor->hasPermission('blogs', 'canEditAny'))
             {
-                $error = \XF::phrase('taylorj_userblogs_blog_error_edit');
+                $error = \XF::phrase('taylorj_blogs_blog_error_edit');
                 return false;
             }
         }
@@ -78,7 +78,7 @@ class Blog extends Entity
 		{
             if (!$visitor->hasPermission('blogs', 'canDeleteOwn'))
             {
-                $error = \XF::phrase('taylorj_userblogs_blog_error_delete');
+                $error = \XF::phrase('taylorj_blogs_blog_error_delete');
                 return false;
             }
 		}
@@ -86,7 +86,7 @@ class Blog extends Entity
         {
             if (!$visitor->hasPermission('blogs', 'deleteAny'))
             {
-                $error = \XF::phrase('taylorj_userblogs_blog_error_delete');
+                $error = \XF::phrase('taylorj_blogs_blog_error_delete');
                 return false;
             }
         }
@@ -122,8 +122,7 @@ class Blog extends Entity
     {
         if (strlen($value) < 10)
         {
-//          the error below needs to be changed to use a phrase rather than hard coded text
-            $this->error(\XF::phrase('taylorj_userblogs_titile_verification_error'), 'title');
+            $this->error(\XF::phrase('taylorj_blogs_titile_verification_error'), 'title');
             return false;
         }
 
@@ -136,13 +135,14 @@ class Blog extends Entity
 	{
 		$visitor = \XF::visitor();
 
-		// return ($visitor->user_id && $visitor->hasPermission('EWRcarta', 'manageAttachments'));
+		//TODO: decide later on if we should have a permission for allowing the
+		// use of the attachment system for posts
         return true;
 	}
 
 	public function getNewBlogPost()
 	{
-		$blogPost = $this->_em->create('TaylorJ\UserBlogs:BlogPost');
+		$blogPost = $this->_em->create('TaylorJ\Blogs:BlogPost');
 		$blogPost->blog_id = $this->blog_id;
 
 		return $blogPost;
@@ -154,7 +154,7 @@ class Blog extends Entity
 			&& $this->User
 		)
 		{
-			$this->User->fastUpdate('taylorj_userblogs_blog_count', max(0, $this->User->taylorj_userblogs_blog_count + $amount));
+			$this->User->fastUpdate('taylorj_blogs_blog_count', max(0, $this->User->taylorj_blogs_blog_count + $amount));
 		}
 	}
     
@@ -165,9 +165,9 @@ class Blog extends Entity
 
 	public static function getStructure(Structure $structure): Structure
 	{
-		$structure->table = 'xf_taylorj_userblogs_blog';
-		$structure->shortName = 'TaylorJ\UserBlogs:Blog';
-		$structure->contentType = 'taylorj_userblogs_blog';
+		$structure->table = 'xf_taylorj_blogs_blog';
+		$structure->shortName = 'TaylorJ\Blogs:Blog';
+		$structure->contentType = 'taylorj_blogs_blog';
 		$structure->primaryKey = 'blog_id';
 		$structure->columns = [
 			'blog_id' => ['type' => self::UINT, 'autoIncrement' => true],
@@ -189,7 +189,15 @@ class Blog extends Entity
         ];
 		$structure->defaultWith = ['User'];
 		$structure->getters['blog_header_image'] = true;
-		$structure->behaviors = [];
+		$structure->behaviors = [
+			'XF:Indexable' => [
+				'checkForUpdates' => ['blog_title', 'blog_id', 'user_id']
+			],
+			'XF:IndexableContainer' => [
+				'childContentType' => 'taylorj_blogs_blog_post',
+				'checkForUpdates' => ['blog_id']
+			],
+		];
 
 		return $structure;
 	}
@@ -201,18 +209,6 @@ class Blog extends Entity
 		$structure = $this->structure();
 
 		$output = [];
-		// if ($this->breadcrumb_data)
-		// {
-		// 	foreach ($this->breadcrumb_data AS $crumb)
-		// 	{
-		// 		$output[] = [
-		// 			'value' => $crumb['title'],
-		// 			'href' => $router->buildLink($link, $crumb),
-		// 			$structure->primaryKey => $crumb[$structure->primaryKey]
-		// 		];
-		// 	}
-		// }
-
 		if ($includeSelf)
 		{
 			$output[] = [

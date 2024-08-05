@@ -8,7 +8,7 @@
 
 
 
-<xf:form action="{{ link('userblogs/save', $blog) }}" class="block" ajax="1">
+<xf:form action="{{ link('blogs/save', $blog) }}" class="block" ajax="1">
     <div class="block-container">
         <xf:textboxrow name="blog_title" value="{$blog.blog_title}" label="Title" />
         <xf:textarearow name="blog_description" value="{$blog.blog_description}" label="Blog Description" autosize="true" rows="5" />

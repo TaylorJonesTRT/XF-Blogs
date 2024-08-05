@@ -1,7 +1,7 @@
 {
     "legacy_addon_id": "",
-    "title": "User Blogs",
-    "description": "",
+    "title": "[TaylorJ] Blogs",
+    "description": "A user blogging system to allow your users to express themselves",
     "version_id": 1000031,
     "version_string": "1.0.0 Beta 1",
     "dev": "",
@@ -10,5 +10,5 @@
     "support_url": "",
     "extra_urls": [],
     "require": [],
-    "icon": ""
+    "icon": "fa-book"
 }

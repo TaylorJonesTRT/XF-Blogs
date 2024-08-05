@@ -1,6 +1,6 @@
 <?php
 
-namespace TaylorJ\UserBlogs\Cron;
+namespace TaylorJ\Blogs\Cron;
 
 class BlogPost
 {
@@ -8,8 +8,8 @@ class BlogPost
     {
         $app = \XF::app();
 
-        /** @var \TaylorJ\UserBlogs\Repository\BlogPost $blogPostRepo */
-        $blogPostRepo = $app->repository('TaylorJ\UserBlogs:BlogPost');
+        /** @var \TaylorJ\Blogs\Repository\BlogPost $blogPostRepo */
+        $blogPostRepo = $app->repository('TaylorJ\Blogs:BlogPost');
         $blogPostRepo->batchUpdateThreadViews();
         
         /** @var \XF\Repository\Attachment $attachmentRepo */

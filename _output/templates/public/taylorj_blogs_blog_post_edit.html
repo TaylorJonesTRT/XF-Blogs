@@ -1,6 +1,6 @@
 <xf:title>Edit your post</xf:title>
 <div class="block">
-	<xf:form action="{{ link('userblogs/post/save', $blogPost) }}" class="block" ajax="true" data-xf-init="attachment-manager">
+	<xf:form action="{{ link('blogs/post/save', $blogPost) }}" class="block" ajax="true" data-xf-init="attachment-manager">
 		<div class="block-container">
 			<div class="block-body">
 				<xf:textboxrow name="blog_post_title" value="{$blogPost.blog_post_title}" rowtype="fullWidth noLabel"
@@ -10,7 +10,7 @@
 				<xf:editorrow name="message" value="{$blogPost.blog_post_content}" label="message"
 					attachments="{{ $attachmentData ? $attachmentData.attachments : [] }}"
 					rowtype="fullWidth noLabel mergePrev"
-					data-preview-url="{{ link('userblogs/post/add-preview', $blogPost) }}" />
+					data-preview-url="{{ link('blogs/post/add-preview', $blogPost) }}" />
 
 				<xf:formrow>
 					<xf:macro template="helper_attach_upload" name="upload_block"

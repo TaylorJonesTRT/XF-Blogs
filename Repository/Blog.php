@@ -1,6 +1,6 @@
 <?php
 
-namespace TaylorJ\UserBlogs\Repository;
+namespace TaylorJ\Blogs\Repository;
 
 use XF\Mvc\Entity\Repository;
 use XF\Util\File;

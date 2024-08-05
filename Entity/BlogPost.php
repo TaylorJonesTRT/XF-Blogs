@@ -1,6 +1,6 @@
 <?php
 
-namespace TaylorJ\UserBlogs\Entity;
+namespace TaylorJ\Blogs\Entity;
 
 use XF\Mvc\Entity\Entity;
 use XF\Mvc\Entity\Structure;
@@ -22,7 +22,7 @@ use XF\BbCode\RenderableContentInterface;
  *
  * RELATIONS
  * @property \XF\Entity\User $User
- * @property \TaylorJ\UserBlogs\Entity\Blog $Blog
+ * @property \TaylorJ\Blogs\Entity\Blog $Blog
  * @property \XF\Mvc\Entity\AbstractCollection|\XF\Entity\Attachment[] $Attachments
  */
 class BlogPost extends Entity implements RenderableContentInterface
@@ -34,7 +34,7 @@ class BlogPost extends Entity implements RenderableContentInterface
 		if ($includeSelf)
 		{
 			$breadcrumbs[] = [
-				'href' => $this->app()->router()->buildLink('userblogs/post', $this),
+				'href' => $this->app()->router()->buildLink('blogs/post', $this),
 				'value' => $this->blog_post_title,
 				'blog_post_id' => $this->blog_post_id
 			];
@@ -48,7 +48,7 @@ class BlogPost extends Entity implements RenderableContentInterface
         if (strlen($value) < 10)
         {
 //          the error below needs to be changed to use a phrase rather than hard coded text
-            $this->error(\XF::phrase('taylorj_userblogs_blog_post_title_verification_error'), 'title');
+            $this->error(\XF::phrase('taylorj_blogs_blog_post_title_verification_error'), 'title');
             return false;
         }
 
@@ -56,6 +56,18 @@ class BlogPost extends Entity implements RenderableContentInterface
 
         return true;
     }
+
+	public function canView(&$error = null)
+	{
+        $visitor = \XF::visitor();
+        
+        if (!$visitor->hasPermission('blogs', 'viewOwn') || !$visitor->hasPermission('blogs', 'viewAny'))
+        {
+            return false;
+        }
+
+        return true;
+	}
 
 	public function canEdit(&$error = null)
 	{
@@ -65,7 +77,7 @@ class BlogPost extends Entity implements RenderableContentInterface
 		{
             if (!$visitor->hasPermission('blogPost', 'canEditOwnPost'))
             {
-                $error = \XF::phrase('taylorj_userblogs_blog_post_error_edit');
+                $error = \XF::phrase('taylorj_blogs_blog_post_error_edit');
                 return false;
             }
 		}
@@ -73,7 +85,7 @@ class BlogPost extends Entity implements RenderableContentInterface
         {
             if ($visitor->hasPermission('blogs', 'canEditAny'))
             {
-                $error = \XF::phrase('taylorj_userblogs_blog_post_error_edit');
+                $error = \XF::phrase('taylorj_blogs_blog_post_error_edit');
                 return false;
             }
         }
@@ -89,7 +101,7 @@ class BlogPost extends Entity implements RenderableContentInterface
 		{
             if (!$visitor->hasPermission('blogPost', 'canDeleteOwnPost'))
             {
-                $error = \XF::phrase('taylorj_userblogs_blog_post_error_delete');
+                $error = \XF::phrase('taylorj_blogs_blog_post_error_delete');
                 return false;
             }
 		}
@@ -97,7 +109,7 @@ class BlogPost extends Entity implements RenderableContentInterface
         {
             if (!$visitor->hasPermission('blogPost', 'deleteAny'))
             {
-                $error = \XF::phrase('taylorj_userblogs_blog_post_error_delete');
+                $error = \XF::phrase('taylorj_blogs_blog_post_error_delete');
                 return false;
             }
         }
@@ -124,7 +136,6 @@ class BlogPost extends Entity implements RenderableContentInterface
 	{
 		$visitor = \XF::visitor();
 		
-		// return ($visitor->hasPermission('EWRcarta', 'viewAttachments'));
         return true;
 	}
     
@@ -132,7 +143,7 @@ class BlogPost extends Entity implements RenderableContentInterface
 	{
 		$visitor = \XF::visitor();
 
-		// return ($visitor->user_id && $visitor->hasPermission('EWRcarta', 'manageAttachments'));
+		return ($visitor->user_id && $visitor->hasPermission('blogs', 'manageAttachments'));
         return true;
 	}
 
@@ -146,15 +157,26 @@ class BlogPost extends Entity implements RenderableContentInterface
 		];
 	}
 	
-	protected function _postSave()
+	protected function adjustBlogPostCount($amount)
 	{
+		if ($this->user_id
+			&& $this->User
+		)
+		{
+			$this->Blog->fastUpdate('blog_post_count', max(0, $this->Blog->blog_post_count + $amount));
+		}
 	}
+    
+    protected function _postSave()
+    {
+        $this->adjustBlogPostCount(1);
+    }
 
 	public static function getStructure(Structure $structure): Structure
 	{
-		$structure->table = 'xf_taylorj_userblogs_blog_post';
-		$structure->shortName = 'TaylorJ\UserBlogs:BlogPost';
-		$structure->contentType = 'taylorj_userblogs_blog_post';
+		$structure->table = 'xf_taylorj_blogs_blog_post';
+		$structure->shortName = 'TaylorJ\Blogs:BlogPost';
+		$structure->contentType = 'taylorj_blogs_blog_post';
 		$structure->primaryKey = 'blog_post_id';
 		$structure->columns = [
 			'blog_post_id' => ['type' => self::UINT, 'autoIncrement' => true],
@@ -176,7 +198,7 @@ class BlogPost extends Entity implements RenderableContentInterface
             	'primary'    => true
             ],
             'Blog' => [
-                'entity'    => 'TaylorJ\UserBlogs:Blog',
+                'entity'    => 'TaylorJ\Blogs:Blog',
                 'type'      => self::TO_ONE,
                 'conditions'=> 'blog_id',
                 'primary'   => true
@@ -185,7 +207,7 @@ class BlogPost extends Entity implements RenderableContentInterface
 				'entity' => 'XF:Attachment',
 				'type' => self::TO_MANY,
 				'conditions' => [
-					['content_type', '=', 'taylorj_usersblogs_post'],
+					['content_type', '=', 'taylorj_blogs_blog_post'],
 					['content_id', '=', '$blog_post_id']
 				],
 				'with' => 'Data',
@@ -194,7 +216,11 @@ class BlogPost extends Entity implements RenderableContentInterface
         ];
 		$structure->defaultWith = ['User'];
 		$structure->getters[] = true;
-		$structure->behaviors = [];
+		$structure->behaviors = [
+			'XF:Indexable' => [
+				'checkForUpdates' => ['blog_post_title', 'blog_post_id', 'blog_id', 'user_id']
+			],
+		];
 
 		return $structure;
 	}

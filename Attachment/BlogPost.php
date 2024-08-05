@@ -1,6 +1,6 @@
 <?php
 
-namespace TaylorJ\UserBlogs\Attachment;
+namespace TaylorJ\Blogs\Attachment;
 
 use XF\Entity\Attachment;
 use XF\Mvc\Entity\Entity;
@@ -18,7 +18,8 @@ class BlogPost extends \XF\Attachment\AbstractHandler
 
 		if (!empty($context['blog_post_id']))
 		{
-			$blogPost = $em->find('TaylorJ\UserBlogs:BlogPost', intval($context['blog_post_id']));
+			/** @var \TaylorJ\Blogs\Entity\BlogPost $blogPost */
+			$blogPost = $em->find('TaylorJ\Blogs:BlogPost', intval($context['blog_post_id']));
 			if (!$blogPost || !$blogPost->canEdit())
 			{
 				return false;
@@ -28,7 +29,8 @@ class BlogPost extends \XF\Attachment\AbstractHandler
 		}
 		else
 		{
-			$blogPost = $em->create('TaylorJ\UserBlogs:BlogPost');
+			/** @var \TaylorJ\Blogs\Entity\BlogPost $blogPost */
+			$blogPost = $em->create('TaylorJ\Blogs:BlogPost');
 			return $blogPost->canUploadAndManageAttachments();
 		}
 	}
@@ -40,7 +42,9 @@ class BlogPost extends \XF\Attachment\AbstractHandler
 
 	public function getConstraints(array $context)
 	{
-		return \XF::repository('XF:Attachment')->getDefaultAttachmentConstraints();
+		/** @var \XF\Repository\Attachment $attachmentRepository */
+		$attachmentRepository = \XF::repository('XF:Attachment');
+		return $attachmentRepository->getDefaultAttachmentConstraints();
 	}
 
 	public function getContainerIdFromContext(array $context)
@@ -50,12 +54,12 @@ class BlogPost extends \XF\Attachment\AbstractHandler
 
 	public function getContainerLink(Entity $container, array $extraParams = [])
 	{
-		return \XF::app()->router('public')->buildLink('taylorj-userblogs', $container, $extraParams);
+		return \XF::app()->router('public')->buildLink('taylorj-blogs', $container, $extraParams);
 	}
 
 	public function getContext(Entity $entity = null, array $extraContext = [])
 	{
-		if ($entity instanceof \TaylorJ\UserBlogs\Entity\BlogPost)
+		if ($entity instanceof \TaylorJ\Blogs\Entity\BlogPost)
 		{
 			$extraContext['blog_post_id'] = $entity->blog_post_id;
 		}

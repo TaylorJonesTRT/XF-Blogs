@@ -1,6 +1,6 @@
 <?php
 
-namespace TaylorJ\UserBlogs\Pub\Controller;
+namespace TaylorJ\Blogs\Pub\Controller;
 
 use XF\Pub\Controller\AbstractController;
 use XF\Mvc\ParameterBag;
@@ -12,7 +12,7 @@ class Blog extends AbstractController
 {
     public function actionIndex(ParameterBag $params)
     {
-        /** @var \TaylorJ\UserBlogs\Entity\Blog $blog */
+        /** @var \TaylorJ\Blogs\Entity\Blog $blog */
         $blog = $this->assertBlogExists($params->blog_id);
         
         if (!$blog->canView() && $blog->user_id == \XF::visitor()->user_id)
@@ -24,7 +24,7 @@ class Blog extends AbstractController
             return $this->noPermission(\XF::phrase('permission.blogs_viewAny'));
         }
 
-        $blogPostFinder = $this->finder('TaylorJ\UserBlogs:BlogPost')
+        $blogPostFinder = $this->finder('TaylorJ\Blogs:BlogPost')
             ->where('blog_id', $params->blog_id)
             ->order('blog_post_date', 'DESC');
 
@@ -41,15 +41,15 @@ class Blog extends AbstractController
         ];
 
         return $this->view(
-            'TaylorJ\UserBlogs:Blog\Index',
-            'taylorj_userblogs_blog_view',
+            'TaylorJ\Blogs:Blog\Index',
+            'taylorj_blogs_blog_view',
             $viewParams
         );
     }
 
     public function actionEdit(ParameterBag $params)
     {
-        $blogFinder = $this->finder('TaylorJ\UserBlogs:Blog')->where('blog_id', $params->blog_id)->fetchOne();
+        $blogFinder = $this->finder('TaylorJ\Blogs:Blog')->where('blog_id', $params->blog_id)->fetchOne();
         return $this->blogEdit($blogFinder, $params->blog_id);
     }
 
@@ -61,9 +61,9 @@ class Blog extends AbstractController
         $plugin = $this->plugin('XF:Delete');
         return $plugin->actionDelete(
             $blog,
-            $this->buildLink('userblogs/blog/delete', $blog),
-            $this->buildLink('userblogs/blog/edit', $blog),
-            $this->buildLink('userblogs'),
+            $this->buildLink('blogs/blog/delete', $blog),
+            $this->buildLink('blogs/blog/edit', $blog),
+            $this->buildLink('blogs'),
             $blog->blog_title
         );
     }
@@ -72,27 +72,27 @@ class Blog extends AbstractController
     {
         if (!\XF::visitor()->hasPermission('blogPost', 'canPost'))
         {
-            return $this->noPermission(\XF::phrase('taylorj_userblogs_blog_post_error_new'));
+            return $this->noPermission(\XF::phrase('taylorj_blogs_blog_post_error_new'));
         }
-        $blogPost = $this->em()->create('TaylorJ\UserBlogs:BlogPost');
+        $blogPost = $this->em()->create('TaylorJ\Blogs:BlogPost');
         return $this->blogPostAdd($blogPost, $params->blog_id);
     }
 
-    protected function blogEdit(\TaylorJ\UserBlogs\Entity\Blog $blog)
+    protected function blogEdit(\TaylorJ\Blogs\Entity\Blog $blog)
     {
         $viewParams = [
             'blog' => $blog,
         ];
 
-        return $this->view('TaylorJ\UserBlogs:Blog\Edit', 'taylorj_userblogs_blog_edit', $viewParams);
+        return $this->view('TaylorJ\Blogs:Blog\Edit', 'taylorj_blogs_blog_edit', $viewParams);
     }
 
-    protected function blogPostAdd(\TaylorJ\UserBlogs\Entity\BlogPost $blogPost, $blog_id)
+    protected function blogPostAdd(\TaylorJ\Blogs\Entity\BlogPost $blogPost, $blog_id)
     {
         /** @var \XF\Repository\Attachment $attachmentRepo */
         $attachmentRepo = $this->repository('XF:Attachment');
         $attachmentData = $attachmentRepo->getEditorData(
-            'taylorj_userblogs_post',
+            'taylorj_blogs_blog_post',
             $blogPost,
         );
 
@@ -102,19 +102,19 @@ class Blog extends AbstractController
             'blogId' => $blog_id
         ];
 
-        return $this->view('TaylorJ\UserBlogs:BlogPost\Edit', 'taylorj_userblogs_blog_post_new_edit', $viewParams);
+        return $this->view('TaylorJ\Blogs:BlogPost\Edit', 'taylorj_blogs_blog_post_new_edit', $viewParams);
     }
 
     public function actionPostSave(ParameterBag $params)
     {
-        $blogPost = $this->em()->create('TaylorJ\UserBlogs:BlogPost');
+        $blogPost = $this->em()->create('TaylorJ\Blogs:BlogPost');
 
         $this->blogPostSaveProcess($blogPost, $params);
 
-        return $this->redirect($this->buildLink('userblogs/post', $blogPost));
+        return $this->redirect($this->buildLink('blogs/post', $blogPost));
     }
 
-    protected function blogPostSaveProcess(\TaylorJ\UserBlogs\Entity\BlogPost $blogPost, ParameterBag $params)
+    protected function blogPostSaveProcess(\TaylorJ\Blogs\Entity\BlogPost $blogPost, ParameterBag $params)
     {
         $input = $this->filter([
             'blog_post_title' => 'str',
@@ -131,8 +131,9 @@ class Blog extends AbstractController
 
         $hash = $this->filter('attachment_hash', 'str');
         if ($hash && $blogPost->canUploadAndManageAttachments()) {
+            /** @var \XF\Service\Attachment\Preparer $inserter */
             $inserter = $this->service('XF:Attachment\Preparer');
-            $associated = $inserter->associateAttachmentsWithContent($hash, 'taylorj_userblogs_post', $blogPost->blog_post_id);
+            $associated = $inserter->associateAttachmentsWithContent($hash, 'taylorj_blogs_blog_post', $blogPost->blog_post_id);
             if ($associated) {
                 $blogPost->fastUpdate('attach_count', $blogPost->attach_count + $associated);
             }
@@ -142,11 +143,11 @@ class Blog extends AbstractController
     }
 
     /**
-     * @param \TaylorJ\UserBlogs\Entity\Blog $blog
+     * @param \TaylorJ\Blogs\Entity\Blog $blog
      *
-     * @return \TaylorJ\UserBlogs\Service\Blog\Creator
+     * @return \TaylorJ\Blogs\Service\Blog\Creator
      */
-    protected function setupBlogPostCreate(\TaylorJ\UserBlogs\Entity\Blog $blog)
+    protected function setupBlogPostCreate(\TaylorJ\Blogs\Entity\Blog $blog)
     {
         $title = $this->filter('title', 'str');
         $message = $this->plugin('XF:Editor')->fromInput('message');
@@ -159,18 +160,18 @@ class Blog extends AbstractController
         return $creator;
     }
 
-    public function actionBlogAddPreview(ParameterBag $params)
+    public function actionAddPreview(ParameterBag $params)
     {
         $message = $this->plugin('XF:Editor')->fromInput('message');
         $blogId = $this->filter('blog_id', 'int');
-        /** @var \TaylorJ\UserBlogs\Entity\Blog $blog */
+        /** @var \TaylorJ\Blogs\Entity\Blog $blog */
         $blog = $this->assertBlogExists($blogId);
         $blogPost = $blog->getNewBlogPost();
 
         $tempHash = $this->filter('attachment_hash', 'str');
         /** @var \XF\Repository\Attachment $attachmentRepo */
         $attachmentRepo = $this->repository('XF:Attachment');
-        $attachmentData = $attachmentRepo->getEditorData('taylorj_userblogs_post', $blogPost, $tempHash);
+        $attachmentData = $attachmentRepo->getEditorData('taylorj_blogs_blog_post', $blogPost, $tempHash);
         $attachments = $attachmentData['attachments'];
 
         return $this->plugin('XF:BbCodePreview')->actionPreview(
@@ -183,12 +184,12 @@ class Blog extends AbstractController
 
     protected function assertBlogExists($id, $with = null, $phraseKey = null)
     {
-        $blog = $this->assertRecordExists('TaylorJ\UserBlogs:Blog', $id, $with, $phraseKey);
+        $blog = $this->assertRecordExists('TaylorJ\Blogs:Blog', $id, $with, $phraseKey);
         return $blog;
     }
 
     protected function assertBlogPostExists($id, $with = null, $phraseKey = null)
     {
-        return $this->assertRecordExists('TaylorJ\UserBlogs:BlogPost', $id, $with, $phraseKey);
+        return $this->assertRecordExists('TaylorJ\Blogs:BlogPost', $id, $with, $phraseKey);
     }
 }

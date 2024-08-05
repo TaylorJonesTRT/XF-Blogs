@@ -1,16 +1,16 @@
 <?php
 
-namespace TaylorJ\UserBlogs\Repository;
+namespace TaylorJ\Blogs\Repository;
 
 use XF\Mvc\Entity\Repository;
 use XF\Util\File;
 
 class BlogPost extends Repository
 {
-	public function logThreadView(\TaylorJ\UserBlogs\Entity\BlogPost $blogPost)
+	public function logThreadView(\TaylorJ\Blogs\Entity\BlogPost $blogPost)
 	{
 		$this->db()->query("
-			INSERT INTO xf_taylorj_userblogs_blog_post_view
+			INSERT INTO xf_taylorj_blogs_blog_post_view
 				(blog_post_id, total)
 			VALUES
 				(? , 1)
@@ -23,10 +23,10 @@ class BlogPost extends Repository
 	{
 		$db = $this->db();
 		$db->query("
-			UPDATE xf_taylorj_userblogs_blog_post AS t
-			INNER JOIN xf_taylorj_userblogs_blog_post_view AS tv ON (t.blog_post_id = tv.blog_post_id)
+			UPDATE xf_taylorj_blogs_blog_post AS t
+			INNER JOIN xf_taylorj_blogs_blog_post_view AS tv ON (t.blog_post_id = tv.blog_post_id)
 			SET t.view_count = t.view_count + tv.total
 		");
-		$db->emptyTable('xf_taylorj_userblogs_blog_post_view');
+		$db->emptyTable('xf_taylorj_blogs_blog_post_view');
 	}
 }

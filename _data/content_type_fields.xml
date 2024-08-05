@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<content_type_fields>
+  <field content_type="taylorj_blogs_blog_post" field_name="attachment_handler_class">TaylorJ\Blogs\Attachment\BlogPost</field>
+  <field content_type="taylorj_blogs_blog_post" field_name="entity">TaylorJ\Blogs:BlogPost</field>
+</content_type_fields>

@@ -1,6 +1,6 @@
 <?php
 
-namespace TaylorJ\UserBlogs\Pub\Controller;
+namespace TaylorJ\Blogs\Pub\Controller;
 
 use XF\Mvc\ParameterBag;
 
@@ -18,21 +18,21 @@ class Blogs extends AbstractController
             return $this->noPermission(\XF::phrase('permission.blogs_viewOwn'));
         }
 
-        $blogFinder = $this->finder('TaylorJ\UserBlogs:Blog');
+        $blogFinder = $this->finder('TaylorJ\Blogs:Blog');
         
         if (!\XF::visitor()->hasPermission('blogs', 'viewAny'))
         {
             $blogFinder->where('user_id', \XF::visitor()->user_id);
         }
 
-        $blogFinder = $this->finder('TaylorJ\UserBlogs:Blog')
+        $blogFinder = $this->finder('TaylorJ\Blogs:Blog')
             ->order('blog_creation_date', 'DESC');
 
         $viewParams = [
             'blogs' => $blogFinder->fetch()
         ];
 
-        return $this->view('TaylorJ\UserBlogs:Blogs\Index', 'taylorj_userblogs_blogs_index', $viewParams);
+        return $this->view('TaylorJ\Blogs:Blogs\Index', 'taylorj_blogs_index', $viewParams);
     }
 
 	public function actionAdd()
@@ -42,7 +42,7 @@ class Blogs extends AbstractController
             return $this->noPermission(\XF::phrase('permission.blogs_canCreate'));
         }
 
-        $blog = $this->em()->create('TaylorJ\UserBlogs:Blog');
+        $blog = $this->em()->create('TaylorJ\Blogs:Blog');
         return $this->blogAddEdit($blog);
     }
 	
@@ -58,13 +58,13 @@ class Blogs extends AbstractController
         return $this->blogAddEdit($blog);
     }
 	
-	protected function blogAddEdit(\TaylorJ\UserBlogs\Entity\Blog $blog)
+	protected function blogAddEdit(\TaylorJ\Blogs\Entity\Blog $blog)
     {
         $viewParams = [
             'blog' => $blog
         ];
 
-        return $this->view('TaylorJ\UserBlogs:Blog\Edit', 'taylorj_userblogs_blog_edit', $viewParams);
+        return $this->view('TaylorJ\Blogs:Blog\Edit', 'taylorj_blogs_blog_edit', $viewParams);
     }
 	
 	public function actionSave(ParameterBag $params)
@@ -80,7 +80,7 @@ class Blogs extends AbstractController
         }
         else
         {
-            $blog = $this->em()->create('TaylorJ\UserBlogs:Blog');
+            $blog = $this->em()->create('TaylorJ\Blogs:Blog');
         }
 
         $this->blogSaveProcess($blog)->run();
@@ -89,10 +89,10 @@ class Blogs extends AbstractController
             $this->getBlogRepo()->setBlogHeaderImagePath($blog->blog_id, $upload);
         }
 
-        return $this->redirect($this->buildLink('userblogs', $blog));
+        return $this->redirect($this->buildLink('blogs', $blog));
     }
 
-    protected function blogSaveProcess(\TaylorJ\UserBlogs\Entity\Blog $blog)
+    protected function blogSaveProcess(\TaylorJ\Blogs\Entity\Blog $blog)
     {
         $input = $this->filter([
             'blog_title' => 'str',
@@ -122,18 +122,18 @@ class Blogs extends AbstractController
      * @param $id
      * @param $with
      * @param $phraseKey
-     * @return \TaylorJ\UserBlogs\Entity\Blog
+     * @return \TaylorJ\Blogs\Entity\Blog
      * @throws \XF\Mvc\Reply\Exception
      */
     protected function assertBlogExists($blog_id, $with = null, $phraseKey = null)
     {
-        return $this->assertRecordExists('TaylorJ\UserBlogs:Blog', $blog_id, $with, $phraseKey);
+        return $this->assertRecordExists('TaylorJ\Blogs:Blog', $blog_id, $with, $phraseKey);
     }
 
     protected function getBlogRepo()
     {
-        /** @var \TaylorJ\UserBlogs\Repository\Blog $repo */
-        $repo = $this->repository('TaylorJ\UserBlogs:Blog');
+        /** @var \TaylorJ\Blogs\Repository\Blog $repo */
+        $repo = $this->repository('TaylorJ\Blogs:Blog');
 
         return $repo;
     }

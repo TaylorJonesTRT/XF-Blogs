@@ -1,4 +1,6 @@
-<xf:css src="taylorj_userblogs_blog_view.less" />
+<xf:css src="taylorj_blogs_blog_view.less" />
+
+<xf:breadcrumb source="$blog.getBreadcrumbs(true)" />
 
 <xf:title>
     {$blog.blog_title}
@@ -9,7 +11,7 @@
         {$blog.blog_description}
     </span>
 <xf:pageaction>
-    <xf:button href="{{ link('userblogs/blog/add-post', $blog) }}" fa="fa-plus-square" class="button--cta">
+    <xf:button href="{{ link('blogs/blog/add-post', $blog) }}" fa="fa-plus-square" class="button--cta">
         Create a new post
     </xf:button>
 </xf:pageaction>
@@ -24,12 +26,12 @@
                 <xf:contentcheck>
                     <!--[XF:thread_tools_menu:top]-->
                     <xf:if is="$blog.canEdit()">
-                        <a href="{{ link('userblogs/blog/edit', $blog) }}" class="menu-linkRow">{{
-                            phrase('taylorj_userblogs_blog_edit') }}</a>
+                        <a href="{{ link('blogs/blog/edit', $blog) }}" class="menu-linkRow">{{
+                            phrase('taylorj_blogs_blog_edit') }}</a>
                     </xf:if>
                     <xf:if is="$blog.canDelete()">
-                        <a href="{{ link('userblogs/blog/delete', $blog) }}" data-xf-click="overlay" class="menu-linkRow">{{
-                            phrase('taylorj_userblogs_blog_delete') }}</a>
+                        <a href="{{ link('blogs/blog/delete', $blog) }}" data-xf-click="overlay" class="menu-linkRow">{{
+                            phrase('taylorj_blogs_blog_delete') }}</a>
                     </xf:if>
                     <!--[XF:thread_tools_menu:bottom]-->
                 </xf:contentcheck>
@@ -44,7 +46,7 @@
     <div class="taylorjUserBlogs-blog-posts">
         <xf:foreach loop="{$blogPosts}" key="$blog_post_id" value="$blogPost">
             <div class="block-container">
-                <a href="{{ link('userblogs/post', $blogPost) }}">
+                <a href="{{ link('blogs/post', $blogPost) }}">
                     <h2 class="block-header">{$blogPost.blog_post_title}</h2>
                     
                 </a>
@@ -71,7 +73,7 @@
             </div>
         </xf:foreach>
         <xf:pagenav page="{$page}" perpage="{$perPage}" total="{$total}"
-            link="userblogs/blog/" data="{$blogPost}" wrapperclass="block-outer block-outer--after" />
+            link="blogs/blog/" data="{$blogPost}" wrapperclass="block-outer block-outer--after" />
     </div>
     <div class="taylorjUserBlogs-blog-details">
         <div class="taylorjBlogs-blog-header-image">
