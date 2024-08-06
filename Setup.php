@@ -68,4 +68,21 @@ class Setup extends AbstractSetup
             $table->addColumn('taylorj_blogs_blog_count', 'int')->setDefault(0);
         });
     }
+
+    public function uninstallStep1()
+    {
+        $sm = $this->schemaManager();
+        $sm->dropTable('xf_taylorj_blogs_blog');
+        $sm->dropTable('xf_taylorj_blogs_blog_blog_post');
+        $sm->dropTable('xf_taylorj_blogs_blog_blog_post_view');
+    }
+
+    public function uninstallStep2()
+    {
+        $sm = $this->schemaManager();
+        $sm->alterTable('xf_user', function(Alter $table)
+        {
+            $table->dropColumns('taylorj_blogs_blog_count');
+        });
+    }
 }
