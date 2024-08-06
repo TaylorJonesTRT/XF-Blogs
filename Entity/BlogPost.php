@@ -61,7 +61,7 @@ class BlogPost extends Entity implements RenderableContentInterface
 	{
         $visitor = \XF::visitor();
         
-        if (!$visitor->hasPermission('blogs', 'viewOwn') || !$visitor->hasPermission('blogs', 'viewAny'))
+        if (!$visitor->hasPermission('taylorjBlogs', 'viewOwn') || !$visitor->hasPermission('taylorjBlogs', 'viewAny'))
         {
             return false;
         }
@@ -75,7 +75,7 @@ class BlogPost extends Entity implements RenderableContentInterface
 
 		if ($visitor->user_id == $this->user_id)
 		{
-            if (!$visitor->hasPermission('blogPost', 'canEditOwnPost'))
+            if (!$visitor->hasPermission('taylorjBlogPost', 'canEditOwnPost'))
             {
                 $error = \XF::phrase('taylorj_blogs_blog_post_error_edit');
                 return false;
@@ -83,7 +83,7 @@ class BlogPost extends Entity implements RenderableContentInterface
 		}
         else
         {
-            if ($visitor->hasPermission('blogs', 'canEditAny'))
+            if ($visitor->hasPermission('taylorjBlogs', 'canEditAny'))
             {
                 $error = \XF::phrase('taylorj_blogs_blog_post_error_edit');
                 return false;
@@ -99,7 +99,7 @@ class BlogPost extends Entity implements RenderableContentInterface
 
 		if ($visitor->user_id == $this->user_id)
 		{
-            if (!$visitor->hasPermission('blogPost', 'canDeleteOwnPost'))
+            if (!$visitor->hasPermission('taylorjBlogPost', 'canDeleteOwnPost'))
             {
                 $error = \XF::phrase('taylorj_blogs_blog_post_error_delete');
                 return false;
@@ -107,7 +107,7 @@ class BlogPost extends Entity implements RenderableContentInterface
 		}
         else
         {
-            if (!$visitor->hasPermission('blogPost', 'deleteAny'))
+            if (!$visitor->hasPermission('taylorjBlogPost', 'deleteAny'))
             {
                 $error = \XF::phrase('taylorj_blogs_blog_post_error_delete');
                 return false;
@@ -143,7 +143,7 @@ class BlogPost extends Entity implements RenderableContentInterface
 	{
 		$visitor = \XF::visitor();
 
-		return ($visitor->user_id && $visitor->hasPermission('blogs', 'manageAttachments'));
+		// return ($visitor->user_id && $visitor->hasPermission('taylorjBlogs', 'manageAttachments'));
         return true;
 	}
 
@@ -170,6 +170,7 @@ class BlogPost extends Entity implements RenderableContentInterface
     protected function _postSave()
     {
         $this->adjustBlogPostCount(1);
+		$this->Blog->fastUpdate('blog_last_post_date', \XF::$time);
     }
 
 	public static function getStructure(Structure $structure): Structure

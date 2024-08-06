@@ -38,7 +38,7 @@ class Blog extends Entity
 	{
         $visitor = \XF::visitor();
         
-        if (!$visitor->hasPermission('blogs', 'viewOwn') || !$visitor->hasPermission('blogs', 'viewAny'))
+        if (!$visitor->hasPermission('taylorjBlogs', 'viewOwn') || !$visitor->hasPermission('taylorjBlogs', 'viewAny'))
         {
             return false;
         }
@@ -52,7 +52,7 @@ class Blog extends Entity
 
 		if ($visitor->user_id == $this->user_id)
 		{
-            if (!$visitor->hasPermission('blogs', 'canEditOwn'))
+            if (!$visitor->hasPermission('taylorjBlogs', 'canEditOwn'))
             {
                 $error = \XF::phrase('taylorj_blogs_blog_error_edit');
                 return false;
@@ -60,7 +60,7 @@ class Blog extends Entity
 		}
         else
         {
-            if ($visitor->hasPermission('blogs', 'canEditAny'))
+            if ($visitor->hasPermission('taylorjBlogs', 'canEditAny'))
             {
                 $error = \XF::phrase('taylorj_blogs_blog_error_edit');
                 return false;
@@ -76,7 +76,7 @@ class Blog extends Entity
 
 		if ($visitor->user_id == $this->user_id)
 		{
-            if (!$visitor->hasPermission('blogs', 'canDeleteOwn'))
+            if (!$visitor->hasPermission('taylorjBlogs', 'canDeleteOwn'))
             {
                 $error = \XF::phrase('taylorj_blogs_blog_error_delete');
                 return false;
@@ -84,7 +84,7 @@ class Blog extends Entity
 		}
         else
         {
-            if (!$visitor->hasPermission('blogs', 'deleteAny'))
+            if (!$visitor->hasPermission('taylorjBlogs', 'deleteAny'))
             {
                 $error = \XF::phrase('taylorj_blogs_blog_error_delete');
                 return false;

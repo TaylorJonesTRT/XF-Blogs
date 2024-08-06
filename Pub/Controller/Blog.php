@@ -70,7 +70,7 @@ class Blog extends AbstractController
 
     public function actionAddPost(ParameterBag $params)
     {
-        if (!\XF::visitor()->hasPermission('blogPost', 'canPost'))
+        if (!\XF::visitor()->hasPermission('taylorjBlogPost', 'canPost'))
         {
             return $this->noPermission(\XF::phrase('taylorj_blogs_blog_post_error_new'));
         }

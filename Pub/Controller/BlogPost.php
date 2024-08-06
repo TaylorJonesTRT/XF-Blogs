@@ -80,6 +80,7 @@ class BlogPost extends AbstractController
         $message = $this->plugin('XF:Editor')->fromInput('message');
         $input['blog_post_content'] = $message;
         $input['blog_post_last_edit_date'] = 0;
+        $input['blog_post_edit_date'] = \XF::$time;
 
         $form = $this->formAction();
         $form->basicEntitySave($blogPost, $input);

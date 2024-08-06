@@ -1,5 +1,5 @@
 {
-    "cron_class": "TaylorJ\\UserBlogs\\Cron\\BlogPost",
+    "cron_class": "TaylorJ\\Blogs\\Cron\\BlogPost",
     "cron_method": "runViewUpdate",
     "run_rules": {
         "day_type": "dom",

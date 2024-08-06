@@ -1,2 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<options/>
+<options>
+  <option option_id="taylorjBlogPostsPerPage" edit_format="spinbox" data_type="positive_integer" advanced="0">
+    <default_value>10</default_value>
+    <relation group_id="taylorjBlogs" display_order="1"/>
+  </option>
+  <option option_id="taylorjBlogsPerPage" edit_format="spinbox" data_type="positive_integer" advanced="0">
+    <default_value>6</default_value>
+    <relation group_id="taylorjBlogs" display_order="1"/>
+  </option>
+</options>

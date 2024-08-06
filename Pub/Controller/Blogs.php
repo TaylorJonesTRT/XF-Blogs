@@ -13,14 +13,14 @@ class Blogs extends AbstractController
 {
     public function actionIndex(ParameterBag $params)
     {
-        if (!\XF::visitor()->hasPermission('blogs', 'viewOwn'))
+        if (!\XF::visitor()->hasPermission('taylorjBlogs', 'viewOwn'))
         {
             return $this->noPermission(\XF::phrase('permission.blogs_viewOwn'));
         }
 
         $blogFinder = $this->finder('TaylorJ\Blogs:Blog');
         
-        if (!\XF::visitor()->hasPermission('blogs', 'viewAny'))
+        if (!\XF::visitor()->hasPermission('taylorjBlogs', 'viewAny'))
         {
             $blogFinder->where('user_id', \XF::visitor()->user_id);
         }
@@ -44,7 +44,7 @@ class Blogs extends AbstractController
 
 	public function actionAdd()
     {
-        if (!\XF::visitor()->hasPermission('blogs', 'canCreate'))
+        if (!\XF::visitor()->hasPermission('taylorjBlogs', 'canCreate'))
         {
             return $this->noPermission(\XF::phrase('permission.blogs_canCreate'));
         }

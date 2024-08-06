@@ -1,5 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <phrases>
+  <phrase title="cron_entry.userblogs" version_id="1000031" version_string="1.0.0 Beta 1"><![CDATA[Update Blog Post View Counter]]></phrase>
+  <phrase title="nav.taylorjBlogs" version_id="1000031" version_string="1.0.0 Beta 1"><![CDATA[Blogs]]></phrase>
+  <phrase title="option.taylorjBlogPostsPerPage" version_id="1000031" version_string="1.0.0 Beta 1"><![CDATA[Blog Posts per page]]></phrase>
+  <phrase title="option.taylorjBlogsPerPage" version_id="1000031" version_string="1.0.0 Beta 1"><![CDATA[Blogs per page]]></phrase>
+  <phrase title="option_explain.taylorjBlogPostsPerPage" version_id="1000031" version_string="1.0.0 Beta 1"><![CDATA[How many blog posts to show per page on the blog view]]></phrase>
+  <phrase title="option_explain.taylorjBlogsPerPage" version_id="1000031" version_string="1.0.0 Beta 1"><![CDATA[How many blogs to display per page on the blogs index page]]></phrase>
+  <phrase title="option_group.taylorjBlogs" version_id="1000031" version_string="1.0.0 Beta 1"><![CDATA[[TaylorJ] Blogs - Options]]></phrase>
+  <phrase title="option_group_description.taylorjBlogs" version_id="1000031" version_string="1.0.0 Beta 1"><![CDATA[Personalize the blog addon's options to fit your communities needs!]]></phrase>
+  <phrase title="permission.taylorjBlogPost_canDeleteAny" version_id="1000031" version_string="1.0.0 Beta 1"><![CDATA[Can delete any blog post]]></phrase>
+  <phrase title="permission.taylorjBlogPost_canDeleteOwnPost" version_id="1000031" version_string="1.0.0 Beta 1"><![CDATA[Can delete own blog post]]></phrase>
+  <phrase title="permission.taylorjBlogPost_canEditAny" version_id="1000031" version_string="1.0.0 Beta 1"><![CDATA[Can edit any blog post]]></phrase>
+  <phrase title="permission.taylorjBlogPost_canEditOwnPost" version_id="1000031" version_string="1.0.0 Beta 1"><![CDATA[Can edit own blog post]]></phrase>
+  <phrase title="permission.taylorjBlogPost_canPost" version_id="1000031" version_string="1.0.0 Beta 1"><![CDATA[Can make a blog post]]></phrase>
+  <phrase title="permission.taylorjBlogs_canCreate" version_id="1000031" version_string="1.0.0 Beta 1"><![CDATA[Can create a new blog]]></phrase>
+  <phrase title="permission.taylorjBlogs_canDeleteAny" version_id="1000031" version_string="1.0.0 Beta 1"><![CDATA[Can delete any blog]]></phrase>
+  <phrase title="permission.taylorjBlogs_canDeleteOwn" version_id="1000031" version_string="1.0.0 Beta 1"><![CDATA[Can delete own blog]]></phrase>
+  <phrase title="permission.taylorjBlogs_canEditAny" version_id="1000031" version_string="1.0.0 Beta 1"><![CDATA[Can edit any blog]]></phrase>
+  <phrase title="permission.taylorjBlogs_canEditOwn" version_id="1000031" version_string="1.0.0 Beta 1"><![CDATA[Can edit own blog]]></phrase>
+  <phrase title="permission.taylorjBlogs_viewAny" version_id="1000031" version_string="1.0.0 Beta 1"><![CDATA[Can view any blog]]></phrase>
+  <phrase title="permission.taylorjBlogs_viewOwn" version_id="1000031" version_string="1.0.0 Beta 1"><![CDATA[Can view own blog]]></phrase>
+  <phrase title="permission_interface.taylorjBlogsModeratorPermissions" version_id="1000031" version_string="1.0.0 Beta 1"><![CDATA[[TaylorJ] Blogs Moderator Permissions]]></phrase>
+  <phrase title="permission_interface.taylorjBlogsPermissions" version_id="1000031" version_string="1.0.0 Beta 1"><![CDATA[[TaylorJ] Blogs permissions]]></phrase>
   <phrase title="taylorj_blogs_blog" version_id="1000031" version_string="1.0.0 Beta 1"><![CDATA[Blog]]></phrase>
   <phrase title="taylorj_blogs_blog_delete" version_id="1000031" version_string="1.0.0 Beta 1"><![CDATA[Delete blog]]></phrase>
   <phrase title="taylorj_blogs_blog_edit" version_id="1000031" version_string="1.0.0 Beta 1"><![CDATA[Edit blog]]></phrase>

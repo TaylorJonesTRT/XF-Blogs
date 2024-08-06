@@ -1,0 +1,11 @@
+{
+    "parent_navigation_id": "",
+    "display_order": 1000,
+    "navigation_type_id": "basic",
+    "type_config": {
+        "link": "{{ link('blogs') }}",
+        "display_condition": "",
+        "extra_attributes": []
+    },
+    "enabled": true
+}

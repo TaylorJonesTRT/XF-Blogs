@@ -47,20 +47,6 @@ class BlogPost extends \XF\Search\Data\AbstractData
 		return ['taylorj_blogs_blog_page'];
 	}
 
-	// public function getSearchFormTab()
-	// {
-	// 	$visitor = \XF::visitor();
-	// 	if (!$visitor->hasPermission('EWRcarta', 'viewWiki'))
-	// 	{
-	// 		return null;
-	// 	}
-
-	// 	return [
-	// 		'title' => \XF::phrase('EWRcarta_search_wiki'),
-	// 		'order' => 200
-	// 	];
-	// }
-
 	public function getSectionContext()
 	{
 		return 'TaylorJ\Blogs';
