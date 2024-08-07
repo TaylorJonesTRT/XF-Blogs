@@ -27,6 +27,10 @@ class Setup extends AbstractSetup
             $table->addColumn('blog_last_post_date', 'int')->setDefault(0);
             $table->addColumn('blog_has_header', 'tinyint')->setDefault(0);
 			$table->addColumn('blog_post_count', 'int')->setDefault(0);
+			$table->addColumn('blog_post_state', 'varchar')->setDefault('visible');
+			$table->addColumn('reaction_score', 'int')->unsigned(false)->setDefault(0);
+			$table->addColumn('reactions', 'blob')->nullable();
+			$table->addColumn('reaction_users', 'blob');
         });
 
     }

@@ -6,6 +6,7 @@ use XF\Mvc\Entity\Entity;
 use XF\Mvc\Entity\Structure;
 use XF\Mvc\ParameterBag;
 use XF\BbCode\RenderableContentInterface;
+use XF\Entity\ReactionTrait;
 
 /**
  * COLUMNS
@@ -27,6 +28,7 @@ use XF\BbCode\RenderableContentInterface;
  */
 class BlogPost extends Entity implements RenderableContentInterface
 {
+	use ReactionTrait;
 
 	public function getBreadcrumbs($includeSelf = true)
 	{
@@ -146,6 +148,11 @@ class BlogPost extends Entity implements RenderableContentInterface
 		// return ($visitor->user_id && $visitor->hasPermission('taylorjBlogs', 'manageAttachments'));
         return true;
 	}
+	
+	public function canReact(&$error = null)
+	{
+		return true;
+	}
 
 	public function getBbCodeRenderOptions($context, $type)
 	{
@@ -190,6 +197,9 @@ class BlogPost extends Entity implements RenderableContentInterface
 			'attach_count' => ['type' => self::UINT, 'max' => 65535, 'forced' => true, 'default' => 0, 'api' => true],
 			'embed_metadata' => ['type' => self::JSON_ARRAY, 'nullable' => true, 'default' => null],
 			'view_count' => ['type' => self::UINT, 'forced' => true, 'default' => 0, 'api' => true],
+			'blog_post_state' => ['type' => self::STR, 'default' => 'visible',
+				'allowedValues' => ['visible', 'moderated', 'deleted'], 'api' => true
+			],
 		];
 		$structure->relations = [
             'User' => [
@@ -221,7 +231,12 @@ class BlogPost extends Entity implements RenderableContentInterface
 			'XF:Indexable' => [
 				'checkForUpdates' => ['blog_post_title', 'blog_post_id', 'blog_id', 'user_id']
 			],
+			'XF:Reactable' => [
+				'stateField' => 'blog_post_state' 
+			]
 		];
+		
+		static::addReactableStructureElements($structure);
 
 		return $structure;
 	}

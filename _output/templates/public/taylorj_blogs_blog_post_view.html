@@ -57,6 +57,12 @@
         <div class="block-body taylorJUserBlogs-post-content">
             {{ bb_code($blogPost.blog_post_content, 'blog_post_id', $blogPost) }}
         </div>
+        <xf:react content="{$blogPost}" link="blogs/post/react" list="< .taylorJUserBlogs-post-content | .js-reactionList" />
+        <div class="reactionsBar js-reactionList {{ $blogPost.reactions ? 'is-active' : ''}}">
+            <xf:if is="$blogPost.reactions">
+                <xf:reactions content="{$blogPost}" link="blogs/post/reactions" />
+            </xf:if>
+        </div>
         <aside class="message-articleUserInfo">
             <div class="message-cell">
                 <div class="contentRow">
