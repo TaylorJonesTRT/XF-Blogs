@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <templates>
+  <template type="public" title="alert_taylorj_blogs_blog_post_reaction" version_id="1000033" version_string="1.0.0 Beta 3"><![CDATA[{{ phrase('taylorj_x_reacted_to_your_blogpost', {
+	'name': username_link($user, false, {'defaultname': $alert.username}),
+	'reaction': alert_reaction($extra.reaction_id)|preescaped,
+	'posterParams': 'href="' . link('blogs/post', $content) . '" class="fauxBlockLink-blockLink"',
+	'title': $content.blog_post_title
+}) }}]]></template>
   <template type="public" title="search_result_taylorj_blogs_blog_post" version_id="1000031" version_string="1.0.0 Beta 1"><![CDATA[<li class="block-row block-row--separated js-inlineModContainer" data-author="{{ $blogPost.User.username }}">
 	<div class="contentRow">
 		<span class="contentRow-figure">
@@ -95,7 +101,7 @@
 		<xf:submitrow submit="{{ phrase('save') }}" fa="fa-save" icon="save" />
 	</xf:form>
 </div>]]></template>
-  <template type="public" title="taylorj_blogs_blog_post_view" version_id="1000031" version_string="1.0.0 Beta 1"><![CDATA[<xf:css src="taylorj_blogs_blog_post_view.less" />
+  <template type="public" title="taylorj_blogs_blog_post_view" version_id="1000033" version_string="1.0.0 Beta 3"><![CDATA[<xf:css src="taylorj_blogs_blog_post_view.less" />
 <xf:css src="message.less" />
 
 <xf:breadcrumb source="$blogPost.getBreadcrumbs(true)" />
@@ -153,6 +159,12 @@
     <div class="block-container">
         <div class="block-body taylorJUserBlogs-post-content">
             {{ bb_code($blogPost.blog_post_content, 'blog_post_id', $blogPost) }}
+        </div>
+        <xf:react content="{$blogPost}" link="blogs/post/react" list="< .taylorJUserBlogs-post-content | .js-reactionList" />
+        <div class="reactionsBar js-reactionList {{ $blogPost.reactions ? 'is-active' : ''}}">
+            <xf:if is="$blogPost.reactions">
+                <xf:reactions content="{$blogPost}" link="blogs/post/reactions" />
+            </xf:if>
         </div>
         <aside class="message-articleUserInfo">
             <div class="message-cell">

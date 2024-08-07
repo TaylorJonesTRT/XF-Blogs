@@ -27,10 +27,6 @@ class Setup extends AbstractSetup
             $table->addColumn('blog_last_post_date', 'int')->setDefault(0);
             $table->addColumn('blog_has_header', 'tinyint')->setDefault(0);
 			$table->addColumn('blog_post_count', 'int')->setDefault(0);
-			$table->addColumn('blog_post_state', 'varchar')->setDefault('visible');
-			$table->addColumn('reaction_score', 'int')->unsigned(false)->setDefault(0);
-			$table->addColumn('reactions', 'blob')->nullable();
-			$table->addColumn('reaction_users', 'blob');
         });
 
     }
@@ -49,6 +45,10 @@ class Setup extends AbstractSetup
 			$table->addColumn('attach_count', 'int')->setDefault(0);
 			$table->addColumn('embed_metadata', 'blob')->nullable();
             $table->addColumn('view_count', 'int')->setDefault(0);
+			$table->addColumn('blog_post_state', 'varchar')->setDefault('visible');
+			$table->addColumn('reaction_score', 'int')->unsigned(false)->setDefault(0);
+			$table->addColumn('reactions', 'blob')->nullable();
+			$table->addColumn('reaction_users', 'blob');
         });
 
     }
@@ -62,6 +62,17 @@ class Setup extends AbstractSetup
             $table->addColumn('blog_post_id', 'int');
             $table->addColumn('total', 'int');
             $table->addPrimaryKey('blog_post_id');
+        });
+    }
+    
+    public function upgrade1000034Step1()
+    {
+        $this->alterTable('xf_taylorj_blogs_blog_post', function (\XF\Db\Schema\Alter $table)
+        {
+			$table->addColumn('blog_post_state', 'varchar')->setDefault('visible');
+			$table->addColumn('reaction_score', 'int')->unsigned(false)->setDefault(0);
+			$table->addColumn('reactions', 'blob')->nullable();
+			$table->addColumn('reaction_users', 'blob');
         });
     }
     
