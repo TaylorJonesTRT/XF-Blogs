@@ -189,15 +189,7 @@ class Blog extends Entity
         ];
 		$structure->defaultWith = ['User'];
 		$structure->getters['blog_header_image'] = true;
-		$structure->behaviors = [
-			'XF:Indexable' => [
-				'checkForUpdates' => ['blog_title', 'blog_id', 'user_id']
-			],
-			'XF:IndexableContainer' => [
-				'childContentType' => 'taylorj_blogs_blog_post',
-				'checkForUpdates' => ['blog_id']
-			],
-		];
+		$structure->behaviors = [];
 
 		return $structure;
 	}

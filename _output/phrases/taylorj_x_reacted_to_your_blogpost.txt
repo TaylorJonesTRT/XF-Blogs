@@ -1,0 +1,1 @@
+{name} reacted to <a {posterParams}>your blog post</a> {title} with {reaction}.

@@ -79,8 +79,7 @@ class BlogPost extends AbstractController
         ]);
         $message = $this->plugin('XF:Editor')->fromInput('message');
         $input['blog_post_content'] = $message;
-        $input['blog_post_last_edit_date'] = 0;
-        $input['blog_post_edit_date'] = \XF::$time;
+        $input['blog_post_last_edit_date'] = \XF::$time;
 
         $form = $this->formAction();
         $form->basicEntitySave($blogPost, $input);
@@ -105,6 +104,28 @@ class BlogPost extends AbstractController
             $this->buildLink('blogs/post/edit', $blogPost),
             $this->buildLink('blogs/blog', $blogPost->blog_id),
             $blogPost->blog_post_title
+        );
+    }
+    
+    public function actionReact(ParameterBag $params)
+    {
+        $blogPost = $this->assertViewablePost($params->blog_post_id);
+        
+        /** @var \XF\ControllerPlugin\Reaction $reactionPlugin */
+        $reactionPlugin = $this->plugin('XF:Reaction');
+        
+        return $reactionPlugin->actionReactSimple($blogPost, 'blogs/post');
+    }
+    
+    public function actionReactions(ParameterBag $params)
+    {
+        $blogPost = $this->assertViewablePost($params->blog_post_id);
+        
+        /** @var \XF\ControllerPlugin\Reaction $reactionPlugin */
+        $reactionPlugin = $this->plugin('XF:Reaction');
+
+        return $reactionPlugin->actionReactions(
+            $blogPost, 'blogs/post/reactions', null, []
         );
     }
 
@@ -138,7 +159,7 @@ class BlogPost extends AbstractController
         $tempHash = $this->filter('attachment_hash', 'str');
         /** @var \XF\Repository\Attachment $attachmentRepo */
         $attachmentRepo = $this->repository('XF:Attachment');
-        $attachmentData = $attachmentRepo->getEditorData('taylorj_blogs_post', $blogPost, $tempHash);
+        $attachmentData = $attachmentRepo->getEditorData('taylorj_blogs_blog_post', $blogPost, $tempHash);
         $attachments = $attachmentData['attachments'];
 
         return $this->plugin('XF:BbCodePreview')->actionPreview(
@@ -152,6 +173,21 @@ class BlogPost extends AbstractController
     protected function assertBlogPostExists($id, $with = null, $phraseKey = null)
     {
         return $this->assertRecordExists('TaylorJ\Blogs:BlogPost', $id, $with, $phraseKey);
+    }
+    
+    protected function assertViewablePost($id, $with = null, $phraseKey = null)
+    {
+        /** @var \TaylorJ\Blogs\Entity\BlogPost $blogPost */
+        $blogPost = $this->assertBlogPostExists($id, $with, $phraseKey);
+
+        if (!$blogPost->canView($error))
+        {
+            throw $this->exception(
+                $this->noPermission($error)
+            );
+        }
+        
+        return $blogPost;
     }
 
 	/**
