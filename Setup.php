@@ -67,7 +67,7 @@ class Setup extends AbstractSetup
     
     public function upgrade1000034Step1()
     {
-        $this->alterTable('xf_taylorj_blogs_blog_post', function (\XF\Db\Schema\Create $table)
+        $this->alterTable('xf_taylorj_blogs_blog_post', function (\XF\Db\Schema\Alter $table)
         {
 			$table->addColumn('blog_post_state', 'varchar')->setDefault('visible');
 			$table->addColumn('reaction_score', 'int')->unsigned(false)->setDefault(0);

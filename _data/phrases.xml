@@ -35,4 +35,5 @@
   <phrase title="taylorj_blogs_blog_post_title_verification_error" version_id="1000031" version_string="1.0.0 Beta 1"><![CDATA[Blog titles need to be at least 10 characters long]]></phrase>
   <phrase title="taylorj_blogs_blogs_total" version_id="1000031" version_string="1.0.0 Beta 1"><![CDATA[Blogs]]></phrase>
   <phrase title="taylorj_blogs_titile_verification_error" version_id="1000031" version_string="1.0.0 Beta 1"><![CDATA[Blog titles need to be at least 10 characters long]]></phrase>
+  <phrase title="taylorj_x_reacted_to_your_blogpost" version_id="1000033" version_string="1.0.0 Beta 3"><![CDATA[{name} reacted to <a {posterParams}>your blog post</a> {title} with {reaction}.]]></phrase>
 </phrases>
