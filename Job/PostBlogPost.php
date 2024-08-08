@@ -16,7 +16,9 @@ class PostBlogPost extends AbstractJob
             if($blogPost)
             {                
                 if($blogPost->blog_post_date <= \XF::$time)
-                {                    
+                {
+                    $blogPost->fastUpdate('blog_post_state', 'visible');
+                    $blogPost->fastUpdate('blog_post_date', \XF::$time);
                 }
             }
         } 

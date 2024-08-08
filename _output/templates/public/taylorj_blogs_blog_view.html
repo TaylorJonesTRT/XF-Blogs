@@ -10,35 +10,36 @@
     <span>
         {$blog.blog_description}
     </span>
-<xf:pageaction>
-    <xf:button href="{{ link('blogs/blog/add-post', $blog) }}" fa="fa-plus-square" class="button--cta">
-        Create a new post
-    </xf:button>
-</xf:pageaction>
+    <xf:pageaction>
+        <xf:button href="{{ link('blogs/blog/add-post', $blog) }}" fa="fa-plus-square" class="button--cta">
+            Create a new post
+        </xf:button>
+    </xf:pageaction>
 
-<xf:if contentcheck="true">
-    <div class="u-pullRight buttonGroup-buttonWrapper">
-        <xf:button class="button--link menuTrigger" data-xf-click="menu" aria-expanded="false" aria-haspopup="true"
-            title="{{ phrase('more_options') }}">&#8226;&#8226;&#8226;</xf:button>
-        <div class="menu" data-menu="menu" aria-hidden="true">
-            <div class="menu-content">
-                <h4 class="menu-header">{{ phrase('more_options') }}</h4>
-                <xf:contentcheck>
-                    <!--[XF:thread_tools_menu:top]-->
-                    <xf:if is="$blog.canEdit()">
-                        <a href="{{ link('blogs/blog/edit', $blog) }}" class="menu-linkRow">{{
-                            phrase('taylorj_blogs_blog_edit') }}</a>
-                    </xf:if>
-                    <xf:if is="$blog.canDelete()">
-                        <a href="{{ link('blogs/blog/delete', $blog) }}" data-xf-click="overlay" class="menu-linkRow">{{
-                            phrase('taylorj_blogs_blog_delete') }}</a>
-                    </xf:if>
-                    <!--[XF:thread_tools_menu:bottom]-->
-                </xf:contentcheck>
+    <xf:if contentcheck="true">
+        <div class="u-pullRight buttonGroup-buttonWrapper">
+            <xf:button class="button--link menuTrigger" data-xf-click="menu" aria-expanded="false" aria-haspopup="true"
+                title="{{ phrase('more_options') }}">&#8226;&#8226;&#8226;</xf:button>
+            <div class="menu" data-menu="menu" aria-hidden="true">
+                <div class="menu-content">
+                    <h4 class="menu-header">{{ phrase('more_options') }}</h4>
+                    <xf:contentcheck>
+                        <!--[XF:thread_tools_menu:top]-->
+                        <xf:if is="$blog.canEdit()">
+                            <a href="{{ link('blogs/blog/edit', $blog) }}" class="menu-linkRow">{{
+                                phrase('taylorj_blogs_blog_edit') }}</a>
+                        </xf:if>
+                        <xf:if is="$blog.canDelete()">
+                            <a href="{{ link('blogs/blog/delete', $blog) }}" data-xf-click="overlay"
+                                class="menu-linkRow">{{
+                                phrase('taylorj_blogs_blog_delete') }}</a>
+                        </xf:if>
+                        <!--[XF:thread_tools_menu:bottom]-->
+                    </xf:contentcheck>
+                </div>
             </div>
         </div>
-    </div>
-</xf:if>
+    </xf:if>
 </div>
 
 
@@ -46,10 +47,9 @@
     <div class="taylorjUserBlogs-blog-posts">
         <xf:foreach loop="{$blogPosts}" key="$blog_post_id" value="$blogPost">
             <div class="block-container">
-                <a href="{{ link('blogs/post', $blogPost) }}">
-                    <h2 class="block-header">{$blogPost.blog_post_title}</h2>
-                    
-                </a>
+                    <a href="{{ link('blogs/post', $blogPost) }}">
+                        <h2 class="block-header">{$blogPost.blog_post_title}<xf:if is="$blogPost.scheduled"> - Scheduled Post</xf:if></h2>
+                    </a>
                 <div class="block-body">
                     <div class="block-row">
                         <xf:date time="$blogPost.blog_post_date" />
@@ -58,11 +58,11 @@
                         </div>
                         <hr />
                         {{ snippet($blogPost.blog_post_content, 750, {
-                            'stripQuote': true,
-                            'bbWrapper': true
+                        'stripQuote': true,
+                        'bbWrapper': true
                         }) }}
                         <xf:if is="$blogPost.blog_post_last_edit_date">
-                        <hr />
+                            <hr />
                             <span class="u-pullRight">
                                 Last edited
                                 <xf:date time="$blogPost.blog_post_last_edit_date" />
@@ -72,8 +72,8 @@
                 </div>
             </div>
         </xf:foreach>
-        <xf:pagenav page="{$page}" perpage="{$perPage}" total="{$total}"
-            link="blogs/blog/" data="{$blogPost}" wrapperclass="block-outer block-outer--after" />
+        <xf:pagenav page="{$page}" perpage="{$perPage}" total="{$total}" link="blogs/blog/" data="{$blogPost}"
+            wrapperclass="block-outer block-outer--after" />
     </div>
     <div class="taylorjUserBlogs-blog-details">
         <div class="taylorjBlogs-blog-header-image">

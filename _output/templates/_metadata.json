@@ -15,19 +15,24 @@
         "hash": "5bab3a784206f9cb2a89112fe323b1c3"
     },
     "public/taylorj_blogs_blog_post_edit.html": {
-        "version_id": 1000031,
-        "version_string": "1.0.0 Beta 1",
-        "hash": "cb708c057dde3c8044c52c5a719ab64d"
+        "version_id": 1000034,
+        "version_string": "1.0.0 Beta 4",
+        "hash": "7ecaa8d499903fff183f7a35db1913c8"
+    },
+    "public/taylorj_blogs_blog_post_edit.less": {
+        "version_id": 1000034,
+        "version_string": "1.0.0 Beta 4",
+        "hash": "0b76df3e876284cf7ebb14006c9b9d7e"
     },
     "public/taylorj_blogs_blog_post_new_edit.html": {
-        "version_id": 1000031,
-        "version_string": "1.0.0 Beta 1",
-        "hash": "357dc56787426cdeaa485b8198857e5a"
+        "version_id": 1000034,
+        "version_string": "1.0.0 Beta 4",
+        "hash": "70f8e02ace27c4f6651e53ec0e91e53f"
     },
     "public/taylorj_blogs_blog_post_view.html": {
-        "version_id": 1000033,
-        "version_string": "1.0.0 Beta 3",
-        "hash": "2ed0c86eb417cdf21f02527250843a4e"
+        "version_id": 1000034,
+        "version_string": "1.0.0 Beta 4",
+        "hash": "37b71036fc7ba5d52cce5b122aac26f5"
     },
     "public/taylorj_blogs_blog_post_view.less": {
         "version_id": 1000031,
@@ -35,14 +40,14 @@
         "hash": "bdd6645a24af457115d776a9e17edae3"
     },
     "public/taylorj_blogs_blog_view.html": {
-        "version_id": 1000031,
-        "version_string": "1.0.0 Beta 1",
-        "hash": "7d3358c7ec666308c1e739efe733e1a2"
+        "version_id": 1000034,
+        "version_string": "1.0.0 Beta 4",
+        "hash": "ad4dd9ad078adf890b9b251cfffd571e"
     },
     "public/taylorj_blogs_blog_view.less": {
-        "version_id": 1000031,
-        "version_string": "1.0.0 Beta 1",
-        "hash": "9c207837634e009b3bde003d2be68a18"
+        "version_id": 1000034,
+        "version_string": "1.0.0 Beta 4",
+        "hash": "f4f1adf228ccf21e71726251dadb107f"
     },
     "public/taylorj_blogs_index.html": {
         "version_id": 1000031,

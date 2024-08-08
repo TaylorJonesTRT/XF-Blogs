@@ -49,6 +49,7 @@ class Setup extends AbstractSetup
 			$table->addColumn('reaction_score', 'int')->unsigned(false)->setDefault(0);
 			$table->addColumn('reactions', 'blob')->nullable();
 			$table->addColumn('reaction_users', 'blob');
+            $table->addColumn('scheduled_post_date_time', 'int')->nullable();
         });
 
     }
@@ -73,6 +74,14 @@ class Setup extends AbstractSetup
 			$table->addColumn('reaction_score', 'int')->unsigned(false)->setDefault(0);
 			$table->addColumn('reactions', 'blob')->nullable();
 			$table->addColumn('reaction_users', 'blob');
+        });
+    }
+    
+    public function upgrade1000035Step1()
+    {
+        $this->alterTable('xf_taylorj_blogs_blog_post', function (\XF\Db\Schema\Alter $table)
+        {
+            $table->addColumn('scheduled_post_date_time', 'int')->nullable();
         });
     }
     
