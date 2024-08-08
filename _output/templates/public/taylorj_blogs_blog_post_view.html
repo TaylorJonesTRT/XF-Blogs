@@ -53,8 +53,10 @@
 
 
 <div class="block">
-    <div class="block-container">
-        <div class="block-body taylorJUserBlogs-post-content">
+    <div class="block-container" data-xf-init="lightbox">
+        <div class="block-body taylorJUserBlogs-post-content lbContainer js-lbContainer"
+            data-lb-id="blogPost-{$blogPost.blog_post_id}"
+            data-lb-caption-desc="{{ $blogPost.User.username }} &middot; {{ date_time($blogPost.blog_post_date) }}">
             {{ bb_code($blogPost.blog_post_content, 'blog_post_id', $blogPost) }}
         </div>
         <xf:react content="{$blogPost}" link="blogs/post/react" list="< .taylorJUserBlogs-post-content | .js-reactionList" />
