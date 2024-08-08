@@ -65,6 +65,10 @@ class Blog extends Entity
                 $error = \XF::phrase('taylorj_blogs_blog_error_edit');
                 return false;
             }
+			else
+			{
+				return false;
+			}
         }
 
 		return true;
