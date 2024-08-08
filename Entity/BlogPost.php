@@ -101,6 +101,10 @@ class BlogPost extends Entity implements RenderableContentInterface
                 $error = \XF::phrase('taylorj_blogs_blog_post_error_edit');
                 return false;
             }
+			else
+			{
+				return false;
+			}
         }
 
 		return true;
