@@ -42,12 +42,17 @@
     "public/taylorj_blogs_blog_view.html": {
         "version_id": 1000034,
         "version_string": "1.0.0 Beta 4",
-        "hash": "ad4dd9ad078adf890b9b251cfffd571e"
+        "hash": "6c204acbde5aedbfb3de012bc178e3a7"
     },
     "public/taylorj_blogs_blog_view.less": {
         "version_id": 1000034,
         "version_string": "1.0.0 Beta 4",
         "hash": "f4f1adf228ccf21e71726251dadb107f"
+    },
+    "public/taylorj_blogs_blog_watch.html": {
+        "version_id": 1000034,
+        "version_string": "1.0.0 Beta 4",
+        "hash": "5b623b8b47fa40ea817000f41d1a06d4"
     },
     "public/taylorj_blogs_index.html": {
         "version_id": 1000031,

@@ -174,11 +174,31 @@ class Blog extends AbstractController
 
             return $this->redirect($this->buildLink('blogs/post', $blogPost), \XF::phrase('taylorj_blogs_post_successful'));
         }
-
-        // $form = $this->formAction();
-        // $form->basicEntitySave($blogPost, $input);
-        // $form->run();
     }
+
+    public function actionWatch(ParameterBag $params)
+    {
+        
+		$visitor = \XF::visitor();
+		if (!$visitor->user_id)
+		{
+			return $this->noPermission();
+		}
+
+		$blog = $this->assertBlogExists($params->blog_id);
+        // if (!$blog->canWatch($error))
+        // {
+        // 	return $this->noPermission($error);
+        // }
+        
+        /** @var \TaylorJ\Blogs\Repository\BlogWatch $blogWatchRepo */
+        $blogWatchRepo = $this->repository('TaylorJ\Blogs:BlogWatch');
+        $blogWatchRepo->setWatchState($blog, $visitor);
+
+        $redirect = $this->redirect($this->buildLink('blogs/blog', $blog));
+        return $redirect;
+    }
+
 
     /**
      * @param \TaylorJ\Blogs\Entity\Blog $blog
@@ -262,6 +282,7 @@ class Blog extends AbstractController
             'mm' => 'int'
         ]);
         $creator->setScheduledPostDateTime($scheduledPostDateTime);
+        $creator->sendNotifications(3);
 
         return $creator;
     }

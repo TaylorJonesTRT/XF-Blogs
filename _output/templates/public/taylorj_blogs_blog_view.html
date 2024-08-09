@@ -16,6 +16,14 @@
         </xf:button>
     </xf:pageaction>
 
+            <xf:button href="{{ link('blogs/blog/watch', $blog) }}" class="u-pullRight button--link"
+                data-sk-watch="{{ phrase('watch') }}" data-sk-unwatch="{{ phrase('unwatch') }}">
+                <xf:if is="{$blog.BlogWatch.{$xf.visitor.user_id}}">
+                    {{ phrase('unwatch') }}
+                    <xf:else />
+                    {{ phrase('watch') }}
+                </xf:if>
+            </xf:button>
     <xf:if contentcheck="true">
         <div class="u-pullRight buttonGroup-buttonWrapper">
             <xf:button class="button--link menuTrigger" data-xf-click="menu" aria-expanded="false" aria-haspopup="true"
@@ -47,9 +55,11 @@
     <div class="taylorjUserBlogs-blog-posts">
         <xf:foreach loop="{$blogPosts}" key="$blog_post_id" value="$blogPost">
             <div class="block-container">
-                    <a href="{{ link('blogs/post', $blogPost) }}">
-                        <h2 class="block-header">{$blogPost.blog_post_title}<xf:if is="$blogPost.scheduled"> - Scheduled Post</xf:if></h2>
-                    </a>
+                <a href="{{ link('blogs/post', $blogPost) }}">
+                    <h2 class="block-header">{$blogPost.blog_post_title}<xf:if is="$blogPost.scheduled"> - Scheduled
+                            Post</xf:if>
+                    </h2>
+                </a>
                 <div class="block-body">
                     <div class="block-row">
                         <xf:date time="$blogPost.blog_post_date" />

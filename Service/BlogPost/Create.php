@@ -11,14 +11,19 @@ class Create extends \XF\Service\AbstractService
 	use \XF\Service\ValidateAndSavableTrait;
 
     /**
-	 * @var \TaylorJ\Blogs\Entity\Blog
-	 */
-	protected $blog;
-
-    /**
 	 * @var \TaylorJ\Blogs\Entity\BlogPost
 	 */
 	protected $blogPost;
+
+	/**
+	 * @var TaylorJ\Blogs\Entity\Blog 
+	 */
+	protected $update;
+
+	/**
+	 * @var Blog 
+	 */
+	protected $blog;
 
     public function __construct(\XF\App $app, Blog $blog)
 	{
@@ -95,4 +100,13 @@ class Create extends \XF\Service\AbstractService
         $app->jobManager()->enqueueLater($jobid, $this->blogPost->scheduled_post_date_time, 'TaylorJ\Blogs:PostBlogPost', ['blog_post_id' => $this->blogPost->blog_post_id]);
     }
 
+	public function sendNotifications()
+	{
+		if ($this->blog->isVisible())
+		{
+			/** @var \TaylorJ\Blogs\Service\BlogPost\Notify $notifier */
+			$notifier = $this->service('TaylorJ\Blogs:Blog\Notify', $this->blog, 'newBlogPost');
+			$notifier->notifyAndEnqueue();
+		}
+	}
 }

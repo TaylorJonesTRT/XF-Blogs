@@ -198,12 +198,39 @@ class BlogPost extends Entity implements RenderableContentInterface
 		
 		return false;
 	}
-    
-    protected function _postSave()
-    {
-        $this->adjustBlogPostCount(1);
+
+	public function isVisible()
+	{
+		return true;
+	}
+
+	protected function _postSave()
+	{
+		$test = \XF::app()
+			->finder('TaylorJ\Blogs:BlogWatch')
+			->where('blog_id', $this->Blog->blog_id)
+			->fetch();
+
+		foreach ($test as $BlogWatch) {
+			
+			$a = $BlogWatch;
+			// if ($sendTo->Option->doesReceiveAlert('article', 'article_article')) {
+			// 	$alertRepo = $this->repository('XF:UserAlert');
+			// 	$alertRepo->alert(
+			// 		$sendTo,
+			// 		$this->user_id,
+			// 		$this->User->username,
+			// 		'article',
+			// 		$this->article_id,
+			// 		'andrew_article',
+			// 		$extra
+			// 	);
+			// }
+		}
+
+		$this->adjustBlogPostCount(1);
 		$this->Blog->fastUpdate('blog_last_post_date', \XF::$time);
-    }
+	}
 
 	public static function getStructure(Structure $structure): Structure
 	{
