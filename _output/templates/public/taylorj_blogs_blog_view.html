@@ -6,11 +6,13 @@
 <xf:description>{$blog.blog_description}</xf:description>
 
 <div class="taylorjUserBlogs-blog-description">
-    <xf:pageaction>
-        <xf:button href="{{ link('blogs/blog/add-post', $blog) }}" fa="fa-plus-square" class="button--cta">
-            Create a new post
-        </xf:button>
-    </xf:pageaction>
+    <xf:if is="{$blog.canPost()}">
+        <xf:pageaction>
+            <xf:button href="{{ link('blogs/blog/add-post', $blog) }}" fa="fa-plus-square" class="button--cta">
+                Create a new post
+            </xf:button>
+        </xf:pageaction>
+    </xf:if>
 
     <div class="u-pullRight taylorjBlogs-blog-actions">
         <div>
