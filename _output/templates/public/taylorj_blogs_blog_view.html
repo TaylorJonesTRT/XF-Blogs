@@ -105,9 +105,11 @@
 
 <xf:sidebar>
     <div class="taylorjUserBlogs-blog-details">
-        <div class="taylorjBlogs-blog-header-image">
-            <img src="{$blog.blog_header_image}" alt="Header Image" />
-        </div>
+        <xf:if is="{$blog.blog_header_image}">
+            <div class="taylorjBlogs-blog-header-image">
+                <img src="{$blog.blog_header_image}" alt="Header Image" />
+            </div>
+        </xf:if>
         <div class="taylorJUserBlogs-details-text">
             <dl class="pairs pairs--justified">
                 <dt>{{ phrase('author') }}</dt>
