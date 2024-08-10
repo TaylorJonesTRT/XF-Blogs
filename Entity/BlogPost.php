@@ -166,6 +166,29 @@ class BlogPost extends Entity implements RenderableContentInterface
 	
 	public function canReact(&$error = null)
 	{
+		$visitor = \XF::visitor();
+
+		if (!$visitor->user_id)
+		{
+			return false;
+		}
+
+		if ($this->blog_post_state != 'visible')
+		{
+			return false;
+		}
+
+		if ($this->user_id == $visitor->user_id)
+		{
+			$error = \XF::phraseDeferred('reacting_to_your_own_content_is_considered_cheating');
+			return false;
+		}
+
+		if (!$this->Blog)
+		{
+			return false;
+		}
+		
 		return true;
 	}
 
