@@ -1,6 +1,6 @@
 <xf:css src="taylorj_blogs_blog_post_view.less" />
 <xf:css src="message.less" />
-
+            
 <xf:breadcrumb source="$blogPost.getBreadcrumbs(true)" />
 
 <xf:title>
@@ -51,11 +51,14 @@
     </xf:if>
 </xf:description>
 
+<xf:macro id="lightbox_macros::setup" arg-canViewAttachments="{$blogPost.canViewAttachments()}" />
 
-<div class="block">
-    <div class="block-container">
-        <div class="block-body taylorJUserBlogs-post-content">
-            {{ bb_code($blogPost.blog_post_content, 'blog_post_id', $blogPost) }}
+<div class="block" data-xf-init="lightbox" data-type="taylorj_blogs_blog_post">
+    <div class="block-container lbContainer js-lbContainer" data-lb-id="{$blogPost.blog_post_id}">
+        <div class="block-body taylorJUserBlogs-post-content lbContainer" data-xf-init="lightbox"
+        data-lb-id="attach-{$blogPost.blog_post_id}"
+        data-lb-universal="{$xf.options.lightBoxUniversal}">
+            {{ bb_code($blogPost.blog_post_content, 'taylorj_blogs_blog_post', $blogPost) }}
         </div>
         <xf:react content="{$blogPost}" link="blogs/post/react" list="< .taylorJUserBlogs-post-content | .js-reactionList" />
         <div class="reactionsBar js-reactionList {{ $blogPost.reactions ? 'is-active' : ''}}">

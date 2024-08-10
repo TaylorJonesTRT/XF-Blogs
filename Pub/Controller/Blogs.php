@@ -15,7 +15,7 @@ class Blogs extends AbstractController
     {
         if (!\XF::visitor()->hasPermission('taylorjBlogs', 'viewOwn'))
         {
-            return $this->noPermission(\XF::phrase('permission.blogs_viewOwn'));
+            return $this->noPermission(\XF::phrase('permission.taylorjBlogs_viewOwn'));
         }
 
         $blogFinder = $this->finder('TaylorJ\Blogs:Blog');
@@ -46,7 +46,7 @@ class Blogs extends AbstractController
     {
         if (!\XF::visitor()->hasPermission('taylorjBlogs', 'canCreate'))
         {
-            return $this->noPermission(\XF::phrase('permission.blogs_canCreate'));
+            return $this->noPermission(\XF::phrase('permission.taylorjBlogs_canCreate'));
         }
 
         $blog = $this->em()->create('TaylorJ\Blogs:Blog');
@@ -76,7 +76,7 @@ class Blogs extends AbstractController
 	
 	public function actionSave(ParameterBag $params)
     {
-        if ($params->id)
+        if ($params->blog_id)
         {
             $blog = $this->assertBlogExists($params->blog_id);
 

@@ -1,6 +1,6 @@
 .taylorjUserBlogs-blog-description {
-  padding-bottom: 20px;
-  color: #8c8c8c;
+  padding-bottom: 40px;
+  //color: @xf-textColorDimmed;
 }
 
 .taylorjUserBlogs-block {
@@ -13,7 +13,7 @@
 
 .taylorjUserBlogs-blog-posts {
   width: 100%;
-  flex-basis: 80%;
+  //flex-basis: 80%;
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -23,9 +23,9 @@
   width: 100%;
   flex-basis: 20%;
   height: 100%;
-  background: #f5f5f5;
-  border: 1px solid #d8d8d8;
-  border-radius: 3px;
+  background: @xf-contentAltBg;
+  border: 1px solid @xf-borderColor;
+  border-radius: @xf-borderRadiusMedium;
   display: flex;
   flex-direction: column;
 }
@@ -33,9 +33,23 @@
   display: flex;
   flex-direction: column;
   flex-wrap: wrap;
-  padding: 5px;
+  padding: @xf-paddingMedium @xf-paddingLarge;
   gap: 5px;
 }
 .taylorjUserBlogs-blog-details img {
-  border-radius: 3px;
+  border-radius: borderRadiusMedium;
+}
+
+.taylorjBlogs-blog-view-post-header {
+  // display: flex;
+  // flex-direction: row;
+  // flex-wrap: nowrap;
+  font-size: @xf-fontSizeLarge;
+}
+
+.taylorjBlogs-blog-actions {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  gap: 10px;
 }

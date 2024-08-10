@@ -197,4 +197,12 @@ class BlogPost extends AbstractController
 	{
 		return $this->repository('TaylorJ\Blogs:BlogPost');
 	}
+
+	public function insertJob(\TaylorJ\Blogs\Entity\BlogPost $blogPost)
+	{
+		$jobid = 'taylorjblogs_scheduledpost_'.$blogPost->blog_post_id.'_'.\XF::$time;
+		$app = \XF::app();
+        $app->jobManager()->enqueueLater($jobid, $blogPost->scheduled_post_date_time, 'TaylorJ\Blogs:PostBlogPost', ['blog_post_id'=>$blogPost->blog_post_id]);
+	}
+
 }

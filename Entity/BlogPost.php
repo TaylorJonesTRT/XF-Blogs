@@ -15,16 +15,27 @@ use XF\Entity\ReactionTrait;
  * @property int $blog_id
  * @property string $blog_post_title
  * @property string $blog_post_content
- * @property int $blog_post_creation_date
+ * @property int $blog_post_date
  * @property int $blog_post_last_edit_date
  * @property int $attach_count
  * @property array|null $embed_metadata
  * @property int $view_count
+ * @property string $blog_post_state
+ * @property int|null $scheduled_post_date_time
+ * @property int $reaction_score
+ * @property array $reactions_
+ * @property array $reaction_users_
+ *
+ * GETTERS
+ * @property bool $scheduled
+ * @property mixed $reactions
+ * @property mixed $reaction_users
  *
  * RELATIONS
  * @property \XF\Entity\User $User
  * @property \TaylorJ\Blogs\Entity\Blog $Blog
  * @property \XF\Mvc\Entity\AbstractCollection|\XF\Entity\Attachment[] $Attachments
+ * @property \XF\Mvc\Entity\AbstractCollection|\XF\Entity\ReactionContent[] $Reactions
  */
 class BlogPost extends Entity implements RenderableContentInterface
 {
@@ -90,6 +101,10 @@ class BlogPost extends Entity implements RenderableContentInterface
                 $error = \XF::phrase('taylorj_blogs_blog_post_error_edit');
                 return false;
             }
+			else
+			{
+				return false;
+			}
         }
 
 		return true;
@@ -173,12 +188,30 @@ class BlogPost extends Entity implements RenderableContentInterface
 			$this->Blog->fastUpdate('blog_post_count', max(0, $this->Blog->blog_post_count + $amount));
 		}
 	}
-    
-    protected function _postSave()
-    {
-        $this->adjustBlogPostCount(1);
-		$this->Blog->fastUpdate('blog_last_post_date', \XF::$time);
-    }
+	
+	public function getScheduled() : bool
+	{
+		if ($this->blog_post_state === 'scheduled')
+		{
+			return true;
+		}
+		
+		return false;
+	}
+
+	public function isVisible()
+	{
+		return true;
+	}
+
+	protected function _postSave()
+	{
+		if (!$this->isUpdate())
+		{
+			$this->adjustBlogPostCount(1);
+			$this->Blog->fastUpdate('blog_last_post_date', \XF::$time);
+		}
+	}
 
 	public static function getStructure(Structure $structure): Structure
 	{
@@ -198,8 +231,9 @@ class BlogPost extends Entity implements RenderableContentInterface
 			'embed_metadata' => ['type' => self::JSON_ARRAY, 'nullable' => true, 'default' => null],
 			'view_count' => ['type' => self::UINT, 'forced' => true, 'default' => 0, 'api' => true],
 			'blog_post_state' => ['type' => self::STR, 'default' => 'visible',
-				'allowedValues' => ['visible', 'moderated', 'deleted'], 'api' => true
+				'allowedValues' => ['visible', 'scheduled']
 			],
+			'scheduled_post_date_time' => ['type' => self::UINT, 'nullable' => true]
 		];
 		$structure->relations = [
             'User' => [
@@ -226,7 +260,7 @@ class BlogPost extends Entity implements RenderableContentInterface
 			]
         ];
 		$structure->defaultWith = ['User'];
-		$structure->getters[] = true;
+		$structure->getters['scheduled'] = true;
 		$structure->behaviors = [
 			'XF:Indexable' => [
 				'checkForUpdates' => ['blog_post_title', 'blog_post_id', 'blog_id', 'user_id']

@@ -1,20 +1,21 @@
-.taylorjBlogs.block
-{
+.taylorjBlogs.block {
   width: 100%;
   display: flex;
-  flex-display: row;
+  flex-direction: row;
   flex-wrap: wrap;
-  gap: 5px;
+  //gap: 5px;
+  gap: 15px;
 }
 
 
 .taylorjBlogs-main
 {
-  width: 33%;
+  width: 31%;
   display: flex;
-  flex-display: row;
+  flex-direction: row;
   flex-flow: wrap;
   justify-content: center;
+  margin: 0 auto;
 }
 
 .taylorjBlogs.block-container
@@ -42,6 +43,7 @@
   background: #185886;
   border-top-right-radius: 5px;
   border-top-left-radius: 5px;
+  object-fit: cover;
 
   img {
     position: relative;
@@ -116,3 +118,17 @@
     flex-wrap: wrap;
   }
 }
+
+
+
+.taylorjBlogs-noImage {
+  color: @xf-chromeTextColor;
+  font-size: 5rem;
+  margin-top: 11%;
+}
+
+h1 {
+  margin: 10px 0 0;
+  font-size: large;
+}
+

@@ -45,10 +45,11 @@ class Setup extends AbstractSetup
 			$table->addColumn('attach_count', 'int')->setDefault(0);
 			$table->addColumn('embed_metadata', 'blob')->nullable();
             $table->addColumn('view_count', 'int')->setDefault(0);
-			$table->addColumn('blog_post_state', 'varchar')->setDefault('visible');
 			$table->addColumn('reaction_score', 'int')->unsigned(false)->setDefault(0);
 			$table->addColumn('reactions', 'blob')->nullable();
 			$table->addColumn('reaction_users', 'blob');
+            $table->addColumn('scheduled_post_date_time', 'int')->nullable();
+			$table->addColumn('blog_post_state', 'enum')->values(['visible','schdeduled'])->setDefault('visible');
         });
 
     }
@@ -64,6 +65,23 @@ class Setup extends AbstractSetup
             $table->addPrimaryKey('blog_post_id');
         });
     }
+
+    public function installStep4()
+    {
+        $this->schemaManager()->alterTable('xf_user', function(Alter $table)
+        {
+            $table->addColumn('taylorj_blogs_blog_count', 'int')->setDefault(0);
+        });
+    }
+    
+    public function installStep5()
+    {
+        $this->createTable('xf_taylorj_blogs_blog_watch', function (\XF\Db\Schema\Create $table)
+        {
+                $table->addColumn('user_id', 'int');
+                $table->addColumn('blog_id', 'int');
+        }); 
+    }
     
     public function upgrade1000034Step1()
     {
@@ -76,11 +94,14 @@ class Setup extends AbstractSetup
         });
     }
     
-    public function installStep4()
+    public function upgrade1000035Step1()
     {
-        $this->schemaManager()->alterTable('xf_user', function(Alter $table)
+        $this->alterTable('xf_taylorj_blogs_blog_post', function (\XF\Db\Schema\Alter $table)
         {
-            $table->addColumn('taylorj_blogs_blog_count', 'int')->setDefault(0);
+            $table->addColumn('scheduled_post_date_time', 'int')->nullable();
+            $table->changeColumn('user_id', 'int');
+            $table->changeColumn('blog_id', 'int');
+			$table->changeColumn('blog_post_state', 'enum')->values(['visible','schdeduled'])->setDefault('visible');
         });
     }
 
