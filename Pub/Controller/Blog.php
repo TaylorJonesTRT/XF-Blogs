@@ -18,9 +18,9 @@ class Blog extends AbstractController
         $blog = $this->assertBlogExists($params->blog_id);
 
         if (!$blog->canView() && $blog->user_id == \XF::visitor()->user_id) {
-            return $this->noPermission(\XF::phrase('permission.blogs_viewOwn'));
+            return $this->noPermission(\XF::phrase('permission.taylorjBlogs_viewOwn'));
         } elseif (!$blog->canView()) {
-            return $this->noPermission(\XF::phrase('permission.blogs_viewAny'));
+            return $this->noPermission(\XF::phrase('permission.taylorjBlogs_viewAny'));
         }
 
         $blogPostFinder = $this->finder('TaylorJ\Blogs:BlogPost')
@@ -54,7 +54,8 @@ class Blog extends AbstractController
 
     public function actionEdit(ParameterBag $params)
     {
-        $blogFinder = $this->finder('TaylorJ\Blogs:Blog')->where('blog_id', $params->blog_id)->fetchOne();
+        $blogFinder = $this->finder('TaylorJ\Blogs:Blog')
+            ->where('blog_id', $params->blog_id)->fetchOne();
         return $this->blogEdit($blogFinder, $params->blog_id);
     }
 
@@ -75,11 +76,21 @@ class Blog extends AbstractController
 
     public function actionAddPost(ParameterBag $params)
     {
-        if (!\XF::visitor()->hasPermission('taylorjBlogPost', 'canPost')) {
-            return $this->noPermission(\XF::phrase('taylorj_blogs_blog_post_error_new'));
+        $visitor = \XF::visitor();
+        $blog = $this->assertBlogExists($params->blog_id);
+
+        if ($blog->user_id === $visitor->user_id)
+        {
+            if (!$visitor->hasPermission('taylorjBlogPost', 'canPost'))
+            {
+                return $this->noPermission(\XF::phrase('taylorj_blogs_blog_post_error_new'));
+            }
+            else
+            {
+                $blogPost = $this->em()->create('TaylorJ\Blogs:BlogPost');
+                return $this->blogPostAdd($blogPost, $params->blog_id);
+            }
         }
-        $blogPost = $this->em()->create('TaylorJ\Blogs:BlogPost');
-        return $this->blogPostAdd($blogPost, $params->blog_id);
     }
 
     protected function blogEdit(\TaylorJ\Blogs\Entity\Blog $blog)

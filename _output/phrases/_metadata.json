@@ -115,8 +115,8 @@
     },
     "permission.blogs_viewOwn.txt": {
         "global_cache": false,
-        "version_id": 1000010,
-        "version_string": "1.0.0 Alpha",
+        "version_id": 1000034,
+        "version_string": "1.0.0 Beta 4",
         "hash": "b7c30f30fdb33cf572ee1793150a9ad6"
     },
     "permission.taylorjBlogPost_canDeleteAny.txt": {
@@ -221,6 +221,18 @@
         "version_string": "1.0.0 Beta 1",
         "hash": "be8df1f28c0abc85a0ed0c6860e5d832"
     },
+    "taylorj_blogs_blog_created_by.txt": {
+        "global_cache": false,
+        "version_id": 1000034,
+        "version_string": "1.0.0 Beta 4",
+        "hash": "c8e6a7ed1489c036564b6bc24c92cca4"
+    },
+    "taylorj_blogs_blog_created_on.txt": {
+        "global_cache": false,
+        "version_id": 1000034,
+        "version_string": "1.0.0 Beta 4",
+        "hash": "f7f19392da30e81c3abf433ce7b8ca38"
+    },
     "taylorj_blogs_blog_delete.txt": {
         "global_cache": false,
         "version_id": 1000031,
@@ -299,6 +311,12 @@
         "version_string": "1.0.0 Beta 1",
         "hash": "f5445fb22962ee36f01baf05283ce20c"
     },
+    "taylorj_blogs_blog_total_blog_posts.txt": {
+        "global_cache": false,
+        "version_id": 1000034,
+        "version_string": "1.0.0 Beta 4",
+        "hash": "b909ae311405d6e1d4067bab8b32145c"
+    },
     "taylorj_blogs_blogs_total.txt": {
         "global_cache": false,
         "version_id": 1000031,
@@ -322,6 +340,12 @@
         "version_id": 1000031,
         "version_string": "1.0.0 Beta 1",
         "hash": "f5445fb22962ee36f01baf05283ce20c"
+    },
+    "taylorj_blogs_user_tz.txt": {
+        "global_cache": false,
+        "version_id": 1000034,
+        "version_string": "1.0.0 Beta 4",
+        "hash": "7a6043446636d43b94502dc8ef857c53"
     },
     "taylorj_userblogs_blog_delete.txt": {
         "global_cache": false,
@@ -388,6 +412,12 @@
         "version_id": 1000010,
         "version_string": "1.0.0 Alpha",
         "hash": "f5445fb22962ee36f01baf05283ce20c"
+    },
+    "taylorj_x_created_new_post_in_y.txt": {
+        "global_cache": false,
+        "version_id": 1000034,
+        "version_string": "1.0.0 Beta 4",
+        "hash": "bf64b6274aa9304ffb3127ec9a09fcf7"
     },
     "taylorj_x_reacted_to_your_blogpost.txt": {
         "global_cache": false,

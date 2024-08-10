@@ -15,6 +15,7 @@ use XF\Mvc\ParameterBag;
  * @property string $blog_header_image_
  * @property int $blog_creation_date
  * @property int $blog_last_post_date
+ * @property array $breadcrumb_data
  *
  * GETTERS
  * @property string $blog_header_image
@@ -96,6 +97,25 @@ class Blog extends Entity
         }
 
 		return true;	
+	}
+	
+	public function canPost(&$error = null)
+	{
+		$visitor = \XF::visitor();
+
+        if ($this->user_id === $visitor->user_id)
+        {
+            if (!$visitor->hasPermission('taylorjBlogPost', 'canPost'))
+            {
+                $error = \XF::phrase('taylorj_blogs_blog_post_error_new');
+				return false;
+            }
+			else
+			{
+				return true;
+			}
+		}
+		return false;
 	}
     
     public function getBlogHeaderImage(bool $canonical = false): string

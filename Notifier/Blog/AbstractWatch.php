@@ -57,29 +57,6 @@ abstract class AbstractWatch extends AbstractNotifier
 		return true;
 	}
 
-	public function sendAlert(\XF\Entity\User $user)
-	{
-		$update = $this->update;
-		// $resource = $update->Resource;
-
-		if ($user->user_id == $update->User->user_id) {
-			$senderId = $update->User->user_id;
-			$senderName = $update->User->username;
-		} else {
-			$senderId = $update->User->user_id;
-			$senderName = $update->User->username;
-		}
-
-		return $this->basicAlert(
-			$user,
-			$senderId,
-			$senderName,
-			'taylorj_blogs_blog_post',
-			$update->blog_id,
-			'insert'
-		);
-	}
-
 	public function sendEmail(\XF\Entity\User $user)
 	{
 		if (!$user->email || $user->user_state != 'valid') {

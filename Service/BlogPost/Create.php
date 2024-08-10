@@ -104,8 +104,8 @@ class Create extends \XF\Service\AbstractService
 	{
 		if ($this->blog->isVisible())
 		{
-			/** @var \TaylorJ\Blogs\Service\BlogPost\Notify $notifier */
-			$notifier = $this->service('TaylorJ\Blogs:Blog\Notify', $this->blog, 'newBlogPost');
+			/** @var \TaylorJ\Blogs\Service\Blog\Notify $notifier */
+			$notifier = $this->service('TaylorJ\Blogs:Blog\Notify', $this->blog, $this->blogPost, 'newBlogPost');
 			$notifier->notifyAndEnqueue();
 		}
 	}

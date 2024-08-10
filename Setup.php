@@ -99,8 +99,8 @@ class Setup extends AbstractSetup
         $this->alterTable('xf_taylorj_blogs_blog_post', function (\XF\Db\Schema\Alter $table)
         {
             $table->addColumn('scheduled_post_date_time', 'int')->nullable();
-            $table->addColumn('user_id', 'int');
-            $table->addColumn('blog_id', 'int');
+            $table->changeColumn('user_id', 'int');
+            $table->changeColumn('blog_id', 'int');
 			$table->changeColumn('blog_post_state', 'enum')->values(['visible','schdeduled'])->setDefault('visible');
         });
     }

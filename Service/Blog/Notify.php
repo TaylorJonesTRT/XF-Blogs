@@ -3,6 +3,7 @@
 namespace TaylorJ\Blogs\Service\Blog;
 
 use TaylorJ\Blogs\Entity\Blog;
+use TaylorJ\Blogs\Entity\BlogPost;
 use XF\Service\AbstractNotifier;
 
 class Notify extends AbstractNotifier
@@ -12,9 +13,14 @@ class Notify extends AbstractNotifier
 	 */
 	protected $update;
 
+	/**
+	 * @var BlogPost
+	 */
+	protected $blogPost;
+
 	protected $actionType;
 
-	public function __construct(\XF\App $app, Blog $update, $actionType)
+	public function __construct(\XF\App $app, Blog $update, BlogPost $blogPost, $actionType)
 	{
 		parent::__construct($app);
 
@@ -30,17 +36,18 @@ class Notify extends AbstractNotifier
 
 		$this->actionType = $actionType;
 		$this->update = $update;
+		$this->blogPost = $blogPost;
 	}
 
 	public static function createForJob(array $extraData)
 	{
-		$update = \XF::app()->find('XFRM:ResourceUpdate', $extraData['updateId'], ['Resource', 'Resource.Category']);
+		$update = \XF::app()->find('TaylorJ\Blogs:Blog', $extraData['updateId'], ['Blog']);
 		if (!$update)
 		{
 			return null;
 		}
 
-		return \XF::service('XFRM:ResourceUpdate\Notify', $update, $extraData['actionType']);
+		return \XF::service('TaylorJ\Blogs:Blog\Notify', $update, $extraData['actionType']);
 	}
 
 	protected function getExtraJobData()
@@ -81,31 +88,77 @@ class Notify extends AbstractNotifier
 		);
 	}
 
-	public function skipUsersWatchingCategory(\XFRM\Entity\Category $category)
+	public function notify($timeLimit = null)
 	{
-		$checkCategories = array_keys($category->breadcrumb_data);
-		$checkCategories[] = $category->resource_category_id;
+		$this->ensureDataLoaded();
 
-		$db = $this->db();
+		$endTime = $timeLimit > 0 ? microtime(true) + $timeLimit : null;
 
-		$watchers = $db->fetchAll("
-			SELECT user_id, send_alert, send_email
-			FROM xf_rm_category_watch
-			WHERE resource_category_id IN (" . $db->quote($checkCategories) . ")
-				AND (resource_category_id = ? OR include_children > 0)
-				AND (send_alert = 1 OR send_email = 1)
-		", $category->resource_category_id);
-
-		foreach ($watchers AS $watcher)
+		foreach ($this->getNotifiers() AS $type => $notifier)
 		{
-			if ($watcher['send_alert'])
+			$data = $this->notifyData[$type];
+			if (!$data)
 			{
-				$this->setUserAsAlerted($watcher['user_id']);
+				// already processed or nothing to do
+				continue;
 			}
-			if ($watcher['send_email'])
+
+			$newData = $this->notifyType($notifier, $data, $endTime);
+			$this->notifyData[$type] = $newData;
+
+			if ($endTime && microtime(true) >= $endTime)
 			{
-				$this->setUserAsEmailed($watcher['user_id']);
+				break;
 			}
 		}
 	}
+
+	public function notifyAndEnqueue($timeLimit = null)
+	{
+		$this->notify($timeLimit);
+		return $this->enqueueJobIfNeeded();
+	}
+
+	protected function notifyType(\XF\Notifier\AbstractNotifier $notifier, array $data, $endTime = null)
+	{
+		do
+		{
+			$notifyUsers = array_slice($data, 0, self::USERS_PER_CYCLE, true);
+			$users = $notifier->getUserData(array_keys($notifyUsers));
+
+			$this->loadExtraUserData($users);
+
+			foreach ($notifyUsers AS $userId => $notify)
+			{
+				unset($data[$userId]);
+
+				if (!isset($users[$userId]))
+				{
+					continue;
+				}
+
+				$user = $users[$userId];
+
+				if (!$this->canUserViewContent($user) || !$notifier->canNotify($user))
+				{
+					continue;
+				}
+
+				$alert = ($notify['alert'] && empty($this->alerted[$userId]));
+				if ($alert && $notifier->sendAlert($user))
+				{
+					$this->alerted[$userId] = true;
+				}
+
+				if ($endTime && microtime(true) >= $endTime)
+				{
+					return $data;
+				}
+			}
+		}
+		while ($data);
+
+		return $data;
+	}
+
 }
