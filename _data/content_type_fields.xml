@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <content_type_fields>
+  <field content_type="taylorj_blogs_blog" field_name="alert_handler_class">TaylorJ\Blogs\Alert\Blog</field>
+  <field content_type="taylorj_blogs_blog" field_name="entity">TaylorJ\Blogs:Blog</field>
   <field content_type="taylorj_blogs_blog_post" field_name="alert_handler_class">TaylorJ\Blogs\Alert\BlogPost</field>
   <field content_type="taylorj_blogs_blog_post" field_name="attachment_handler_class">TaylorJ\Blogs\Attachment\BlogPost</field>
   <field content_type="taylorj_blogs_blog_post" field_name="entity">TaylorJ\Blogs:BlogPost</field>

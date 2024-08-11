@@ -103,14 +103,20 @@ class Setup extends AbstractSetup
             $table->changeColumn('blog_id', 'int');
 			$table->changeColumn('blog_post_state', 'enum')->values(['visible','schdeduled'])->setDefault('visible');
         });
+
+        $this->createTable('xf_taylorj_blogs_blog_watch', function (\XF\Db\Schema\Create $table)
+        {
+                $table->addColumn('user_id', 'int');
+                $table->addColumn('blog_id', 'int');
+        }); 
     }
 
     public function uninstallStep1()
     {
         $sm = $this->schemaManager();
         $sm->dropTable('xf_taylorj_blogs_blog');
-        $sm->dropTable('xf_taylorj_blogs_blog_blog_post');
-        $sm->dropTable('xf_taylorj_blogs_blog_blog_post_view');
+        $sm->dropTable('xf_taylorj_blogs_blog_post');
+        $sm->dropTable('xf_taylorj_blogs_blog_post_view');
     }
 
     public function uninstallStep2()
@@ -120,5 +126,11 @@ class Setup extends AbstractSetup
         {
             $table->dropColumns('taylorj_blogs_blog_count');
         });
+    }
+
+    public function uninstallStep3()
+    {
+        $sm = $this->schemaManager();
+        $sm->dropTable('xf_taylorj_blogs_blog_watch');
     }
 }

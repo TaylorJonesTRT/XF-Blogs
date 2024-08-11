@@ -8,6 +8,7 @@
   <phrase title="option_explain.taylorjBlogsPerPage" version_id="1000031" version_string="1.0.0 Beta 1"><![CDATA[How many blogs to display per page on the blogs index page]]></phrase>
   <phrase title="option_group.taylorjBlogs" version_id="1000031" version_string="1.0.0 Beta 1"><![CDATA[[TaylorJ] Blogs - Options]]></phrase>
   <phrase title="option_group_description.taylorjBlogs" version_id="1000031" version_string="1.0.0 Beta 1"><![CDATA[Personalize the blog addon's options to fit your communities needs!]]></phrase>
+  <phrase title="permission.blogs_viewOwn" version_id="1000034" version_string="1.0.0 Beta 4"><![CDATA[Can view own blogs']]></phrase>
   <phrase title="permission.taylorjBlogPost_canDeleteAny" version_id="1000031" version_string="1.0.0 Beta 1"><![CDATA[Can delete any blog post]]></phrase>
   <phrase title="permission.taylorjBlogPost_canDeleteOwnPost" version_id="1000031" version_string="1.0.0 Beta 1"><![CDATA[Can delete own blog post]]></phrase>
   <phrase title="permission.taylorjBlogPost_canEditAny" version_id="1000031" version_string="1.0.0 Beta 1"><![CDATA[Can edit any blog post]]></phrase>
@@ -23,6 +24,8 @@
   <phrase title="permission_interface.taylorjBlogsModeratorPermissions" version_id="1000031" version_string="1.0.0 Beta 1"><![CDATA[[TaylorJ] Blogs Moderator Permissions]]></phrase>
   <phrase title="permission_interface.taylorjBlogsPermissions" version_id="1000031" version_string="1.0.0 Beta 1"><![CDATA[[TaylorJ] Blogs permissions]]></phrase>
   <phrase title="taylorj_blogs_blog" version_id="1000031" version_string="1.0.0 Beta 1"><![CDATA[Blog]]></phrase>
+  <phrase title="taylorj_blogs_blog_created_by" version_id="1000034" version_string="1.0.0 Beta 4"><![CDATA[Created by]]></phrase>
+  <phrase title="taylorj_blogs_blog_created_on" version_id="1000034" version_string="1.0.0 Beta 4"><![CDATA[Created on]]></phrase>
   <phrase title="taylorj_blogs_blog_delete" version_id="1000031" version_string="1.0.0 Beta 1"><![CDATA[Delete blog]]></phrase>
   <phrase title="taylorj_blogs_blog_edit" version_id="1000031" version_string="1.0.0 Beta 1"><![CDATA[Edit blog]]></phrase>
   <phrase title="taylorj_blogs_blog_error_delete" version_id="1000031" version_string="1.0.0 Beta 1"><![CDATA[You do not have permissions to delete this blog]]></phrase>
@@ -32,8 +35,14 @@
   <phrase title="taylorj_blogs_blog_post_edit" version_id="1000031" version_string="1.0.0 Beta 1"><![CDATA[Edit blog post]]></phrase>
   <phrase title="taylorj_blogs_blog_post_error_edit" version_id="1000031" version_string="1.0.0 Beta 1"><![CDATA[You do not have permissions to edit this blog post]]></phrase>
   <phrase title="taylorj_blogs_blog_post_error_new" version_id="1000031" version_string="1.0.0 Beta 1"><![CDATA[You do not have permissions to create a new blog post]]></phrase>
+  <phrase title="taylorj_blogs_blog_post_schedule_later" version_id="1000034" version_string="1.0.0 Beta 4"><![CDATA[Schedule for later]]></phrase>
+  <phrase title="taylorj_blogs_blog_post_schedule_now" version_id="1000034" version_string="1.0.0 Beta 4"><![CDATA[Post now]]></phrase>
   <phrase title="taylorj_blogs_blog_post_title_verification_error" version_id="1000031" version_string="1.0.0 Beta 1"><![CDATA[Blog titles need to be at least 10 characters long]]></phrase>
+  <phrase title="taylorj_blogs_blog_total_blog_posts" version_id="1000034" version_string="1.0.0 Beta 4"><![CDATA[Blog Posts]]></phrase>
   <phrase title="taylorj_blogs_blogs_total" version_id="1000031" version_string="1.0.0 Beta 1"><![CDATA[Blogs]]></phrase>
+  <phrase title="taylorj_blogs_time" version_id="1000034" version_string="1.0.0 Beta 4"><![CDATA[Time]]></phrase>
   <phrase title="taylorj_blogs_titile_verification_error" version_id="1000031" version_string="1.0.0 Beta 1"><![CDATA[Blog titles need to be at least 10 characters long]]></phrase>
+  <phrase title="taylorj_blogs_user_tz" version_id="1000034" version_string="1.0.0 Beta 4"><![CDATA[This date/time value will be according to the <strong>{tz}</strong> timezone.]]></phrase>
+  <phrase title="taylorj_x_created_new_post_in_y" version_id="1000034" version_string="1.0.0 Beta 4"><![CDATA[{name} created a new blog post in <a {blog}>{blogTitle}</a>.]]></phrase>
   <phrase title="taylorj_x_reacted_to_your_blogpost" version_id="1000033" version_string="1.0.0 Beta 3"><![CDATA[{name} reacted to <a {posterParams}>your blog post</a> {title} with {reaction}.]]></phrase>
 </phrases>
