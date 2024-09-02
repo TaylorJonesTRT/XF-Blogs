@@ -1,1 +1,1 @@
-Edit blog
+Edit blog: {blogTitle}

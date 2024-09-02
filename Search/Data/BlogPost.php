@@ -1,6 +1,6 @@
 <?php
 
-namespace TaylorJ\Blogs\Search;
+namespace TaylorJ\Blogs\Search\Data;
 
 use XF\Mvc\Entity\Entity;
 use XF\Search\IndexRecord;
@@ -22,11 +22,20 @@ class BlogPost extends \XF\Search\Data\AbstractData
 
 	protected function getMetaData(\TaylorJ\Blogs\Entity\BlogPost $entity)
 	{
-		return [];
+		$blog = $entity->Blog;
+
+		$metadata = [
+			'blog' => $blog->blog_id,
+			'blogPost' => $entity->blog_post_id
+		];
+
+		return $metadata;
 	}
 
 	public function setupMetadataStructure(MetadataStructure $structure)
 	{
+		$structure->addField('blog', MetadataStructure::INT);
+		$structure->addField('blogPost', MetadataStructure::INT);
 	}
 
 	public function getResultDate(Entity $entity)

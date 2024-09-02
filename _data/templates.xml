@@ -1,5 +1,76 @@
 <?xml version="1.0" encoding="utf-8"?>
 <templates>
+  <template type="admin" title="taylorj_blogs_admin_blog_view" version_id="1000035" version_string="1.0.0 Beta 5"><![CDATA[<xf:title>
+    {$blog.blog_title}
+</xf:title>]]></template>
+  <template type="admin" title="taylorj_blogs_admin_index" version_id="1000035" version_string="1.0.0 Beta 5"><![CDATA[<xf:title>Blogs</xf:title>
+
+<div class="block">
+    <div class="block-outer">
+        <xf:macro name="filter_macros::quick_filter" arg-key="blogs" arg-class="block-outer-opposite" />
+    </div>
+    <div class="block-container">
+        <div class="block-body">
+            <xf:datalist data-xf-init="responsive-datalist">
+                <xf:foreach loop="$blogs" key="$blog_post_id" value="$blog">
+                    <xf:datarow>
+
+                        <xf:cell class="dataList-cell--min dataList-cell--image dataList-cell--imageSmall"
+                            href="{{ link('users/edit', $blog.User) }}">
+                            <xf:avatar user="$blog.User" size="s" href="" />
+                        </xf:cell>
+
+                        <xf:main>
+
+                            <xf:label>
+                                <a href="{{ link('blogs', $blog) }}">
+                                    {$blog.blog_title}
+                                </a>
+                            </xf:label>
+
+                            <xf:explain>
+                                <ul class="listInline listInline--bullet">
+                                    <li>
+                                        <xf:username user="$blog.User" href="{{ link('users', $blog.User)}}" />
+                                    </li>
+                                    <li>
+                                        <xf:date time="$blog.blog_creation_date" />
+                                    </li>
+                                </ul>
+                            </xf:explain>
+
+                        </xf:main>
+                        
+                        <xf:delete href="{{ link('blogs/blog-delete', $blog) }}" />
+
+                    </xf:datarow>
+                </xf:foreach>
+            </xf:datalist>
+        </div>
+    </div>
+</div>
+
+<xf:pagenav page="{$page}" perpage="{$perPage}" total="{$total}"
+    link="blogs" params="{$linkParams}"
+    wrapperclass="block-outer block-outer--after" />]]></template>
+  <template type="admin" title="taylorj_blogs_option_template_forumChoiceAction" version_id="1000035" version_string="1.0.0 Beta 5"><![CDATA[<xf:selectrow 
+	label="{$option.title}"
+	hint="{$hintHtml}"
+	explain="{$explainHtml}"
+	html="{$listedHtml}"
+	rowclass="{$rowClass}"
+	name="options[taylorjBlogsBlogPostForum]"
+	value="{$option.option_value}"
+	id="js-rmThreadNodeList">
+
+				<xf:foreach loop="$forumOptions" value="$forum">
+					<xf:option value="{$forum.value}" disabled="{$forum.disabled}" label="{$forum.label}" />
+				</xf:foreach>
+			</xf:selectrow>]]></template>
+  <template type="admin" title="widget_def_options_taylorj_latest_blog_posts" version_id="1000035" version_string="1.0.0 Beta 5"><![CDATA[<hr class="formRowSep" />
+
+<xf:numberboxrow name="options[limit]" value="{$options}" min="1" label="{{ phrase('maximum_entries') }}" />
+]]></template>
   <template type="public" title="alert_taylorj_blogs_blog_insert" version_id="1000034" version_string="1.0.0 Beta 4"><![CDATA[{{ phrase('taylorj_x_created_new_post_in_y', {
 	'name': username_link($user, false, {'defaultname': $alert.username}),
 	'blog': 'href="' . link('blogs/blog', $content) . '" class="fauxBlockLink-blockLink"',
@@ -35,11 +106,11 @@
 		</div>
 	</div>
 </li>]]></template>
-  <template type="public" title="taylorj_blogs_blog_edit" version_id="1000031" version_string="1.0.0 Beta 1"><![CDATA[<xf:title>
+  <template type="public" title="taylorj_blogs_blog_edit" version_id="1000035" version_string="1.0.0 Beta 5"><![CDATA[<xf:title>
     <xf:if is="$blog.blog_id">
-        Edit Blog {$blog.blog_title}
+        {{ phrase('taylorj_blogs_blog_edit', { 'blogTitle': $blog.blog_title }) }}
         <xf:else />
-        Create a new Blog
+        {{ phrase('taylorj_blogs_blog_create') }}
     </xf:if>
 </xf:title>
 
@@ -48,22 +119,21 @@
 <xf:form action="{{ link('blogs/save', $blog) }}" class="block" ajax="1">
     <div class="block-container">
         <xf:textboxrow name="blog_title" value="{$blog.blog_title}" label="Title" />
-        <xf:textarearow name="blog_description" value="{$blog.blog_description}" label="Blog Description" autosize="true" rows="5" />
-        <xf:uploadrow name="upload"
-                      label="Header Image"
-                      accept=".gif,.jpeg,.jpg,.jpe,.png"
-                      value="{{ $blog.blog_header_image ? $blog.blog_header_image : null }}"
-                      placeholder="{{ phrase('taylorj_blogs_blog_header_upload') }}"
-                      asset="taylorj_blogs_blog_header"
-                      explain="Please keep it below the threshold"
-                      dir="ltr" />
+        <xf:textarearow name="blog_description" value="{$blog.blog_description}" label="Blog Description"
+            autosize="true" rows="5" />
+        <xf:uploadrow name="upload" label="Header Image" accept=".gif,.jpeg,.jpg,.jpe,.png"
+            value="{{ $blog.blog_header_image ? $blog.blog_header_image : null }}"
+            placeholder="{{ phrase('taylorj_blogs_blog_header_upload') }}" asset="taylorj_blogs_blog_header"
+            explain="Please keep it below the threshold" dir="ltr" />
     </div>
     <xf:submitrow submit="{{ phrase('save') }}" fa="fa-save" icon="save" />
-</xf:form>]]></template>
-  <template type="public" title="taylorj_blogs_blog_post_edit" version_id="1000034" version_string="1.0.0 Beta 4"><![CDATA[<xf:breadcrumb source="$blogPost.getBreadcrumbs(true)" />
+</xf:form>
+]]></template>
+  <template type="public" title="taylorj_blogs_blog_post_edit" version_id="1000035" version_string="1.0.0 Beta 5"><![CDATA[<xf:breadcrumb source="$blogPost.getBreadcrumbs(true)" />
 <xf:title>Edit your post</xf:title>
 <div class="block">
-	<xf:form action="{{ link('blogs/post/save', $blogPost) }}" class="block" ajax="true" data-xf-init="attachment-manager">
+	<xf:form action="{{ link('blogs/post/save', $blogPost) }}" class="block" ajax="true"
+		data-xf-init="attachment-manager">
 		<div class="block-container">
 			<div class="block-body">
 				<xf:textboxrow name="blog_post_title" value="{$blogPost.blog_post_title}" rowtype="fullWidth noLabel"
@@ -75,17 +145,104 @@
 					rowtype="fullWidth noLabel mergePrev"
 					data-preview-url="{{ link('blogs/post/add-preview', $blogPost) }}" />
 
-				<xf:formrow>
+				<xf:formrow rowtype="fullWidth noLabel mergePrev">
 					<xf:macro template="helper_attach_upload" name="upload_block"
 						arg-attachmentData="{$attachmentData}" />
 				</xf:formrow>
+
+				<xf:macro name="watch_input" arg-thread="!" arg-rowType="" arg-label="{{ phrase('options') }}"
+					arg-explain="" arg-forceWatchChecked="{{ null }}" arg-forceWatchEmailChecked="{{ null }}"
+					arg-visible="{{ true }}">
+
+				</xf:macro>
+
+				<xf:if is="$blogPost.blog_post_state == 'scheduled'">
+					<xf:radiorow name="blog_post_schedule" value="{{ $blogPost.blog_post_state == 'scheduled' ? 0 : 1}}"
+						rowtype="noColon" label="{{ phrase('taylorj_blogs_blog_post_schedule') }}">
+
+						<xf:option value="1">{{ phrase('taylorj_blogs_blog_post_schedule_now') }}</xf:option>
+						<xf:option value="0">{{ phrase('taylorj_blogs_blog_post_schedule_later') }}</xf:option>
+					</xf:radiorow>
+
+					<xf:formrow>
+						<div class=" inputGroup">
+							<xf:radio name="now" value="true" label="now" />
+							<xf:dateinput name="dd" value="{{date($dt, 'picker')}}" />
+							<span class="inputGroup-text">
+								{{ phrase('taylorj_blogs_time:') }}
+							</span>
+							<span class="inputGroup" dir="ltr">
+								<xf:select name="hh" value="{$hh_value}" class="input--inline input--autoSize">
+									<xf:foreach loop="$hours" value="$hour">
+										<xf:option value="{$hour}" label="{$hour}" />
+									</xf:foreach>
+								</xf:select>
+								<span class="inputGroup-text">:</span>
+								<xf:select name="mm" value="{$mm_value}" class="input--inline input--autoSize">
+									<xf:foreach loop="$minutes" value="$minute">
+										<xf:option value="{$minute}" label="{$minute}" />
+									</xf:foreach>
+								</xf:select>
+							</span>
+						</div>
+					</xf:formrow>
+					<dl class="formRow formRow--input">
+						<dt>
+							<div class="formRow-labelWrapper"></div>
+						</dt>
+						<dd>
+							<div class="blockMessage blockMessage--warning">
+								{{phrase('taylorj_blogs_user_tz', {'tz': $xf.visitor.timezone})}}
+							</div>
+						</dd>
+					</dl>
+					<xf:else />
+
+					<xf:hiddenval name="blog_post_schedule" autocomplete="off">
+						<xf:radiorow name="blog_post_schedule" value="1" rowtype="noColon"
+							label="{{ phrase('taylorj_blogs_blog_post_schedule') }}">
+
+							<xf:option value="1">{{ phrase('taylorj_blogs_blog_post_schedule_now') }}</xf:option>
+						</xf:radiorow>
+					</xf:hiddenval>
+				</xf:if>
 			</div>
 		</div>
 		<xf:hiddenval name="blog_id" autocomplete="off">{$blog_id}</xf:hiddenval>
 		<xf:submitrow submit="{{ phrase('save') }}" fa="fa-save" icon="save" />
 	</xf:form>
-</div>]]></template>
-  <template type="public" title="taylorj_blogs_blog_post_new_edit" version_id="1000034" version_string="1.0.0 Beta 4"><![CDATA[<xf:breadcrumb source="$blog.getBreadcrumbs(true)" />
+</div>
+]]></template>
+  <template type="public" title="taylorj_blogs_blog_post_list_macros" version_id="1000035" version_string="1.0.0 Beta 5"><![CDATA[<xf:macro id="item_new_blog_posts" arg-blogPost="!">
+	<div class="contentRow">
+		<div class="contentRow-figure">
+			<xf:avatar user="$blogPost.User" size="xxs" defaultname="{$blogPost.User.username}" />
+		</div>
+		<div class="contentRow-main contentRow-main--close">
+			<a
+				href="{{ link('blogs/post', $blogPost, {'blog_post_id': $blogPost.blog_post_id}) }}">{$blogPost.blog_post_title}</a>
+
+			<div class="contentRow-minor contentRow-minor--hideLinks">
+				<ul class="listInline listInline--bullet">
+					<li>{{ phrase('latest_x', {'name': $blogPost.User.username}) }}</li>
+					<li>
+						<xf:date time="{$blogPost.blog_post_date}" />
+					</li>
+				</ul>
+			</div>
+			<div class="contentRow-minor contentRow-minor--hideLinks">
+				<a href="{{ link('forums', $thread.Forum) }}">{$thread.Forum.title}</a>
+			</div>
+		</div>
+	</div>
+</xf:macro>
+]]></template>
+  <template type="public" title="taylorj_blogs_blog_post_new_edit" version_id="1000035" version_string="1.0.0 Beta 5"><![CDATA[<xf:if is="$blog">
+	<xf:breadcrumb source="$blog.getBreadcrumbs(true)" />
+	<xf:else />
+	<xf:breadcrumb source="$blogPost.getBreadcrumbs(true)" />
+</xf:if>
+
 <xf:title>Create a new blog post</xf:title>
 <div class="block">
 	<xf:form action="{{ link('blogs/blog/post-save', $blogPost) }}" class="block" ajax="true"
@@ -158,8 +315,9 @@
 		<xf:hiddenval name="blog_id" autocomplete="off">{$blogId}</xf:hiddenval>
 		<xf:submitrow submit="{{ phrase('save') }}" fa="fa-save" icon="save" />
 	</xf:form>
-</div>]]></template>
-  <template type="public" title="taylorj_blogs_blog_post_view" version_id="1000034" version_string="1.0.0 Beta 4"><![CDATA[<xf:css src="taylorj_blogs_blog_post_view.less" />
+</div>
+]]></template>
+  <template type="public" title="taylorj_blogs_blog_post_view" version_id="1000035" version_string="1.0.0 Beta 5"><![CDATA[<xf:css src="taylorj_blogs_blog_post_view.less" />
 <xf:css src="message.less" />
 
 <xf:breadcrumb source="$blogPost.getBreadcrumbs(true)" />
@@ -167,7 +325,7 @@
 <xf:title>{$blogPost.blog_post_title}</xf:title>
 
 <xf:description meta="false">
-    <div class="u-pullLeft">
+    <div class="u-pullLeft" data-xf-init="taylorj-blogs">
         <ul class="listInline listInline--bullet">
             <li>
                 <xf:fa icon="fa-user" title="{{ phrase('thread_starter')|for_attr }}" />
@@ -182,6 +340,9 @@
                 <a href="{{ link('blogs/post', $blogPost) }}" class="u-concealed">
                     <xf:date time="{$blogPost.blog_post_date}" />
                 </a>
+            </li>
+            <li class="taylorj-blogs-read-time">
+                {{ phrase('taylorj_blogs_blog_post_read_time', { 'readTime': $blogPostReadTime}) }}
             </li>
         </ul>
     </div>
@@ -327,11 +488,77 @@
             </div>
         </aside>
     </div>
-</div>]]></template>
+</div>
+
+<xf:if is="$blogPost.blog_post_state == 'visible'">
+
+    <div class="block">
+        <div class="block-container">
+            <h3 class="block-header">{{ phrase('taylorj_blogs_blog_post_latest_comments') }}</h3>
+            <div class="block-body">
+                <xf:foreach loop="$comments" value="$comment">
+                    <xf:css src="message.less" />
+                    <xf:js src="xf/comment.js" min="1" />
+
+                    <div class="message message--simple{{ $comment.isIgnored() ? ' is-ignored' : '' }}">
+                        <span class="u-anchorTarget" id="resource-review-{$review.resource_rating_id}"></span>
+                        <div class="message-inner">
+                            <span class="message-cell message-cell--user">
+                                <xf:if is="$review.is_anonymous">
+                                    <xf:macro id="message_macros::user_info_simple" arg-user="{{ null }}"
+                                        arg-fallbackName="" />
+                                    <xf:else />
+                                    <xf:macro id="message_macros::user_info_simple" arg-user="{$comment.User}"
+                                        arg-fallbackName="{{ phrase('deleted_member') }}" />
+                                </xf:if>
+                            </span>
+                            <div class="message-cell message-cell--main">
+                                <div class="message-content js-messageContent">
+                                    <div class="message-attribution message-attribution--plain">
+
+                                        <ul class="listInline listInline--bullet">
+                                            <li class="message-attribution-user">
+                                                <xf:username user="{$comment.User}"
+                                                    defaultname="{{ phrase('deleted_member') }}" />
+                                            </li>
+                                            <li><a href="{{ link('posts', $comment) }}" class="u-concealed">
+                                                    <xf:date time="$comment.post_date" />
+                                                </a></li>
+                                        </ul>
+                                    </div>
+
+                                    <xf:macro id="custom_fields_macros::custom_fields_view" arg-type="resourceReviews"
+                                        arg-group="above_review"
+                                        arg-onlyInclude="{$resource.Category.review_field_cache}"
+                                        arg-set="{$review.custom_fields}"
+                                        arg-wrapperClass="message-fields message-fields--before" />
+
+                                    <div class="message-body">
+                                        {{ bb_code($comment.message, 'post', $comment.Thread) }}
+                                    </div>
+
+                                    <xf:macro id="custom_fields_macros::custom_fields_view" arg-type="resourceReviews"
+                                        arg-group="below_review"
+                                        arg-onlyInclude="{$resource.Category.review_field_cache}"
+                                        arg-set="{$review.custom_fields}"
+                                        arg-wrapperClass="message-fields message-fields--after" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </xf:foreach>
+            </div>
+        </div>
+    </div>
+    <xf:button href="{{ link('threads', $blogPost.Discussion) }}" fa="fa-plus-square" class="u-pullRight button--cta">
+        {{ phrase('taylorj_blogs_blog_post_add_comment') }}
+    </xf:button>
+</xf:if>]]></template>
   <template type="public" title="taylorj_blogs_blog_post_view.less" version_id="1000034" version_string="1.0.0 Beta 4"><![CDATA[.taylorJUserBlogs-post-content {
     padding: @xf-paddingLarge;
 }]]></template>
-  <template type="public" title="taylorj_blogs_blog_view" version_id="1000034" version_string="1.0.0 Beta 4"><![CDATA[<xf:css src="taylorj_blogs_blog_view.less" />
+  <template type="public" title="taylorj_blogs_blog_view" version_id="1000035" version_string="1.0.0 Beta 5"><![CDATA[<xf:css src="taylorj_blogs_blog_view.less" />
+<xf:css src="structured_list.less" />
 
 <xf:breadcrumb source="$blog.getBreadcrumbs(true)" />
 
@@ -342,21 +569,28 @@
     <xf:if is="{$blog.canPost()}">
         <xf:pageaction>
             <xf:button href="{{ link('blogs/blog/add-post', $blog) }}" fa="fa-plus-square" class="button--cta">
-                Create a new post
+                {{ phrase('taylorj_blogs_blog_create_post') }}
             </xf:button>
         </xf:pageaction>
     </xf:if>
 
     <div class="u-pullRight taylorjBlogs-blog-actions">
         <div>
-            <xf:button href="{{ link('blogs/blog/watch', $blog) }}" class="u-pullRight button--link"
-                data-sk-watch="{{ phrase('watch') }}" data-sk-unwatch="{{ phrase('unwatch') }}">
-                <xf:if is="{$blog.BlogWatch.{$xf.visitor.user_id}}">
-                    {{ phrase('unwatch') }}
-                    <xf:else />
-                    {{ phrase('watch') }}
-                </xf:if>
-            </xf:button>
+            <xf:if is="{$blog.canWatch()}">
+                <xf:button href="{{ link('blogs/blog/watch', $blog) }}" class="u-pullRight button--link"
+                    data-sk-watch="{{ phrase('watch') }}" data-sk-unwatch="{{ phrase('unwatch') }}">
+                    <xf:if is="{$blog.BlogWatch.{$xf.visitor.user_id}}">
+                        {{ phrase('unwatch') }}
+                        <xf:else />
+                        {{ phrase('watch') }}
+                    </xf:if>
+                </xf:button>
+            </xf:if>
+            <xf:if is="{$blog.canViewScheduledPosts()}">
+                <xf:button href="{{ link('blogs/blog/scheduled-posts', $blog) }}" class="u-pullRight button--link">
+                    {{ phrase('taylorj_blogs_scheduled_posts_button') }}
+                </xf:button>
+            </xf:if>
         </div>
 
         <div>
@@ -371,7 +605,7 @@
                                 <!--[XF:thread_tools_menu:top]-->
                                 <xf:if is="$blog.canEdit()">
                                     <a href="{{ link('blogs/blog/edit', $blog) }}" class="menu-linkRow">{{
-                                        phrase('taylorj_blogs_blog_edit') }}</a>
+                                        phrase('taylorj_blogs_blog_edit_button') }}</a>
                                 </xf:if>
                                 <xf:if is="$blog.canDelete()">
                                     <a href="{{ link('blogs/blog/delete', $blog) }}" data-xf-click="overlay"
@@ -395,27 +629,50 @@
         <xf:foreach loop="{$blogPosts}" key="$blog_post_id" value="$blogPost">
             <div class="block-container">
                 <div class="block-body">
-                    <div class="message message--article message--articlePreview">
+                    <article
+                        class="message message--article message--articlePreview js-inlineModContainer js-threadListItem-{$blogPost.blog_post_id}">
                         <div class="articlePreview-main">
-                            <div class="articlePreview-text">
-                                <div class="articlePreview-headline">
-                                    <h2 class="articlePreview-title">
-                                        <a href="{{ link('blogs/post', $blogPost) }}">{$blogPost.blog_post_title}</a>
-                                    </h2>
-                                </div>
-                                <div class="message--articlePreview articlePreview-content">
-                                    <div class="message-content">
-                                        <div class="message-userContent">
-                                            <article class="message-body">
-                                                {{ bb_code_snippet($blogPost.blog_post_content,
-                                                'taylorj_blogs_blog_post', $blogPost, 750) }}
-                                            </article>
+                            <div class="taylorjBlogs-main">
+
+                                <xf:if is="$blogPost.cover_image">
+                                    <div class="taylorjBlogs-blog-post-cover-image">
+                                        <a href="{$linkUnread}" class="articlePreview-image" tabindex="-1">
+                                            <img src="{$blogPost.cover_image}" alt="{$blogPost.blog_post_title}"
+                                                loading="lazy" />
+                                        </a>
+                                    </div>
+                                </xf:if>
+                                <div class="taylorjBlogs-blog-post-snippet {{
+                                $blogPost.cover_image ? '' : 'taylorjBlogs-blog-post-no-cover' }}">
+                                    <div class="articlePreview-text ">
+                                        <div class="articlePreview-headline">
+                                            <h2 class="articlePreview-title">
+                                                <a
+                                                    href="{{ link('blogs/post', $blogPost) }}">{$blogPost.blog_post_title}</a>
+                                            </h2>
+                                        </div>
+                                        <div class="{{ $blogPost.cover_image ? 'taylorjBlogs-preview-text' : '' }}">
+                                            <div class="message--articlePreview articlePreview-content">
+                                                <div class="message-content">
+                                                    <div class="message-userContent">
+                                                        <article class="message-body">
+                                                            <!-- {{ bb_code_snippet($blogPost.blog_post_content,
+                                                    'taylorj_blogs_blog_post', $blogPost, 750) }} -->
+                                                            {{ snippet($blogPost.blog_post_content, 750, {
+                                                            'stripQuote': true,
+                                                            'bbWrapper': false
+                                                            }) }}
+                                                        </article>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="articlePreview-links">
+                                                <a href="{{ link('blogs/post', $blogPost) }}"
+                                                    class="button button--link">{{
+                                                    phrase('view_full_post') }} &raquo;</a>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="articlePreview-links">
-                                    <a href="{{ link('blogs/post', $blogPost) }}" class="button button--link">{{
-                                        phrase('view_full_post') }} &raquo;</a>
                                 </div>
                             </div>
                             <div class="block-footer">
@@ -427,7 +684,7 @@
                                 <span class="u-pullRight">{{ phrase('views') }}: {$blogPost.view_count}</span>
                             </div>
                         </div>
-                    </div>
+                    </article>
                 </div>
             </div>
         </xf:foreach>
@@ -460,8 +717,9 @@
             </dl>
         </div>
     </div>
-</xf:sidebar>]]></template>
-  <template type="public" title="taylorj_blogs_blog_view.less" version_id="1000034" version_string="1.0.0 Beta 4"><![CDATA[.taylorjUserBlogs-blog-description {
+</xf:sidebar>
+]]></template>
+  <template type="public" title="taylorj_blogs_blog_view.less" version_id="1000035" version_string="1.0.0 Beta 5"><![CDATA[.taylorjUserBlogs-blog-description {
   padding-bottom: 40px;
   //color: @xf-textColorDimmed;
 }
@@ -515,15 +773,216 @@
   flex-direction: row;
   flex-wrap: nowrap;
   gap: 10px;
+}
+
+.taylorjBlogs-main {
+  width: full;
+  display: flex;
+  flex-direction: row;
+}
+
+.taylorjBlogs-blog-post-snippet {
+  flex-basis: 70%;
+  width: 100%;
+}
+
+.taylorjBlogs-blog-post-cover-image {
+  width: full;
+  height: full;
+  flex-basis: 30%;
+  object-fit: contain;
+}
+
+.taylorjBlogs-blog-post-cover-image img {
+  width: 100%;
+  height: 100%;
+}
+
+.taylorjBlogs-blog-post-no-cover {
+  width: full;
+  height: full;
+  flex-basis: 100% !important;
+  object-fit: contain;
+}
+
+.taylorjBlogs-preview-text {
+  height: 100%;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: space-between !important;
 }]]></template>
-  <template type="public" title="taylorj_blogs_index" version_id="1000034" version_string="1.0.0 Beta 4"><![CDATA[<xf:css src="taylorj_blogs_index.less" />
+  <template type="public" title="taylorj_blogs_blog_view_scheduled_posts" version_id="1000035" version_string="1.0.0 Beta 5"><![CDATA[<xf:css src="taylorj_blogs_blog_view.less" />
+<xf:css src="structured_list.less" />
+
+
+<xf:breadcrumb source="$blog.getBreadcrumbs(true)" />
+
+<xf:title>{$blog.blog_title}</xf:title>
+<xf:description>{$blog.blog_description}</xf:description>
+
+<div class="taylorjUserBlogs-blog-description">
+    <xf:if is="{$blog.canPost()}">
+        <xf:pageaction>
+            <xf:button href="{{ link('blogs/blog/add-post', $blog) }}" fa="fa-plus-square" class="button--cta">
+                {{ phrase('taylorj_blogs_blog_create_post') }}
+            </xf:button>
+        </xf:pageaction>
+    </xf:if>
+
+    <div class="u-pullRight taylorjBlogs-blog-actions">
+        <div>
+            <xf:if is="{$blog.canWatch()}">
+                <xf:button href="{{ link('blogs/blog/watch', $blog) }}" class="u-pullRight button--link"
+                    data-sk-watch="{{ phrase('watch') }}" data-sk-unwatch="{{ phrase('unwatch') }}">
+                    <xf:if is="{$blog.BlogWatch.{$xf.visitor.user_id}}">
+                        {{ phrase('unwatch') }}
+                        <xf:else />
+                        {{ phrase('watch') }}
+                    </xf:if>
+                </xf:button>
+            </xf:if>
+            <xf:if is="{$blog.canViewScheduledPosts()}">
+                <xf:button href="{{ link('blogs/blog', $blog) }}" class="u-pullRight button--link">
+                    {{ phrase('taylorj_blogs_visible_posts_button') }}
+                </xf:button>
+            </xf:if>
+        </div>
+
+        <div>
+            <xf:if contentcheck="true">
+                <div class="buttonGroup-buttonWrapper">
+                    <xf:button class="button--link menuTrigger" data-xf-click="menu" aria-expanded="false"
+                        aria-haspopup="true" title="{{ phrase('more_options') }}">&#8226;&#8226;&#8226;</xf:button>
+                    <div class="menu" data-menu="menu" aria-hidden="true">
+                        <div class="menu-content">
+                            <h4 class="menu-header">{{ phrase('more_options') }}</h4>
+                            <xf:contentcheck>
+                                <!--[XF:thread_tools_menu:top]-->
+                                <xf:if is="$blog.canEdit()">
+                                    <a href="{{ link('blogs/blog/edit', $blog) }}" class="menu-linkRow">{{
+                                        phrase('taylorj_blogs_blog_edit_button') }}</a>
+                                </xf:if>
+                                <xf:if is="$blog.canDelete()">
+                                    <a href="{{ link('blogs/blog/delete', $blog) }}" data-xf-click="overlay"
+                                        class="menu-linkRow">{{
+                                        phrase('taylorj_blogs_blog_delete') }}</a>
+                                </xf:if>
+                                <!--[XF:thread_tools_menu:bottom]-->
+                            </xf:contentcheck>
+                        </div>
+                    </div>
+                </div>
+            </xf:if>
+        </div>
+    </div>
+</div>
+
+<xf:css src="message.less" />
+
+<div class="block taylorjUserBlogs-block">
+    <div class="taylorjUserBlogs-blog-posts">
+        <xf:foreach loop="{$blogPosts}" key="$blog_post_id" value="$blogPost">
+            <div class="block-container">
+                <div class="block-body">
+                    <article
+                        class="message message--article message--articlePreview js-inlineModContainer js-threadListItem-{$blogPost.blog_post_id}">
+                        <div class="articlePreview-main">
+                            <div class="taylorjBlogs-main">
+
+                                <xf:if is="$blogPost.cover_image">
+                                    <div class="taylorjBlogs-blog-post-cover-image">
+                                        <a href="{$linkUnread}" class="articlePreview-image" tabindex="-1">
+                                            <img src="{$blogPost.cover_image}" alt="{$blogPost.blog_post_title}"
+                                                loading="lazy" />
+                                        </a>
+                                    </div>
+                                </xf:if>
+                                <div class="taylorjBlogs-blog-post-snippet {{
+                                    $blogPost.cover_image ? '' : 'taylorjBlogs-blog-post-no-cover' }}">
+                                    <div class="articlePreview-text ">
+                                        <div class="articlePreview-headline">
+                                            <h2 class="articlePreview-title">
+                                                <a
+                                                    href="{{ link('blogs/post', $blogPost) }}">{$blogPost.blog_post_title}</a>
+                                            </h2>
+                                        </div>
+                                        <div class="{{ $blogPost.cover_image ? 'taylorjBlogs-preview-text' : '' }}">
+                                            <div class="message--articlePreview articlePreview-content">
+                                                <div class="message-content">
+                                                    <div class="message-userContent">
+                                                        <article class="message-body">
+                                                            <!-- {{ bb_code_snippet($blogPost.blog_post_content,
+'taylorj_blogs_blog_post', $blogPost, 750) }} -->
+                                                            {{ snippet($blogPost.blog_post_content, 750, {
+                                                            'stripQuote': true,
+                                                            'bbWrapper': false
+                                                            }) }}
+                                                        </article>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="articlePreview-links">
+                                                <a href="{{ link('blogs/post', $blogPost) }}"
+                                                    class="button button--link">{{
+                                                    phrase('view_full_post') }} &raquo;</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="block-footer">
+                                <xf:date time="$blogPost.blog_post_date" />
+                                <xf:if is="$blogPost.blog_post_last_edit_date">
+                                    &nbsp;&#8226;&nbsp;&nbsp;{{ phrase('last_edited:') }}
+                                    <xf:date time="$blogPost.blog_post_last_edit_date" />
+                                </xf:if>
+                                <span class="u-pullRight">{{ phrase('views') }}: {$blogPost.view_count}</span>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </xf:foreach>
+        <xf:pagenav page="{$page}" perpage="{$perPage}" total="{$total}" link="blogs/blog/" data="{$blogPost}"
+            wrapperclass="block-outer block-outer--after" />
+    </div>
+</div>
+
+<xf:sidebar>
+    <div class="taylorjUserBlogs-blog-details">
+        <xf:if is="{$blog.blog_header_image}">
+            <div class="taylorjBlogs-blog-header-image">
+                <img src="{$blog.blog_header_image}" alt="Header Image" />
+            </div>
+        </xf:if>
+        <div class="taylorJUserBlogs-details-text">
+            <dl class="pairs pairs--justified">
+                <dt>{{ phrase('author') }}</dt>
+                <dd>{$blog.User.username}</dd>
+            </dl>
+            <dl class="pairs pairs--justified">
+                <dt>{{ phrase('created') }}</dt>
+                <dd>
+                    <xf:date time="$blog.blog_creation_date" />
+                </dd>
+            </dl>
+            <dl class="pairs pairs--justified">
+                <dt>Entries</dt>
+                <dd>{$blogPost.Blog.blog_post_count|number}</dd>
+            </dl>
+        </div>
+    </div>
+</xf:sidebar>
+]]></template>
+  <template type="public" title="taylorj_blogs_index" version_id="1000035" version_string="1.0.0 Beta 5"><![CDATA[<xf:css src="taylorj_blogs_index.less" />
 
 <xf:title>
     Blogs
 </xf:title>
 
 <xf:pageaction>
-    <xf:button href="{{ link('blogs/add') }}" icon="add" overlay="true" class="button--cta">Create a Blog
+    <xf:button href="{{ link('blogs/add') }}" icon="add" overlay="true" class="button--cta">
+       {{ phrase('taylorj_blogs_create_blog') }} 
     </xf:button>
 </xf:pageaction>
 
@@ -685,5 +1144,26 @@ h1 {
   font-size: large;
 }
 
+]]></template>
+  <template type="public" title="taylorj_blogs_thread_view_type_blog_post" version_id="1000035" version_string="1.0.0 Beta 5"><![CDATA[<xf:extends template="thread_view" />]]></template>
+  <template type="public" title="widget_taylorj_blogs_new_blog_posts" version_id="1000035" version_string="1.0.0 Beta 5"><![CDATA[<xf:if is="$blogPosts is not empty OR ($blogPosts is empty AND $filter != 'latest')">
+	<div class="block" {{ widget_data($widget) }}>
+		<div class="block-container">
+			<h3 class="block-minorHeader">
+				<a href="{$link}" rel="nofollow">{$title}</a>
+			</h3>
+			<ul class="block-body">
+				<xf:if is="$blogPosts is not empty">
+					<xf:foreach loop="$blogPosts" value="$blogPost">
+						<li class="block-row">
+							<xf:macro id="taylorj_blogs_blog_post_list_macros::item_new_blog_posts"
+								arg-blogPost="{$blogPost}" />
+						</li>
+					</xf:foreach>
+				</xf:if>
+			</ul>
+		</div>
+	</div>
+</xf:if>
 ]]></template>
 </templates>

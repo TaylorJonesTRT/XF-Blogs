@@ -1,4 +1,24 @@
 {
+    "admin/taylorj_blogs_admin_blog_view.html": {
+        "version_id": 1000035,
+        "version_string": "1.0.0 Beta 5",
+        "hash": "8b735eaa0009641623428ab57bf3b7aa"
+    },
+    "admin/taylorj_blogs_admin_index.html": {
+        "version_id": 1000035,
+        "version_string": "1.0.0 Beta 5",
+        "hash": "d13546e36fd71db9b0f4ebb1567fbd4d"
+    },
+    "admin/taylorj_blogs_option_template_forumChoiceAction.html": {
+        "version_id": 1000035,
+        "version_string": "1.0.0 Beta 5",
+        "hash": "6e1901a02cfb1754b871e500bad1aded"
+    },
+    "admin/widget_def_options_taylorj_latest_blog_posts.html": {
+        "version_id": 1000035,
+        "version_string": "1.0.0 Beta 5",
+        "hash": "58b98c376948ffd4fc36d7b661539669"
+    },
     "public/alert_taylorj_blogs_blog_insert.html": {
         "version_id": 1000034,
         "version_string": "1.0.0 Beta 4",
@@ -15,29 +35,34 @@
         "hash": "eeb85e9557886e6de0685e7c362c8122"
     },
     "public/taylorj_blogs_blog_edit.html": {
-        "version_id": 1000031,
-        "version_string": "1.0.0 Beta 1",
-        "hash": "5bab3a784206f9cb2a89112fe323b1c3"
+        "version_id": 1000035,
+        "version_string": "1.0.0 Beta 5",
+        "hash": "6e3834f2f8a905897f36f3c8f687dbfb"
     },
     "public/taylorj_blogs_blog_post_edit.html": {
-        "version_id": 1000034,
-        "version_string": "1.0.0 Beta 4",
-        "hash": "7ecaa8d499903fff183f7a35db1913c8"
+        "version_id": 1000035,
+        "version_string": "1.0.0 Beta 5",
+        "hash": "25501f0ab9c6cf277550e4d3effe97a3"
     },
     "public/taylorj_blogs_blog_post_edit.less": {
         "version_id": 1000034,
         "version_string": "1.0.0 Beta 4",
         "hash": "0b76df3e876284cf7ebb14006c9b9d7e"
     },
+    "public/taylorj_blogs_blog_post_list_macros.html": {
+        "version_id": 1000035,
+        "version_string": "1.0.0 Beta 5",
+        "hash": "eb5833e780095f0c8995217e5d17dd30"
+    },
     "public/taylorj_blogs_blog_post_new_edit.html": {
-        "version_id": 1000034,
-        "version_string": "1.0.0 Beta 4",
-        "hash": "5434985ddbc3e2702171743114bf468a"
+        "version_id": 1000035,
+        "version_string": "1.0.0 Beta 5",
+        "hash": "4b2c6f13395233b5a81ed3d32c606d60"
     },
     "public/taylorj_blogs_blog_post_view.html": {
-        "version_id": 1000034,
-        "version_string": "1.0.0 Beta 4",
-        "hash": "5bf2dcdc94dba3c61a6fea4266dd8088"
+        "version_id": 1000035,
+        "version_string": "1.0.0 Beta 5",
+        "hash": "5b6d8d1293c40c6db0c5b4c6afb313d8"
     },
     "public/taylorj_blogs_blog_post_view.less": {
         "version_id": 1000034,
@@ -45,14 +70,19 @@
         "hash": "b46b89fc8c5985296de2445f8616048d"
     },
     "public/taylorj_blogs_blog_view.html": {
-        "version_id": 1000034,
-        "version_string": "1.0.0 Beta 4",
-        "hash": "acc0a501315314e775a3cffadc6fc7ff"
+        "version_id": 1000035,
+        "version_string": "1.0.0 Beta 5",
+        "hash": "4a9dc216d9acfc86566c6ad2db793dc7"
     },
     "public/taylorj_blogs_blog_view.less": {
-        "version_id": 1000034,
-        "version_string": "1.0.0 Beta 4",
-        "hash": "a0b743f09ec25fe9220eae1d73daa462"
+        "version_id": 1000035,
+        "version_string": "1.0.0 Beta 5",
+        "hash": "905164f1334f053bf02079970a55a6f6"
+    },
+    "public/taylorj_blogs_blog_view_scheduled_posts.html": {
+        "version_id": 1000035,
+        "version_string": "1.0.0 Beta 5",
+        "hash": "5c676cc1396debaff72026a7bf6f785e"
     },
     "public/taylorj_blogs_blog_watch.html": {
         "version_id": 1000034,
@@ -60,14 +90,19 @@
         "hash": "5b623b8b47fa40ea817000f41d1a06d4"
     },
     "public/taylorj_blogs_index.html": {
-        "version_id": 1000034,
-        "version_string": "1.0.0 Beta 4",
-        "hash": "4f9eb34090efce8766f7bae8c9f578c6"
+        "version_id": 1000035,
+        "version_string": "1.0.0 Beta 5",
+        "hash": "b3de0b81e0f076fea1cbde05a4942875"
     },
     "public/taylorj_blogs_index.less": {
         "version_id": 1000034,
         "version_string": "1.0.0 Beta 4",
         "hash": "616043b461b3db39fff1a7edc44e2769"
+    },
+    "public/taylorj_blogs_thread_view_type_blog_post.html": {
+        "version_id": 1000035,
+        "version_string": "1.0.0 Beta 5",
+        "hash": "6ae4fa03cd2f3c57f4761063b1090441"
     },
     "public/taylorj_userblogs_blog_post_edit.html": {
         "version_id": 1000010,
@@ -88,5 +123,10 @@
         "version_id": 1000010,
         "version_string": "1.0.0 Alpha",
         "hash": "27edae06fc23f7701285e6e66c9ab5fc"
+    },
+    "public/widget_taylorj_blogs_new_blog_posts.html": {
+        "version_id": 1000035,
+        "version_string": "1.0.0 Beta 5",
+        "hash": "227b92803a1bc70575e89c48c5f449e3"
     }
 }

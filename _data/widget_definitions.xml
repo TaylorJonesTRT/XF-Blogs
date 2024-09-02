@@ -1,2 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<widget_definitions/>
+<widget_definitions>
+  <widget_definition definition_id="taylorj_latest_blog_posts" definition_class="TaylorJ\Blogs\Widget\LatestBlogPosts"/>
+</widget_definitions>

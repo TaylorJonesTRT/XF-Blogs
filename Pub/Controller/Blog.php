@@ -3,6 +3,7 @@
 namespace TaylorJ\Blogs\Pub\Controller;
 
 use XF\Pub\Controller\AbstractController;
+use XF\Repository\AttachmentRepository;
 use XF\Mvc\ParameterBag;
 
 use TaylorJ\Blogs\Utils as Utils;
@@ -24,11 +25,9 @@ class Blog extends AbstractController
         }
 
         $blogPostFinder = $this->finder('TaylorJ\Blogs:BlogPost')
-            ->where('blog_id', $params->blog_id);
-        if (\XF::visitor()->user_id !== $blog->user_id)
-        {
-            $blogPostFinder->where('blog_post_state', 'visible');
-        }
+            ->where('blog_id', $params->blog_id)
+            ->where('blog_post_state', 'visible');
+
         $blogPostFinder
             ->order('blog_post_state', 'DESC')
             ->order('blog_post_date', 'DESC');
@@ -36,6 +35,10 @@ class Blog extends AbstractController
         $page = $params->page;
         $perPage = $this->options()->taylorjBlogPostsPerPage;
         $blogPostFinder->limitByPage($page, $perPage);
+
+        /** @var AttachmentRepository $attachmentRepo */
+        $attachmentRepo = \XF::repository(AttachmentRepository::class);
+        $attachmentRepo->addAttachmentsToContent($blogPostFinder, 'taylorj_blogs_blog_post');
 
         $viewParams = [
             'blog' => $blog,
@@ -48,6 +51,49 @@ class Blog extends AbstractController
         return $this->view(
             'TaylorJ\Blogs:Blog\Index',
             'taylorj_blogs_blog_view',
+            $viewParams
+        );
+    }
+
+    public function actionScheduledPosts(ParameterBag $params)
+    {
+        /** @var \TaylorJ\Blogs\Entity\Blog $blog */
+        $blog = $this->assertBlogExists($params->blog_id);
+
+        if (!$blog->canView() && $blog->user_id == \XF::visitor()->user_id) {
+            return $this->noPermission(\XF::phrase('permission.taylorjBlogs_viewOwn'));
+        } elseif (!$blog->canView()) {
+            return $this->noPermission(\XF::phrase('permission.taylorjBlogs_viewAny'));
+        } elseif (\XF::visitor()->user_id !== $blog->user_id) {
+            return $this->noPermission(\XF::phrase('taylorj_blogs_blog_scheduled_posts_view_error'));
+        }
+
+        $blogPostFinder = $this->finder('TaylorJ\Blogs:BlogPost')
+            ->where('blog_id', $params->blog_id)
+            ->where('blog_post_state', 'scheduled');
+
+        $blogPostFinder
+            ->order('blog_post_date', 'DESC');
+
+        $page = $params->page;
+        $perPage = $this->options()->taylorjBlogPostsPerPage;
+        $blogPostFinder->limitByPage($page, $perPage);
+
+        /** @var AttachmentRepository $attachmentRepo */
+        $attachmentRepo = \XF::repository(AttachmentRepository::class);
+        $attachmentRepo->addAttachmentsToContent($blogPostFinder, 'post');
+
+        $viewParams = [
+            'blog' => $blog,
+            'blogPosts' => $blogPostFinder->fetch(),
+            'page' => $page,
+            'perPage' => $perPage,
+            'total' => $blogPostFinder->total()
+        ];
+
+        return $this->view(
+            'TaylorJ\Blogs:Blog\Index',
+            'taylorj_blogs_blog_view_scheduled_posts',
             $viewParams
         );
     }
@@ -79,14 +125,10 @@ class Blog extends AbstractController
         $visitor = \XF::visitor();
         $blog = $this->assertBlogExists($params->blog_id);
 
-        if ($blog->user_id === $visitor->user_id)
-        {
-            if (!$visitor->hasPermission('taylorjBlogPost', 'canPost'))
-            {
+        if ($blog->user_id === $visitor->user_id) {
+            if (!$visitor->hasPermission('taylorjBlogPost', 'canPost')) {
                 return $this->noPermission(\XF::phrase('taylorj_blogs_blog_post_error_new'));
-            }
-            else
-            {
+            } else {
                 $blogPost = $this->em()->create('TaylorJ\Blogs:BlogPost');
                 return $this->blogPostAdd($blogPost, $params->blog_id);
             }
@@ -118,7 +160,7 @@ class Blog extends AbstractController
 
         $hours = Utils::hours();
         $minutes = Utils::minutes();
-        
+
         $blog = $this->assertBlogExists($blog_id);
 
         $viewParams = [
@@ -149,59 +191,50 @@ class Blog extends AbstractController
             'blog_post_title' => 'str',
             'blog_id' => 'int'
         ]);
-        // $dateAndTime = $this->filter([
-        //     'blog_post_schedule' => 'bool',
-        //     'dd' => 'str',
-        //     'hh' => 'str',
-        //     'mm' => 'str'
-        // ]);
-        // $test = $dateAndTime['dd'];
         $blog = $this->assertBlogExists($input['blog_id']);
-        // $message = $this->plugin('XF:Editor')->fromInput('message');
-        // $input['blog_post_content'] = $message;
-        // $input['blog_post_last_edit_date'] = 0;
 
-        if ($this->isPost()) {
-            $creator = $this->blogPostCreate($blog);
-            if (!$creator->validate($errors)) {
-                return $this->error($errors);
-            }
-
-            $this->assertNotFlooding('post');
-
-            /** @var \TaylorJ\Blogs\Entity\BlogPost $blogPost */
-            $blogPost = $creator->save();
-
-            $hash = $this->filter('attachment_hash', 'str');
-            if ($hash && $blogPost->canUploadAndManageAttachments()) {
-                /** @var \XF\Service\Attachment\Preparer $inserter */
-                $inserter = $this->service('XF:Attachment\Preparer');
-                $associated = $inserter->associateAttachmentsWithContent($hash, 'taylorj_blogs_blog_post', $blogPost->blog_post_id);
-                if ($associated) {
-                    $blogPost->fastUpdate('attach_count', $blogPost->attach_count + $associated);
-                }
-            }
-            $creator->finalSteps();
-
-            return $this->redirect($this->buildLink('blogs/post', $blogPost), \XF::phrase('taylorj_blogs_post_successful'));
+        // uncomment the below lines if this ends up breaking something
+        // i do not remember why i had a isPost check on a blogPost creation
+        // if ($this->isPost()) {
+        $creator = $this->blogPostCreate($blog);
+        if (!$creator->validate($errors)) {
+            return $this->error($errors);
         }
+
+        $this->assertNotFlooding('post');
+
+        /** @var \TaylorJ\Blogs\Entity\BlogPost $blogPost */
+        $blogPost = $creator->save();
+
+        $hash = $this->filter('attachment_hash', 'str');
+        if ($hash && $blogPost->canUploadAndManageAttachments()) {
+            /** @var \XF\Service\Attachment\Preparer $inserter */
+            $inserter = $this->service('XF:Attachment\Preparer');
+            $associated = $inserter->associateAttachmentsWithContent($hash, 'taylorj_blogs_blog_post', $blogPost->blog_post_id);
+            if ($associated) {
+                $blogPost->fastUpdate('attach_count', $blogPost->attach_count + $associated);
+            }
+        }
+        $creator->finalSteps();
+
+        return $this->redirect($this->buildLink('blogs/post', $blogPost), \XF::phrase('taylorj_blogs_post_successful'));
+        // }
     }
 
     public function actionWatch(ParameterBag $params)
     {
-        
-		$visitor = \XF::visitor();
-		if (!$visitor->user_id)
-		{
-			return $this->noPermission();
-		}
 
-		$blog = $this->assertBlogExists($params->blog_id);
+        $visitor = \XF::visitor();
+        if (!$visitor->user_id) {
+            return $this->noPermission();
+        }
+
+        $blog = $this->assertBlogExists($params->blog_id);
         // if (!$blog->canWatch($error))
         // {
         // 	return $this->noPermission($error);
         // }
-        
+
         /** @var \TaylorJ\Blogs\Repository\BlogWatch $blogWatchRepo */
         $blogWatchRepo = $this->repository('TaylorJ\Blogs:BlogWatch');
         $blogWatchRepo->setWatchState($blog, $visitor);
@@ -292,8 +325,11 @@ class Blog extends AbstractController
             'hh' => 'int',
             'mm' => 'int'
         ]);
+
         $creator->setScheduledPostDateTime($scheduledPostDateTime);
-        $creator->sendNotifications(3);
+        if ($scheduledPostDateTime['blog_post_schedule']) {
+            $creator->sendNotifications(3);
+        }
 
         return $creator;
     }

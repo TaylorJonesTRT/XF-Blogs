@@ -5,8 +5,8 @@
 
 <xf:title>{$blogPost.blog_post_title}</xf:title>
 
-<xf:description meta="false">
-    <div class="u-pullLeft">
+<xf:description>
+    <div class="u-pullLeft" data-xf-init="taylorj-blogs">
         <ul class="listInline listInline--bullet">
             <li>
                 <xf:fa icon="fa-user" title="{{ phrase('thread_starter')|for_attr }}" />
@@ -21,6 +21,9 @@
                 <a href="{{ link('blogs/post', $blogPost) }}" class="u-concealed">
                     <xf:date time="{$blogPost.blog_post_date}" />
                 </a>
+            </li>
+            <li class="taylorj-blogs-read-time">
+                {{ phrase('taylorj_blogs_blog_post_read_time', { 'readTime': $blogPostReadTime}) }}
             </li>
         </ul>
     </div>
@@ -50,6 +53,12 @@
     </xf:if>
 </xf:description>
 
+<xf:set var="$bpSnippet" value="{{ snippet($blogPost.blog_post_content, 0, {'stripBbCode': true}) }}" />
+
+<xf:macro id="metadata_macros::metadata" arg-description="{$fpSnippet}"
+    arg-shareUrl="{{ link('canonical:blogs/post', $blogPost) }}"
+    arg-canonicalUrl="{{ link('canonical:blogs/post', $blogPost) }}" />
+
 <xf:macro id="lightbox_macros::setup" arg-canViewAttachments="{$blogPost.canViewAttachments()}" />
 
 <div class="block" data-xf-init="lightbox" data-type="taylorj_blogs_blog_post">
@@ -61,9 +70,29 @@
                         <xf:extension id="main_cell_inner">
                             <div class="message-main js-quickEditTarget">
                                 <div class="message-attribution">
-                                    <xf:date time="$blogPost.blog_post_date" />
                                     <div class="u-pullRight">
-                                        {{ phrase('views') }}: {$blogPost.view_count}
+                                        <ul
+                                            class="message-attribution-opposite message-attribution-opposite--list {$oppositeClass}">
+                                            <li>
+                                                <a href="{{ link('blogs/post', $blogPost) }}"
+                                                    class="message-attribution-gadget" data-xf-init="share-tooltip"
+                                                    data-href="{{ link('blogs/post/share', $blogPost) }}"
+                                                    aria-label="{{ phrase('share')|for_attr }}" rel="nofollow">
+                                                    <xf:fa icon="fa-share-alt" />
+                                                </a>
+                                            </li>
+                                            <xf:if
+                                                is="$xf.options.embedCodeShare AND method_exists($blogPost, 'getEmbedCodeHtml')">
+                                                <li class="u-hidden js-embedCopy">
+                                                    <xf:macro id="share_page_macros::share_clipboard_text"
+                                                        arg-text="{$blogPost.getEmbedCodeHtml()}"
+                                                        arg-successText="{{ phrase('embed_code_html_copied_to_clipboard') }}" />
+                                                </li>
+                                            </xf:if>
+                                            <li>
+                                                {{ phrase('views') }}: {$blogPost.view_count}
+                                            </li>
+                                        </ul>
                                     </div>
                                 </div>
                                 <div class="message-content">
@@ -167,3 +196,68 @@
         </aside>
     </div>
 </div>
+
+<xf:if is="$blogPost.blog_post_state == 'visible'">
+
+    <div class="block">
+        <div class="block-container">
+            <h3 class="block-header">{{ phrase('taylorj_blogs_blog_post_latest_comments') }}</h3>
+            <div class="block-body">
+                <xf:foreach loop="$comments" value="$comment">
+                    <xf:css src="message.less" />
+                    <xf:js src="xf/comment.js" min="1" />
+
+                    <div class="message message--simple{{ $comment.isIgnored() ? ' is-ignored' : '' }}">
+                        <span class="u-anchorTarget" id="resource-review-{$review.resource_rating_id}"></span>
+                        <div class="message-inner">
+                            <span class="message-cell message-cell--user">
+                                <xf:if is="$review.is_anonymous">
+                                    <xf:macro id="message_macros::user_info_simple" arg-user="{{ null }}"
+                                        arg-fallbackName="" />
+                                    <xf:else />
+                                    <xf:macro id="message_macros::user_info_simple" arg-user="{$comment.User}"
+                                        arg-fallbackName="{{ phrase('deleted_member') }}" />
+                                </xf:if>
+                            </span>
+                            <div class="message-cell message-cell--main">
+                                <div class="message-content js-messageContent">
+                                    <div class="message-attribution message-attribution--plain">
+
+                                        <ul class="listInline listInline--bullet">
+                                            <li class="message-attribution-user">
+                                                <xf:username user="{$comment.User}"
+                                                    defaultname="{{ phrase('deleted_member') }}" />
+                                            </li>
+                                            <li><a href="{{ link('posts', $comment) }}" class="u-concealed">
+                                                    <xf:date time="$comment.post_date" />
+                                                </a></li>
+                                        </ul>
+                                    </div>
+
+                                    <xf:macro id="custom_fields_macros::custom_fields_view" arg-type="resourceReviews"
+                                        arg-group="above_review"
+                                        arg-onlyInclude="{$resource.Category.review_field_cache}"
+                                        arg-set="{$review.custom_fields}"
+                                        arg-wrapperClass="message-fields message-fields--before" />
+
+                                    <div class="message-body">
+                                        {{ bb_code($comment.message, 'post', $comment.Thread) }}
+                                    </div>
+
+                                    <xf:macro id="custom_fields_macros::custom_fields_view" arg-type="resourceReviews"
+                                        arg-group="below_review"
+                                        arg-onlyInclude="{$resource.Category.review_field_cache}"
+                                        arg-set="{$review.custom_fields}"
+                                        arg-wrapperClass="message-fields message-fields--after" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </xf:foreach>
+            </div>
+        </div>
+    </div>
+    <xf:button href="{{ link('threads', $blogPost.Discussion) }}" fa="fa-plus-square" class="u-pullRight button--cta">
+        {{ phrase('taylorj_blogs_blog_post_add_comment') }}
+    </xf:button>
+</xf:if>

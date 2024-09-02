@@ -4,7 +4,7 @@
     "navigation_type_id": "basic",
     "type_config": {
         "link": "{{ link('blogs') }}",
-        "display_condition": "",
+        "display_condition": "$xf.visitor.canViewBlogs()",
         "extra_attributes": []
     },
     "enabled": true

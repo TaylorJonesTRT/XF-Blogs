@@ -1,0 +1,7 @@
+{username} made a new blog post:
+
+[url={blog_post_link}][plain]{title}[/plain][/url]
+
+[quote]{snippet}[/quote]
+
+[url={blog_post_link}]Read the full blog post here...[/url]
