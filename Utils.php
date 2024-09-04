@@ -75,9 +75,11 @@ class Utils
 
     public static function setupBlogPostThreadCreation(BlogPost $blogPost)
     {
-        $forum = \XF::finder('XF:Forum')
+        $forumFinder = \XF::finder('XF:Forum')
             ->where('node_id', \XF::app()->options()->taylorjBlogsBlogPostForum)
             ->fetchOne();
+
+        $forum = $forumFinder ? $forumFinder : 1;
 
         /** @var Creator $creator */
         $creator = \XF::app()->service('TaylorJ\Blogs:BlogPost\ThreadCreator', $forum, $blogPost);

@@ -268,6 +268,22 @@ class BlogPost extends Entity implements RenderableContentInterface
 		$this->_getterCache['Unfurls'] = $unfurls;
 	}
 
+	public function createCommentThreadsForOldBlogs()
+	{
+		$blogPosts = \XF::app()->finder('TaylorJ\Blogs:BlogPost')->fetch();
+
+		foreach ($blogPosts as $blogPost) {
+			if ($blogPost->discussion_thread_id == 0) {
+				$creator = Utils::setupBlogPostThreadCreation($blogPost);
+				if ($creator && $creator->validate()) {
+					$thread = $creator->save();
+					$blogPost->fastUpdate('discussion_thread_id', $thread->thread_id);
+					Utils::afterResourceThreadCreated($thread);
+				}
+			}
+		}
+	}
+
 	protected function _postSave()
 	{
 		$blogPostRepo = Utils::getBlogPostRepo();

@@ -81,10 +81,12 @@ class Edit extends AbstractService
 
 	protected function setupBlogPostThreadCreation(BlogPost $blogPost)
 	{
-		/** @var Forum $forum */
-		$forum = $this->finder('XF:Forum')
+		$forumFinder = \XF::finder('XF:Forum')
 			->where('node_id', \XF::app()->options()->taylorjBlogsBlogPostForum)
 			->fetchOne();
+
+		/** @var Forum $forum */
+		$forum = $forumFinder ? $forumFinder : \XF::finder('XF:Forum')->fetchOne();
 
 		/** @var ThreadCreator $creator */
 		$creator = $this->service('TaylorJ\Blogs:BlogPost\ThreadCreator', $forum, $blogPost);

@@ -138,9 +138,11 @@ class Create extends AbstractService
 
 	protected function setupBlogPostThreadCreation()
 	{
-		$forum = $this->finder('XF:Forum')
+		$forumFinder = \XF::finder('XF:Forum')
 			->where('node_id', \XF::app()->options()->taylorjBlogsBlogPostForum)
 			->fetchOne();
+
+		$forum = $forumFinder ? $forumFinder : \XF::finder('XF:Forum')->fetchOne();
 
 		/** @var Creator $creator */
 		$creator = $this->service('XF:Thread\Creator', $forum);

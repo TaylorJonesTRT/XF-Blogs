@@ -11,5 +11,6 @@
   <permission permission_group_id="taylorjBlogs" permission_id="canEditAny" permission_type="flag" interface_group_id="taylorjBlogsModeratorPermissions" display_order="1"/>
   <permission permission_group_id="taylorjBlogs" permission_id="canEditOwn" permission_type="flag" interface_group_id="taylorjBlogsPermissions" display_order="3"/>
   <permission permission_group_id="taylorjBlogs" permission_id="viewAny" permission_type="flag" depend_permission_id="viewOwn" interface_group_id="taylorjBlogsPermissions" display_order="2"/>
+  <permission permission_group_id="taylorjBlogs" permission_id="viewBlogs" permission_type="flag" interface_group_id="taylorjBlogsPermissions" display_order="1"/>
   <permission permission_group_id="taylorjBlogs" permission_id="viewOwn" permission_type="flag" interface_group_id="taylorjBlogsPermissions" display_order="1"/>
 </permissions>

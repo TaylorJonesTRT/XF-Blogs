@@ -147,6 +147,13 @@ class Setup extends AbstractSetup
         $sm->dropTable('xf_taylorj_blogs_blog_watch');
     }
 
+    public function uninstallStep4()
+    {
+        $contentTypes = ['blogPost'];
+
+        $this->uninstallContentTypeData($contentTypes);
+    }
+
     public function giveBlogPostComments()
     {
         $blogPosts = \XF::app()->finder('TaylorJ\Blogs:BlogPost')->fetch();

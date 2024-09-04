@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <phrases>
   <phrase title="admin_navigation.blogs" version_id="1000035" version_string="1.0.0 Beta 5"><![CDATA[Blogs]]></phrase>
-  <phrase title="admin_navigation.blogs_all" version_id="1000035" version_string="1.0.0 Beta 5"><![CDATA[All blogs]]></phrase>
   <phrase title="admin_navigation.taylorjBlogsSettings" version_id="1000035" version_string="1.0.0 Beta 5"><![CDATA[Settings]]></phrase>
   <phrase title="cron_entry.userblogs" version_id="1000031" version_string="1.0.0 Beta 1"><![CDATA[Update Blog Post View Counter]]></phrase>
   <phrase title="nav.taylorjBlogs" version_id="1000031" version_string="1.0.0 Beta 1"><![CDATA[Blogs]]></phrase>
@@ -25,6 +24,7 @@
   <phrase title="permission.taylorjBlogs_canEditAny" version_id="1000031" version_string="1.0.0 Beta 1"><![CDATA[Can edit any blog]]></phrase>
   <phrase title="permission.taylorjBlogs_canEditOwn" version_id="1000031" version_string="1.0.0 Beta 1"><![CDATA[Can edit own blog]]></phrase>
   <phrase title="permission.taylorjBlogs_viewAny" version_id="1000031" version_string="1.0.0 Beta 1"><![CDATA[Can view any blog]]></phrase>
+  <phrase title="permission.taylorjBlogs_viewBlogs" version_id="1000035" version_string="1.0.0 Beta 5"><![CDATA[Can view blogs]]></phrase>
   <phrase title="permission.taylorjBlogs_viewOwn" version_id="1000031" version_string="1.0.0 Beta 1"><![CDATA[Can view own blog]]></phrase>
   <phrase title="permission_interface.taylorjBlogsModeratorPermissions" version_id="1000031" version_string="1.0.0 Beta 1"><![CDATA[[TaylorJ] Blogs Moderator Permissions]]></phrase>
   <phrase title="permission_interface.taylorjBlogsPermissions" version_id="1000031" version_string="1.0.0 Beta 1"><![CDATA[[TaylorJ] Blogs permissions]]></phrase>
@@ -36,19 +36,26 @@
   <phrase title="taylorj_blogs_blog_delete" version_id="1000031" version_string="1.0.0 Beta 1"><![CDATA[Delete blog]]></phrase>
   <phrase title="taylorj_blogs_blog_edit" version_id="1000035" version_string="1.0.0 Beta 5"><![CDATA[Edit blog: {blogTitle}]]></phrase>
   <phrase title="taylorj_blogs_blog_edit_button" version_id="1000035" version_string="1.0.0 Beta 5"><![CDATA[Edit blog]]></phrase>
+  <phrase title="taylorj_blogs_blog_edit_description" version_id="1000035" version_string="1.0.0 Beta 5"><![CDATA[Blog Description]]></phrase>
+  <phrase title="taylorj_blogs_blog_edit_header_image" version_id="1000035" version_string="1.0.0 Beta 5"><![CDATA[Header Image]]></phrase>
+  <phrase title="taylorj_blogs_blog_edit_threshold" version_id="1000035" version_string="1.0.0 Beta 5"><![CDATA[Please keep it below the threshold]]></phrase>
+  <phrase title="taylorj_blogs_blog_edit_title" version_id="1000035" version_string="1.0.0 Beta 5"><![CDATA[Title]]></phrase>
   <phrase title="taylorj_blogs_blog_error_delete" version_id="1000031" version_string="1.0.0 Beta 1"><![CDATA[You do not have permissions to delete this blog]]></phrase>
   <phrase title="taylorj_blogs_blog_error_edit" version_id="1000031" version_string="1.0.0 Beta 1"><![CDATA[You do not have permissions to edit this blog]]></phrase>
   <phrase title="taylorj_blogs_blog_header_upload" version_id="1000031" version_string="1.0.0 Beta 1"><![CDATA[Choose a header image]]></phrase>
   <phrase title="taylorj_blogs_blog_post_add_comment" version_id="1000035" version_string="1.0.0 Beta 5"><![CDATA[Join the conversation]]></phrase>
+  <phrase title="taylorj_blogs_blog_post_comment_thread_creation" version_id="1000036" version_string="1.0.0 Beta 6"><![CDATA[Create Blog Post Comment Threads]]></phrase>
   <phrase title="taylorj_blogs_blog_post_delete" version_id="1000031" version_string="1.0.0 Beta 1"><![CDATA[Delete blog post]]></phrase>
   <phrase title="taylorj_blogs_blog_post_edit" version_id="1000031" version_string="1.0.0 Beta 1"><![CDATA[Edit blog post]]></phrase>
   <phrase title="taylorj_blogs_blog_post_error_edit" version_id="1000031" version_string="1.0.0 Beta 1"><![CDATA[You do not have permissions to edit this blog post]]></phrase>
   <phrase title="taylorj_blogs_blog_post_error_new" version_id="1000031" version_string="1.0.0 Beta 1"><![CDATA[You do not have permissions to create a new blog post]]></phrase>
+  <phrase title="taylorj_blogs_blog_post_in_x" version_id="1000035" version_string="1.0.0 Beta 5"><![CDATA[Post from blog '{title}']]></phrase>
   <phrase title="taylorj_blogs_blog_post_latest_comments" version_id="1000035" version_string="1.0.0 Beta 5"><![CDATA[Latest comments]]></phrase>
   <phrase title="taylorj_blogs_blog_post_read_time" version_id="1000035" version_string="1.0.0 Beta 5"><![CDATA[Read time: {readTime} minutes]]></phrase>
   <phrase title="taylorj_blogs_blog_post_schedule" version_id="1000035" version_string="1.0.0 Beta 5"><![CDATA[Schedule your blog post]]></phrase>
   <phrase title="taylorj_blogs_blog_post_schedule_later" version_id="1000034" version_string="1.0.0 Beta 4"><![CDATA[Schedule for later]]></phrase>
   <phrase title="taylorj_blogs_blog_post_schedule_now" version_id="1000034" version_string="1.0.0 Beta 4"><![CDATA[Post now]]></phrase>
+  <phrase title="taylorj_blogs_blog_post_share_this" version_id="1000035" version_string="1.0.0 Beta 5"><![CDATA[Share this blog post]]></phrase>
   <phrase title="taylorj_blogs_blog_post_thread_create" version_id="1000035" version_string="1.0.0 Beta 5"><![CDATA[{username} made a new blog post:
 
 [url={blog_post_link}][plain]{title}[/plain][/url]
@@ -56,6 +63,7 @@
 [quote]{snippet}[/quote]
 
 [url={blog_post_link}]Read the full blog post here...[/url]]]></phrase>
+  <phrase title="taylorj_blogs_blog_post_thread_creation_job" version_id="1000036" version_string="1.0.0 Beta 6"><![CDATA[Creating comment threads for needed blog posts]]></phrase>
   <phrase title="taylorj_blogs_blog_post_title_verification_error" version_id="1000031" version_string="1.0.0 Beta 1"><![CDATA[Blog titles need to be at least 10 characters long]]></phrase>
   <phrase title="taylorj_blogs_blog_scheduled_posts_view_error" version_id="1000035" version_string="1.0.0 Beta 5"><![CDATA[You can not view the scheduled posts of a blog that is not yours]]></phrase>
   <phrase title="taylorj_blogs_blog_total_blog_posts" version_id="1000034" version_string="1.0.0 Beta 4"><![CDATA[Blog Posts]]></phrase>

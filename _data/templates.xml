@@ -118,13 +118,14 @@
 
 <xf:form action="{{ link('blogs/save', $blog) }}" class="block" ajax="1">
     <div class="block-container">
-        <xf:textboxrow name="blog_title" value="{$blog.blog_title}" label="Title" />
-        <xf:textarearow name="blog_description" value="{$blog.blog_description}" label="Blog Description"
-            autosize="true" rows="5" />
-        <xf:uploadrow name="upload" label="Header Image" accept=".gif,.jpeg,.jpg,.jpe,.png"
-            value="{{ $blog.blog_header_image ? $blog.blog_header_image : null }}"
+        <xf:textboxrow name="blog_title" value="{$blog.blog_title}"
+            label="{{ phrase('taylorj_blogs_blog_edit_title') }}" />
+        <xf:textarearow name="blog_description" value="{$blog.blog_description}"
+            label="{{ phrase('taylorj_blogs_blog_edit_description') }}" autosize="true" rows="5" />
+        <xf:uploadrow name="upload" label="{{ phrase('taylorj_blogs_blog_edit_header_image') }}"
+            accept=".gif,.jpeg,.jpg,.jpe,.png" value="{{ $blog.blog_header_image ? $blog.blog_header_image : null }}"
             placeholder="{{ phrase('taylorj_blogs_blog_header_upload') }}" asset="taylorj_blogs_blog_header"
-            explain="Please keep it below the threshold" dir="ltr" />
+            explain="{{ phrase('taylorj_blogs_blog_edit_threshold') }}" dir="ltr" />
     </div>
     <xf:submitrow submit="{{ phrase('save') }}" fa="fa-save" icon="save" />
 </xf:form>
@@ -324,7 +325,7 @@
 
 <xf:title>{$blogPost.blog_post_title}</xf:title>
 
-<xf:description meta="false">
+<xf:description>
     <div class="u-pullLeft" data-xf-init="taylorj-blogs">
         <ul class="listInline listInline--bullet">
             <li>
@@ -372,6 +373,12 @@
     </xf:if>
 </xf:description>
 
+<xf:set var="$bpSnippet" value="{{ snippet($blogPost.blog_post_content, 0, {'stripBbCode': true}) }}" />
+
+<xf:macro id="metadata_macros::metadata" arg-description="{$fpSnippet}"
+    arg-shareUrl="{{ link('canonical:blogs/post', $blogPost) }}"
+    arg-canonicalUrl="{{ link('canonical:blogs/post', $blogPost) }}" />
+
 <xf:macro id="lightbox_macros::setup" arg-canViewAttachments="{$blogPost.canViewAttachments()}" />
 
 <div class="block" data-xf-init="lightbox" data-type="taylorj_blogs_blog_post">
@@ -383,9 +390,29 @@
                         <xf:extension id="main_cell_inner">
                             <div class="message-main js-quickEditTarget">
                                 <div class="message-attribution">
-                                    <xf:date time="$blogPost.blog_post_date" />
                                     <div class="u-pullRight">
-                                        {{ phrase('views') }}: {$blogPost.view_count}
+                                        <ul
+                                            class="message-attribution-opposite message-attribution-opposite--list {$oppositeClass}">
+                                            <li>
+                                                <a href="{{ link('blogs/post', $blogPost) }}"
+                                                    class="message-attribution-gadget" data-xf-init="share-tooltip"
+                                                    data-href="{{ link('blogs/post/share', $blogPost) }}"
+                                                    aria-label="{{ phrase('share')|for_attr }}" rel="nofollow">
+                                                    <xf:fa icon="fa-share-alt" />
+                                                </a>
+                                            </li>
+                                            <xf:if
+                                                is="$xf.options.embedCodeShare AND method_exists($blogPost, 'getEmbedCodeHtml')">
+                                                <li class="u-hidden js-embedCopy">
+                                                    <xf:macro id="share_page_macros::share_clipboard_text"
+                                                        arg-text="{$blogPost.getEmbedCodeHtml()}"
+                                                        arg-successText="{{ phrase('embed_code_html_copied_to_clipboard') }}" />
+                                                </li>
+                                            </xf:if>
+                                            <li>
+                                                {{ phrase('views') }}: {$blogPost.view_count}
+                                            </li>
+                                        </ul>
                                     </div>
                                 </div>
                                 <div class="message-content">
@@ -553,7 +580,8 @@
     <xf:button href="{{ link('threads', $blogPost.Discussion) }}" fa="fa-plus-square" class="u-pullRight button--cta">
         {{ phrase('taylorj_blogs_blog_post_add_comment') }}
     </xf:button>
-</xf:if>]]></template>
+</xf:if>
+]]></template>
   <template type="public" title="taylorj_blogs_blog_post_view.less" version_id="1000034" version_string="1.0.0 Beta 4"><![CDATA[.taylorJUserBlogs-post-content {
     padding: @xf-paddingLarge;
 }]]></template>
@@ -563,7 +591,11 @@
 <xf:breadcrumb source="$blog.getBreadcrumbs(true)" />
 
 <xf:title>{$blog.blog_title}</xf:title>
-<xf:description>{$blog.blog_description}</xf:description>
+<xf:description meta="false">{$blog.blog_description}</xf:description>
+
+<xf:macro id="metadata_macros::metadata" arg-description="{$blog.blog_description}"
+    arg-shareUrl="{{ link('canonical:blogs/blog', $blog) }}"
+    arg-canonicalUrl="{{ link('canonical:blogs/blog', $blog) }}" />
 
 <div class="taylorjUserBlogs-blog-description">
     <xf:if is="{$blog.canPost()}">
