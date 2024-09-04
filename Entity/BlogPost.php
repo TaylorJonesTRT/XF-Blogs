@@ -186,6 +186,12 @@ class BlogPost extends Entity implements RenderableContentInterface
 		return true;
 	}
 
+	public function canReport(&$error = null, ?User $asUser = null)
+	{
+		$asUser = $asUser ?: \XF::visitor();
+		return $asUser->canReport($error);
+	}
+
 	public function getBbCodeRenderOptions($context, $type)
 	{
 		$renderOptions = [

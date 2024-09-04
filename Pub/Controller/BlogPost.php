@@ -9,7 +9,7 @@ use XF\Repository\PostRepository;
 use XF\Mvc\ParameterBag;
 use XF\Repository\AttachmentRepository;
 use XF\ControllerPlugin\SharePlugin;
-
+use XF\ControllerPlugin\ReportPlugin;
 use TaylorJ\Blogs\Utils;
 
 /**
@@ -196,6 +196,23 @@ class BlogPost extends AbstractController
             \XF::phrase('taylorj_blogs_blog_post_share_this'),
             null,
             $blogPost->getEmbedCodeHtml()
+        );
+    }
+
+    public function actionReport(ParameterBag $params)
+    {
+        $blogPost = $this->assertViewablePost($params->blog_post_id);
+        if (!$blogPost->canReport($error)) {
+            return $this->noPermission($error);
+        }
+
+        /** @var ReportPlugin $reportPlugin */
+        $reportPlugin = $this->plugin(ReportPlugin::class);
+        return $reportPlugin->actionReport(
+            'taylorj_blogs_blog_post',
+            $blogPost,
+            $this->buildLink('blogs/post/report', $blogPost),
+            $this->buildLink('blogs/post', $blogPost)
         );
     }
 

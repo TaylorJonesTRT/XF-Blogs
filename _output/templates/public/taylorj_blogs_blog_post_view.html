@@ -105,6 +105,13 @@
                                         <xf:react content="{$blogPost}" link="blogs/post/react"
                                             list="< .js-post | .js-reactionList" />
                                     </div>
+                                    <div class="actionBar-set actionBar-set--internal">
+                                        <xf:if is="$blogPost.canReport()">
+                                            <a href="{{ link('blogs/post/report', $blogPost) }}"
+                                                class="actionBar-action actionBar-action--report"
+                                                data-xf-click="overlay">{{ phrase('report_verb') }}</a>
+                                        </xf:if>
+                                    </div>
                                 </div>
                                 <footer class="message-footer">
                                     <div

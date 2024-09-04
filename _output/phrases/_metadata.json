@@ -245,6 +245,12 @@
         "version_string": "1.0.0 Alpha",
         "hash": "f738dc77bde2d5447f39d9feb81e9e10"
     },
+    "taylorj_blog_post_in_blog_x.txt": {
+        "global_cache": false,
+        "version_id": 1000036,
+        "version_string": "1.0.0 Beta 6",
+        "hash": "5f3b6c74b060ad24a8721b0c4a729414"
+    },
     "taylorj_blogs_blog.txt": {
         "global_cache": false,
         "version_id": 1000031,
