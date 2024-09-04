@@ -1,29 +1,41 @@
 <xf:css src="taylorj_blogs_blog_view.less" />
+<xf:css src="structured_list.less" />
 
 <xf:breadcrumb source="$blog.getBreadcrumbs(true)" />
 
 <xf:title>{$blog.blog_title}</xf:title>
-<xf:description>{$blog.blog_description}</xf:description>
+<xf:description meta="false">{$blog.blog_description}</xf:description>
+
+<xf:macro id="metadata_macros::metadata" arg-description="{$blog.blog_description}"
+    arg-shareUrl="{{ link('canonical:blogs/blog', $blog) }}"
+    arg-canonicalUrl="{{ link('canonical:blogs/blog', $blog) }}" />
 
 <div class="taylorjUserBlogs-blog-description">
     <xf:if is="{$blog.canPost()}">
         <xf:pageaction>
             <xf:button href="{{ link('blogs/blog/add-post', $blog) }}" fa="fa-plus-square" class="button--cta">
-                Create a new post
+                {{ phrase('taylorj_blogs_blog_create_post') }}
             </xf:button>
         </xf:pageaction>
     </xf:if>
 
     <div class="u-pullRight taylorjBlogs-blog-actions">
         <div>
-            <xf:button href="{{ link('blogs/blog/watch', $blog) }}" class="u-pullRight button--link"
-                data-sk-watch="{{ phrase('watch') }}" data-sk-unwatch="{{ phrase('unwatch') }}">
-                <xf:if is="{$blog.BlogWatch.{$xf.visitor.user_id}}">
-                    {{ phrase('unwatch') }}
-                    <xf:else />
-                    {{ phrase('watch') }}
-                </xf:if>
-            </xf:button>
+            <xf:if is="{$blog.canWatch()}">
+                <xf:button href="{{ link('blogs/blog/watch', $blog) }}" class="u-pullRight button--link"
+                    data-sk-watch="{{ phrase('watch') }}" data-sk-unwatch="{{ phrase('unwatch') }}">
+                    <xf:if is="{$blog.BlogWatch.{$xf.visitor.user_id}}">
+                        {{ phrase('unwatch') }}
+                        <xf:else />
+                        {{ phrase('watch') }}
+                    </xf:if>
+                </xf:button>
+            </xf:if>
+            <xf:if is="{$blog.canViewScheduledPosts()}">
+                <xf:button href="{{ link('blogs/blog/scheduled-posts', $blog) }}" class="u-pullRight button--link">
+                    {{ phrase('taylorj_blogs_scheduled_posts_button') }}
+                </xf:button>
+            </xf:if>
         </div>
 
         <div>
@@ -38,7 +50,7 @@
                                 <!--[XF:thread_tools_menu:top]-->
                                 <xf:if is="$blog.canEdit()">
                                     <a href="{{ link('blogs/blog/edit', $blog) }}" class="menu-linkRow">{{
-                                        phrase('taylorj_blogs_blog_edit') }}</a>
+                                        phrase('taylorj_blogs_blog_edit_button') }}</a>
                                 </xf:if>
                                 <xf:if is="$blog.canDelete()">
                                     <a href="{{ link('blogs/blog/delete', $blog) }}" data-xf-click="overlay"
@@ -62,27 +74,50 @@
         <xf:foreach loop="{$blogPosts}" key="$blog_post_id" value="$blogPost">
             <div class="block-container">
                 <div class="block-body">
-                    <div class="message message--article message--articlePreview">
+                    <article
+                        class="message message--article message--articlePreview js-inlineModContainer js-threadListItem-{$blogPost.blog_post_id}">
                         <div class="articlePreview-main">
-                            <div class="articlePreview-text">
-                                <div class="articlePreview-headline">
-                                    <h2 class="articlePreview-title">
-                                        <a href="{{ link('blogs/post', $blogPost) }}">{$blogPost.blog_post_title}</a>
-                                    </h2>
-                                </div>
-                                <div class="message--articlePreview articlePreview-content">
-                                    <div class="message-content">
-                                        <div class="message-userContent">
-                                            <article class="message-body">
-                                                {{ bb_code_snippet($blogPost.blog_post_content,
-                                                'taylorj_blogs_blog_post', $blogPost, 750) }}
-                                            </article>
+                            <div class="taylorjBlogs-main">
+
+                                <xf:if is="$blogPost.cover_image">
+                                    <div class="taylorjBlogs-blog-post-cover-image">
+                                        <a href="{$linkUnread}" class="articlePreview-image" tabindex="-1">
+                                            <img src="{$blogPost.cover_image}" alt="{$blogPost.blog_post_title}"
+                                                loading="lazy" />
+                                        </a>
+                                    </div>
+                                </xf:if>
+                                <div class="taylorjBlogs-blog-post-snippet {{
+                                $blogPost.cover_image ? '' : 'taylorjBlogs-blog-post-no-cover' }}">
+                                    <div class="articlePreview-text ">
+                                        <div class="articlePreview-headline">
+                                            <h2 class="articlePreview-title">
+                                                <a
+                                                    href="{{ link('blogs/post', $blogPost) }}">{$blogPost.blog_post_title}</a>
+                                            </h2>
+                                        </div>
+                                        <div class="{{ $blogPost.cover_image ? 'taylorjBlogs-preview-text' : '' }}">
+                                            <div class="message--articlePreview articlePreview-content">
+                                                <div class="message-content">
+                                                    <div class="message-userContent">
+                                                        <article class="message-body">
+                                                            <!-- {{ bb_code_snippet($blogPost.blog_post_content,
+                                                    'taylorj_blogs_blog_post', $blogPost, 750) }} -->
+                                                            {{ snippet($blogPost.blog_post_content, 750, {
+                                                            'stripQuote': true,
+                                                            'bbWrapper': false
+                                                            }) }}
+                                                        </article>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="articlePreview-links">
+                                                <a href="{{ link('blogs/post', $blogPost) }}"
+                                                    class="button button--link">{{
+                                                    phrase('view_full_post') }} &raquo;</a>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="articlePreview-links">
-                                    <a href="{{ link('blogs/post', $blogPost) }}" class="button button--link">{{
-                                        phrase('view_full_post') }} &raquo;</a>
                                 </div>
                             </div>
                             <div class="block-footer">
@@ -94,7 +129,7 @@
                                 <span class="u-pullRight">{{ phrase('views') }}: {$blogPost.view_count}</span>
                             </div>
                         </div>
-                    </div>
+                    </article>
                 </div>
             </div>
         </xf:foreach>

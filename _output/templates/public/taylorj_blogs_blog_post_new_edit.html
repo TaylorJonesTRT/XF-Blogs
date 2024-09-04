@@ -1,4 +1,9 @@
-<xf:breadcrumb source="$blog.getBreadcrumbs(true)" />
+<xf:if is="$blog">
+	<xf:breadcrumb source="$blog.getBreadcrumbs(true)" />
+	<xf:else />
+	<xf:breadcrumb source="$blogPost.getBreadcrumbs(true)" />
+</xf:if>
+
 <xf:title>Create a new blog post</xf:title>
 <div class="block">
 	<xf:form action="{{ link('blogs/blog/post-save', $blogPost) }}" class="block" ajax="true"

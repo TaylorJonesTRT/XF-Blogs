@@ -2,8 +2,15 @@
 
 namespace TaylorJ\Blogs\Pub\Controller;
 
+use TaylorJ\Blogs\Entity\BlogPost as BlogPostEntity;
+use TaylorJ\Blogs\XF\ForumType\Discussion;
 use XF\Pub\Controller\AbstractController;
+use XF\Repository\PostRepository;
 use XF\Mvc\ParameterBag;
+use XF\Repository\AttachmentRepository;
+use XF\ControllerPlugin\SharePlugin;
+
+use TaylorJ\Blogs\Utils;
 
 /**
  * Controller for handling a blog instance
@@ -13,24 +20,40 @@ class BlogPost extends AbstractController
     public function actionIndex(ParameterBag $params)
     {
         $blogPost = $this->assertBlogPostExists($params->blog_post_id);
-		$blogPostRepo = $this->getBlogPostRepo();
-        
+        $blogPostRepo = $this->getBlogPostRepo();
+
         $blogPostContent = $this->finder('TaylorJ\Blogs:BlogPost')
             ->where('blog_post_id', $params->blog_post_id);
 
         /** @var \XF\Repository\Attachment $attachmentRepo */
-        $attachmentRepo = $this->repository('XF:Attachment');
+        $attachmentRepo = $this->repository(AttachmentRepository::class);
         $attachmentRepo->addAttachmentsToContent($blogPostContent->fetch(), 'taylorj_blogs_blog_post');
 
-		$isPrefetchRequest = $this->request->isPrefetch();
+        if ($blogPost->blog_post_state === 'visible') {
+            $discussionThread = $this->finder('XF:Thread')->where('thread_id', $blogPost->discussion_thread_id)->fetchOne();
+            /** @var \XF\Repository\PostRepository $postRepo */
+            $postRepo = $this->getPostRepo();
+            $postList = $postRepo->findPostsForThreadView($discussionThread)
+                ->order('post_date', 'DESC')
+                ->fetch(5);
+        } else {
+            $discussionThread = null;
+            $postList = null;
+        }
+        $isPrefetchRequest = $this->request->isPrefetch();
 
-		if (!$isPrefetchRequest)
-		{
-			$blogPostRepo->logThreadView($blogPost);
-		}
+        if (!$isPrefetchRequest) {
+            $blogPostRepo->logThreadView($blogPost);
+        }
+
+        $blogPostWordCount = str_word_count(strip_tags($blogPost->blog_post_content));
+        $readTime = ceil($blogPostWordCount / 225);
 
         $viewParams = [
-            'blogPost' => $blogPost
+            'blogPost' => $blogPost,
+            'comments' => $postList,
+            'discussionThread' => $discussionThread,
+            'blogPostReadTime' => $readTime
         ];
 
         return $this->view('TaylorJ\Blogs:BlogPost\Index', 'taylorj_blogs_blog_post_view', $viewParams);
@@ -51,12 +74,28 @@ class BlogPost extends AbstractController
             $blogPost,
         );
 
+        $tz = new \DateTimeZone(\XF::visitor()->timezone);
+        $dt = new \DateTime();
+        $dt->setTimezone(new \DateTimeZone(\XF::visitor()->timezone));
+        $dt->setTimestamp($blogPost->scheduled_post_date_time);
+        /*$dt = new \DateTime($blogPost->scheduled_post_date_time);*/
+        $hh_value = $dt->format('H');
+        $mm_value = $dt->format('i');
+
+        $hours = Utils::hours();
+        $minutes = Utils::minutes();
+
         $blogId = $blogPost->Blog->blog_id;
 
         $viewParams = [
             'blogPost' => $blogPost,
             'attachmentData' => $attachmentData,
-            'blog_id' => $blogId
+            'blog_id' => $blogId,
+            'hours' => $hours,
+            'minutes' => $minutes,
+            'dt' => $dt,
+            'hh_value' => $hh_value,
+            'mm_value' => $mm_value
         ];
 
         return $this->view('TaylorJ\Blogs:BlogPost\Edit', 'taylorj_blogs_blog_post_edit', $viewParams);
@@ -66,36 +105,48 @@ class BlogPost extends AbstractController
     {
         $blogPost = $this->finder('TaylorJ\Blogs:BlogPost')->where('blog_post_id', $params->blog_post_id)->fetchOne();
 
-        $this->blogPostSaveProcess($blogPost, $params)->run();
-
-        return $this->redirect($this->buildLink('blogs/post', $blogPost));
+        return $this->blogPostSaveProcess($blogPost, $params);
     }
 
-    protected function blogPostSaveProcess(\TaylorJ\Blogs\Entity\BlogPost $blogPost, ParameterBag $params)
+    protected function blogPostSaveProcess(BlogPostEntity $blogPost, ParameterBag $params)
     {
         $input = $this->filter([
             'blog_post_title' => 'str',
             'blog_id' => 'int'
         ]);
-        $message = $this->plugin('XF:Editor')->fromInput('message');
-        $input['blog_post_content'] = $message;
-        $input['blog_post_last_edit_date'] = \XF::$time;
 
-        $form = $this->formAction();
-        $form->basicEntitySave($blogPost, $input);
+        // uncomment the below lines if this ends up breaking something
+        // i do not remember why i had a isPost check on a blogPost creation
+        // if ($this->isPost()) {
+        $creator = $this->blogPostEdit($blogPost);
+        if (!$creator->validate($errors)) {
+            return $this->error($errors);
+        }
+
+        $this->assertNotFlooding('post');
+
+        /** @var \TaylorJ\Blogs\Entity\BlogPost $blogPost */
+        $blogPost = $creator->save();
 
         $hash = $this->filter('attachment_hash', 'str');
         if ($hash && $blogPost->canUploadAndManageAttachments()) {
+            /** @var \XF\Service\Attachment\Preparer $inserter */
             $inserter = $this->service('XF:Attachment\Preparer');
+            $associated = $inserter->associateAttachmentsWithContent($hash, 'taylorj_blogs_blog_post', $blogPost->blog_post_id);
+            if ($associated) {
+                $blogPost->fastUpdate('attach_count', $blogPost->attach_count + $associated);
+            }
         }
+        $creator->finalSteps();
 
-        return $form;
+        return $this->redirect($this->buildLink('blogs/post', $blogPost), \XF::phrase('taylorj_blogs_post_edit_successful'));
+        // }
     }
-    
+
     public function actionDelete(ParameterBag $params)
     {
         $blogPost = $this->assertBlogPostExists($params->blog_post_id);
-        
+
         /** @var \XF\ControllerPlugin\Delete $plugin */
         $plugin = $this->plugin('XF:Delete');
         return $plugin->actionDelete(
@@ -106,26 +157,45 @@ class BlogPost extends AbstractController
             $blogPost->blog_post_title
         );
     }
-    
+
     public function actionReact(ParameterBag $params)
     {
         $blogPost = $this->assertViewablePost($params->blog_post_id);
-        
+
         /** @var \XF\ControllerPlugin\Reaction $reactionPlugin */
         $reactionPlugin = $this->plugin('XF:Reaction');
-        
+
         return $reactionPlugin->actionReactSimple($blogPost, 'blogs/post');
     }
-    
+
     public function actionReactions(ParameterBag $params)
     {
         $blogPost = $this->assertViewablePost($params->blog_post_id);
-        
+
         /** @var \XF\ControllerPlugin\Reaction $reactionPlugin */
         $reactionPlugin = $this->plugin('XF:Reaction');
 
         return $reactionPlugin->actionReactions(
-            $blogPost, 'blogs/post/reactions', null, []
+            $blogPost,
+            'blogs/post/reactions',
+            null,
+            []
+        );
+    }
+
+    public function actionShare(ParameterBag $params)
+    {
+        $blogPost = $this->assertViewablePost($params->blog_post_id);
+        $blog = $blogPost->Blog;
+
+        /** @var SharePlugin $sharePlugin */
+        $sharePlugin = $this->plugin(SharePlugin::class);
+        return $sharePlugin->actionTooltipWithEmbed(
+            $this->buildLink('canonical:blogs/post', $blogPost),
+            \XF::phrase('taylorj_blogs_blog_post_in_x', ['title' => $blogPost->blog_post_title]),
+            \XF::phrase('taylorj_blogs_blog_post_share_this'),
+            null,
+            $blogPost->getEmbedCodeHtml()
         );
     }
 
@@ -174,35 +244,73 @@ class BlogPost extends AbstractController
     {
         return $this->assertRecordExists('TaylorJ\Blogs:BlogPost', $id, $with, $phraseKey);
     }
-    
+
     protected function assertViewablePost($id, $with = null, $phraseKey = null)
     {
         /** @var \TaylorJ\Blogs\Entity\BlogPost $blogPost */
         $blogPost = $this->assertBlogPostExists($id, $with, $phraseKey);
 
-        if (!$blogPost->canView($error))
-        {
+        if (!$blogPost->canView($error)) {
             throw $this->exception(
                 $this->noPermission($error)
             );
         }
-        
+
         return $blogPost;
     }
 
-	/**
-	 * @return \XF\Repository\Thread
-	 */
-	protected function getBlogPostRepo()
-	{
-		return $this->repository('TaylorJ\Blogs:BlogPost');
-	}
+    /**
+     * @return \XF\Repository\Thread
+     */
+    protected function getBlogPostRepo()
+    {
+        return $this->repository('TaylorJ\Blogs:BlogPost');
+    }
 
-	public function insertJob(\TaylorJ\Blogs\Entity\BlogPost $blogPost)
-	{
-		$jobid = 'taylorjblogs_scheduledpost_'.$blogPost->blog_post_id.'_'.\XF::$time;
-		$app = \XF::app();
-        $app->jobManager()->enqueueLater($jobid, $blogPost->scheduled_post_date_time, 'TaylorJ\Blogs:PostBlogPost', ['blog_post_id'=>$blogPost->blog_post_id]);
-	}
+    /**
+     * @return PostRepository
+     */
+    protected function getPostRepo()
+    {
+        return $this->repository(PostRepository::class);
+    }
 
+    public function insertJob(\TaylorJ\Blogs\Entity\BlogPost $blogPost)
+    {
+        $jobid = 'taylorjblogs_scheduledpost_' . $blogPost->blog_post_id . '_' . \XF::$time;
+        $app = \XF::app();
+        $app->jobManager()->enqueueLater($jobid, $blogPost->scheduled_post_date_time, 'TaylorJ\Blogs:PostBlogPost', ['blog_post_id' => $blogPost->blog_post_id]);
+    }
+
+    /**
+     * @param \TaylorJ\Blogs\Entity\Blog $blog
+     *
+     * @return \TaylorJ\Blogs\Service\BlogPost\Create
+     */
+    protected function blogPostEdit(\TaylorJ\Blogs\Entity\BlogPost $blogPost)
+    {
+        /** @var \TaylorJ\Blogs\Service\BlogPost\Edit $creator */
+        $creator = $this->service('TaylorJ\Blogs:BlogPost\Edit', $blogPost);
+
+        $title = $this->filter('blog_post_title', 'str');
+        $creator->setTitle($title);
+
+        $message = $this->plugin('XF:Editor')->fromInput('message');
+        $creator->setContent($message);
+
+        $scheduledPostDateTime = $this->filter([
+            'blog_post_schedule' => 'bool',
+            'dd' => 'str',
+            'hh' => 'int',
+            'mm' => 'int'
+        ]);
+
+        $creator->setScheduledPostDateTime($scheduledPostDateTime);
+
+        /*if ($blogPost->isChanged('blog_post_state')) {*/
+        /*    $test = 'hello';*/
+        /*}*/
+
+        return $creator;
+    }
 }

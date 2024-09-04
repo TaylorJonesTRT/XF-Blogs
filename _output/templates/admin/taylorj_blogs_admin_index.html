@@ -1,0 +1,50 @@
+<xf:title>Blogs</xf:title>
+
+<div class="block">
+    <div class="block-outer">
+        <xf:macro name="filter_macros::quick_filter" arg-key="blogs" arg-class="block-outer-opposite" />
+    </div>
+    <div class="block-container">
+        <div class="block-body">
+            <xf:datalist data-xf-init="responsive-datalist">
+                <xf:foreach loop="$blogs" key="$blog_post_id" value="$blog">
+                    <xf:datarow>
+
+                        <xf:cell class="dataList-cell--min dataList-cell--image dataList-cell--imageSmall"
+                            href="{{ link('users/edit', $blog.User) }}">
+                            <xf:avatar user="$blog.User" size="s" href="" />
+                        </xf:cell>
+
+                        <xf:main>
+
+                            <xf:label>
+                                <a href="{{ link('blogs', $blog) }}">
+                                    {$blog.blog_title}
+                                </a>
+                            </xf:label>
+
+                            <xf:explain>
+                                <ul class="listInline listInline--bullet">
+                                    <li>
+                                        <xf:username user="$blog.User" href="{{ link('users', $blog.User)}}" />
+                                    </li>
+                                    <li>
+                                        <xf:date time="$blog.blog_creation_date" />
+                                    </li>
+                                </ul>
+                            </xf:explain>
+
+                        </xf:main>
+                        
+                        <xf:delete href="{{ link('blogs/blog-delete', $blog) }}" />
+
+                    </xf:datarow>
+                </xf:foreach>
+            </xf:datalist>
+        </div>
+    </div>
+</div>
+
+<xf:pagenav page="{$page}" perpage="{$perPage}" total="{$total}"
+    link="blogs" params="{$linkParams}"
+    wrapperclass="block-outer block-outer--after" />

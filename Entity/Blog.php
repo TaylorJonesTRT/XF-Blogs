@@ -117,6 +117,30 @@ class Blog extends Entity
 		}
 		return false;
 	}
+	
+	public function canWatch(&$error = null)
+	{
+		$visitor = \XF::visitor();
+
+		if ($this->user_id === $visitor->user_id)
+		{
+			return false;
+		}
+	
+		return true;
+	}
+	
+	public function canViewScheduledPosts(&$error = null)
+	{
+		$visitor = \XF::visitor();
+
+		if ($this->user_id === $visitor->user_id)
+		{
+			return true;
+		}
+		
+		return false;
+	}
     
     public function getBlogHeaderImage(bool $canonical = false): string
     {
