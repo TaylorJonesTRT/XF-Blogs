@@ -26,15 +26,13 @@ class Discussion extends XFCP_Discussion
 	{
 		$filterable = parent::getFilterableThreadTypes($forum);
 
-		$resourceTarget = \XF::db()->fetchOne("
-			SELECT 1
+		$blogPostTarget = \XF::db()->fetchOne("
+			SELECT option_value
 			FROM xf_option
-            WHERE option_id = 'taylorjBlogsBlogPostForum' AS option AND
-			WHERE option.option_value = ?
+			WHERE option_id = 'taylorjBlogsBlogPostForum'
 			LIMIT 1
-		", $forum->node_id);
-		if (!$resourceTarget)
-		{
+		");
+		if (!$blogPostTarget) {
 			$this->removeBlogPostTypeFromList($filterable);
 		}
 
@@ -44,8 +42,7 @@ class Discussion extends XFCP_Discussion
 	protected function removeBlogPostTypeFromList(array &$list)
 	{
 		$blogPostKey = array_search('blogPost', $list);
-		if ($blogPostKey !== false)
-		{
+		if ($blogPostKey !== false) {
 			unset($list[$blogPostKey]);
 		}
 	}
