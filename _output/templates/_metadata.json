@@ -15,9 +15,9 @@
         "hash": "6e1901a02cfb1754b871e500bad1aded"
     },
     "admin/widget_def_options_taylorj_latest_blog_posts.html": {
-        "version_id": 1000035,
-        "version_string": "1.0.0 Beta 5",
-        "hash": "58b98c376948ffd4fc36d7b661539669"
+        "version_id": 1000036,
+        "version_string": "1.0.0 Beta 6",
+        "hash": "588f6fc8d454dae3c02510beef1dc841"
     },
     "public/alert_taylorj_blogs_blog_insert.html": {
         "version_id": 1000034,
@@ -38,6 +38,11 @@
         "version_id": 1000031,
         "version_string": "1.0.0 Beta 1",
         "hash": "eeb85e9557886e6de0685e7c362c8122"
+    },
+    "public/taylorj_blogs_author_view.html": {
+        "version_id": 1000036,
+        "version_string": "1.0.0 Beta 6",
+        "hash": "d461a7242feb0740686ccc9a7d272298"
     },
     "public/taylorj_blogs_blog_edit.html": {
         "version_id": 1000035,
@@ -104,10 +109,20 @@
         "version_string": "1.0.0 Beta 4",
         "hash": "616043b461b3db39fff1a7edc44e2769"
     },
+    "public/taylorj_blogs_list_macros.html": {
+        "version_id": 1000036,
+        "version_string": "1.0.0 Beta 6",
+        "hash": "155ffcc4712a0cff0239ddfcbca805af"
+    },
     "public/taylorj_blogs_thread_view_type_blog_post.html": {
         "version_id": 1000035,
         "version_string": "1.0.0 Beta 5",
         "hash": "6ae4fa03cd2f3c57f4761063b1090441"
+    },
+    "public/taylorj_blogs_whats_new_blog_posts.html": {
+        "version_id": 1000036,
+        "version_string": "1.0.0 Beta 6",
+        "hash": "f2cdb2b9bd73903a21c711d5a8c11d45"
     },
     "public/taylorj_userblogs_blog_post_edit.html": {
         "version_id": 1000010,
@@ -130,8 +145,8 @@
         "hash": "27edae06fc23f7701285e6e66c9ab5fc"
     },
     "public/widget_taylorj_blogs_new_blog_posts.html": {
-        "version_id": 1000035,
-        "version_string": "1.0.0 Beta 5",
-        "hash": "227b92803a1bc70575e89c48c5f449e3"
+        "version_id": 1000036,
+        "version_string": "1.0.0 Beta 6",
+        "hash": "641203f11548c788229179ee5b1f62b6"
     }
 }

@@ -1,0 +1,71 @@
+<xf:title>Your blog posts</xf:title>
+<xf:if is="$blogPosts is not empty">
+
+	<div class="block" data-xf-init="{{ $canInlineMod ? 'inline-mod' : '' }}" data-type="thread"
+		data-href="{{ link('inline-mod') }}">
+
+		<div class="block-outer">
+			<xf:pagenav page="{$page}" perpage="{$perPage}" total="{$total}" link="blogs/authors/{$pageSelected}"
+				params="{{ {
+					'user_id': ($xf.visitor.user_id != $blogPost.User.user_id ? $blogPost.user_id : '')
+				} }}" wrapperclass="block-outer-main" />
+		</div>
+
+		<div class="block-container">
+			<div class="block-body">
+				<div class="structItemContainer">
+					<xf:foreach loop="$blogPosts" value="$blogPost">
+						<xf:set var="$extra" value="" />
+						<xf:macro id="taylorj_blogs_list_macros::blogPost" arg-blogPost="{$blogPost}"
+							arg-allowEdit="{{ false }}" />
+					</xf:foreach>
+				</div>
+			</div>
+		</div>
+
+		<xf:pagenav page="{$page}" perpage="{$perPage}" total="{$total}" link="find-threads/{$pageSelected}" params="{{ {
+				'user_id': ($xf.visitor.user_id != $user.user_id ? $user.user_id : '')
+			} }}" wrapperclass="block-outer block-outer--after" />
+	</div>
+	<xf:else />
+	<div class="blockMessage">{{ phrase('there_no_threads_to_display') }}</div>
+</xf:if>
+
+<xf:macro id="navigation" arg-pageSelected="!" arg-user="!">
+	<xf:if is="property('findThreadsNavStyle') == 'tabs'">
+		<div class="tabs tabs--standalone">
+			<div class="hScroller" data-xf-init="h-scroller">
+				<span class="hScroller-scroll">
+					<xf:macro id="links" arg-pageSelected="{$pageSelected}" arg-baseClass="tabs-tab"
+						arg-selectedClass="is-active" arg-user="{$user}" />
+				</span>
+			</div>
+		</div>
+		<xf:else />
+		<xf:sidenav>
+			<div class="block">
+				<div class="block-container">
+					<h3 class="block-header">{{ phrase('thread_lists') }}</h3>
+					<div class="block-body">
+						<xf:macro id="links" arg-pageSelected="{$pageSelected}" arg-baseClass="blockLink"
+							arg-selectedClass="is-selected" arg-user="{$user}" />
+					</div>
+				</div>
+			</div>
+
+			<xf:widgetpos id="find_threads_sidenav" />
+		</xf:sidenav>
+		<xf:page option="sideNavTitle">{{ phrase('thread_lists') }}</xf:page>
+	</xf:if>
+</xf:macro>
+
+<xf:macro id="links" arg-pageSelected="!" arg-baseClass="!" arg-selectedClass="!" arg-user="!">
+	<a class="{$baseClass} {{ ($pageSelected == 'started' && $xf.visitor.user_id == $user.user_id) ? {$selectedClass} : '' }}"
+		href="{{ link('find-threads/started') }}" rel="nofollow">{{ phrase('your_threads') }}</a>
+	<a class="{$baseClass} {{ $pageSelected == 'contributed' ? {$selectedClass} : '' }}"
+		href="{{ link('find-threads/contributed') }}" rel="nofollow">{{ phrase('threads_with_your_posts') }}</a>
+	<a class="{$baseClass} {{ $pageSelected == 'unanswered' ? {$selectedClass} : '' }}"
+		href="{{ link('find-threads/unanswered') }}" rel="nofollow">{{ phrase('unanswered_threads') }}</a>
+	<a class="{$baseClass} {{ $pageSelected == 'watched' ? {$selectedClass} : '' }}"
+		href="{{ link('watched/threads') }}" rel="nofollow">{{ phrase('watched_threads') }}</a>
+</xf:macro>

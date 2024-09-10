@@ -1,0 +1,54 @@
+<xf:macro id="blogPost" arg-blogPost="!">
+	<xf:css src="structured_list.less" />
+	<xf:css src="xfrm.less" />
+
+	<div class="structItem structItem--resource js-inlineModContainer js-resourceListItem-{$blogPost.blog_post_id}"
+		data-author="{{ $blogPost.User.username }}">
+		<div class="structItem-cell structItem-cell--icon structItem-cell--iconExpanded">
+			<div class="structItem-iconContainer">
+				<xf:if is="$xf.options.xfrmAllowIcons">
+					{{ blog_icon($blogPost->Blog, 's', link('blogs/blog', $blogPost->Blog)) }}
+					<xf:avatar user="$blogPost.User" size="s" href=""
+						class="avatar--separated structItem-secondaryIcon" />
+					<xf:else />
+					<xf:avatar user="$blogPost.User" size="s" />
+				</xf:if>
+			</div>
+		</div>
+		<div class="structItem-cell structItem-cell--main" data-xf-init="touch-proxy">
+
+			<div class="structItem-title">
+				<a href="{{ link('blogs/post', $blogPost) }}" class=""
+					data-tp-primary="on">{$blogPost.blog_post_title}</a>
+			</div>
+
+			<div class="structItem-minor">
+				<ul class="structItem-parts">
+					<li>
+						<xf:username user="$blogPost.User" />
+					</li>
+					<li class="structItem-startDate">
+						<a href="{{ link('blogs/post', $blogPost) }}" rel="nofollow">
+							<xf:date time="{$blogPost.blog_post_date}" />
+						</a>
+					</li>
+				</ul>
+			</div>
+		</div>
+		<div class="structItem-cell structItem-cell--resourceMeta">
+
+			<dl class="pairs pairs--justified structItem-minor structItem-metaItem structItem-metaItem--downloads">
+				<dt>{{ phrase('views') }}</dt>
+				<dd>{$blogPost.view_count|number}</dd>
+			</dl>
+			<dl class="pairs pairs--justified structItem-minor structItem-metaItem structItem-metaItem--lastUpdate">
+				<dt>{{ phrase('taylorj_blogs_blog') }}</dt>
+				<dd>
+					<a href="{{ link('blogs/blog', $blogPost->Blog) }}" class="u-concealed">
+						{{ $blogPost.blog_post_title }}
+					</a>
+				</dd>
+			</dl>
+		</div>
+	</div>
+</xf:macro>

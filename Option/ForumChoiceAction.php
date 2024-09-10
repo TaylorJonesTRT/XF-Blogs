@@ -15,11 +15,11 @@ class ForumChoiceAction extends AbstractOption
 		/** @var ForumRepository $forumRepo */
 		$forumRepo = \XF::repository('XF:Forum');
 
-        $forumOptions = $forumRepo->getForumOptionsData(false, 'discussion');
+		$forumOptions = $forumRepo->getForumOptionsData(false, 'discussion');
 
 		return static::getTemplate('admin:taylorj_blogs_option_template_forumChoiceAction', $option, $htmlParams, [
 			'forumOptions' => $forumOptions,
-            'option' => $option
+			'option' => $option
 		]);
 	}
 

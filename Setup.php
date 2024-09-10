@@ -69,6 +69,9 @@ class Setup extends AbstractSetup
     {
         $this->schemaManager()->alterTable('xf_user', function (Alter $table) {
             $table->addColumn('taylorj_blogs_blog_count', 'int')->setDefault(0);
+            $table->addColumn('taylorj_blogs_blog_post_count', 'int')->setDefault(0);
+            $table->addKey('taylorj_blogs_blog_count', 'blog_post_count');
+            $table->addKey('taylorj_blogs_blog_post_count', 'blog_post_count');
         });
     }
 
@@ -125,6 +128,15 @@ class Setup extends AbstractSetup
         $this->giveBlogPostComments();
     }
 
+    public function upgrade1000037Step1()
+    {
+        $this->schemaManager()->alterTable('xf_user', function (Alter $table) {
+            $table->addKey('taylorj_blogs_blog_count', 'blog_post_count');
+            $table->addColumn('taylorj_blogs_blog_post_count', 'int')->setDefault(0);
+            $table->addKey('taylorj_blogs_blog_post_count', 'blog_post_count');
+        });
+    }
+
     public function uninstallStep1()
     {
         $sm = $this->schemaManager();
@@ -170,4 +182,3 @@ class Setup extends AbstractSetup
         }
     }
 }
-

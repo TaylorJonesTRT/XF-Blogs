@@ -87,7 +87,7 @@ class BlogPost extends Entity implements RenderableContentInterface
 	{
 		$visitor = \XF::visitor();
 
-		if (!$visitor->hasPermission('taylorjBlogs', 'viewOwn') || !$visitor->hasPermission('taylorjBlogs', 'viewAny')) {
+		if (!$visitor->hasPermission('taylorjBlogs', 'viewBlogs')) {
 			return false;
 		}
 
@@ -296,6 +296,7 @@ class BlogPost extends Entity implements RenderableContentInterface
 
 		if (!$this->isUpdate()) {
 			$this->adjustBlogPostCount(1);
+			$this->adjustUserBlogPostCount(1);
 			$this->Blog->fastUpdate('blog_last_post_date', \XF::$time);
 		}
 
@@ -306,6 +307,16 @@ class BlogPost extends Entity implements RenderableContentInterface
 			if ($this->isChanged('blog_post_state') && $this->blog_post_state == 'visible') {
 				$blogPostRepo->removeJob($this);
 			}
+		}
+	}
+
+	protected function adjustUserBlogPostCount($amount)
+	{
+		if (
+			$this->user_id
+			&& $this->User
+		) {
+			$this->User->fastUpdate('taylorj_blogs_blog_post_count', max(0, $this->User->taylorj_blogs_blog_post_count + $amount));
 		}
 	}
 

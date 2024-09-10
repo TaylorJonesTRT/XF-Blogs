@@ -1,19 +1,43 @@
 <xf:if is="$blogPosts is not empty OR ($blogPosts is empty AND $filter != 'latest')">
 	<div class="block" {{ widget_data($widget) }}>
 		<div class="block-container">
-			<h3 class="block-minorHeader">
-				<a href="{$link}" rel="nofollow">{$title}</a>
-			</h3>
-			<ul class="block-body">
-				<xf:if is="$blogPosts is not empty">
-					<xf:foreach loop="$blogPosts" value="$blogPost">
-						<li class="block-row">
-							<xf:macro id="taylorj_blogs_blog_post_list_macros::item_new_blog_posts"
-								arg-blogPost="{$blogPost}" />
-						</li>
-					</xf:foreach>
+			<xf:if is="$style=='full'">
+				<h3 class=" block-header">
+					<a href="{$link}" rel="nofollow">{$title}</a>
+				</h3>
+				<ul class="block-body">
+					<xf:if is="$blogPosts is not empty">
+						<div class="structItemContainer">
+							<xf:foreach loop="$blogPosts" value="$blogPost">
+								<li class="block-row">
+									<xf:macro id="taylorj_blogs_list_macros::blogPost" arg-blogPost="{$blogPost}" />
+								</li>
+							</xf:foreach>
+						</div>
+					</xf:if>
+				</ul>
+				<xf:if is="$hasMore">
+					<div class="block-footer">
+						<span class="block-footer-controls">
+							<xf:button href="{$link}" rel="nofollow">{{ phrase('view_more...') }}</xf:button>
+						</span>
+					</div>
 				</xf:if>
-			</ul>
+				<xf:else />
+				<h3 class="block-minorHeader">
+					<a href="{$link}" rel="nofollow">{$title}</a>
+				</h3>
+				<ul class="block-body">
+					<xf:if is="$blogPosts is not empty">
+						<xf:foreach loop="$blogPosts" value="$blogPost">
+							<li class="block-row">
+								<xf:macro id="taylorj_blogs_blog_post_list_macros::item_new_blog_posts"
+									arg-blogPost="{$blogPost}" />
+							</li>
+						</xf:foreach>
+					</xf:if>
+				</ul>
+			</xf:if>
 		</div>
 	</div>
 </xf:if>

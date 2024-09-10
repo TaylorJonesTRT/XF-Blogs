@@ -54,7 +54,7 @@ class LatestBlogPosts extends AbstractWidget
             case 'latest':
                 $blogPostFinder = $blogPostRepo->findLatestBlogPosts();
                 $title = \XF::phrase('widget.taylorj_blogs_latest_blog_posts');
-                $link = $router->buildLink('blogs', null);
+                $link = $router->buildLink('whats-new/blog-posts', null);
                 break;
         }
 

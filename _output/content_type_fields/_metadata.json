@@ -5,6 +5,9 @@
     "taylorj_blogs_blog-entity.json": {
         "hash": "d7027a8096622e14f7a821e9a59cfd30"
     },
+    "taylorj_blogs_blog-find_new_handler_class.json": {
+        "hash": "1bc02606eabada8616e1424e582dbc13"
+    },
     "taylorj_blogs_blog_post-alert_handler_class.json": {
         "hash": "81db85e86ab75d3c64af20a8c1f84464"
     },
@@ -16,6 +19,9 @@
     },
     "taylorj_blogs_blog_post-entity.json": {
         "hash": "36f19e54dc9dbb4c7acd62bd25f9e3d0"
+    },
+    "taylorj_blogs_blog_post-find_new_handler_class.json": {
+        "hash": "d30907eb75cc43bb0284d4159b222cf6"
     },
     "taylorj_blogs_blog_post-reaction_handler_class.json": {
         "hash": "a5d67501656b3d584a629960eca1a5df"

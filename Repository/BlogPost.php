@@ -72,4 +72,13 @@ class BlogPost extends Repository
 			->where('blog_post_state', 'visible')
 			->order('blog_post_date', 'DESC');
 	}
+
+	public function findBlogPostsByUser($userId)
+	{
+		$blogPostFinder = $this->finder('TaylorJ\Blogs:BlogPost')
+			->where('user_id', $userId)
+			->setDefaultOrder('blog_post_date', 'desc');
+
+		return $blogPostFinder;
+	}
 }

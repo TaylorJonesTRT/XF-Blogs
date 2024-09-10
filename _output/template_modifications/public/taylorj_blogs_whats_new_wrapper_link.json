@@ -1,0 +1,9 @@
+{
+    "template": "whats_new_wrapper",
+    "description": "Add the \"new blog posts\" link to what's new pages.",
+    "execution_order": 10,
+    "enabled": true,
+    "action": "str_replace",
+    "find": "<!--[XF:links:after_thread]-->",
+    "replace": "$0\n<xf:if is=\"$xf.visitor.canViewBlogs()\">\n\t<a class=\"{$baseClass} {{ $pageSelected == 'new_blog_posts' ? {$selectedClass} : '' }}\" href=\"{{ link('whats-new/blog-posts') }}\" rel=\"nofollow\">{{ phrase('taylorj_blogs_new_blog_posts') }}</a>\n</xf:if>"
+}
