@@ -29,7 +29,6 @@ class Blog extends AbstractController
             ->where('blog_post_state', 'visible');
 
         $blogPostFinder
-            ->order('blog_post_state', 'DESC')
             ->order('blog_post_date', 'DESC');
 
         $page = $params->page;
@@ -45,7 +44,8 @@ class Blog extends AbstractController
             'blogPosts' => $blogPostFinder->fetch(),
             'page' => $page,
             'perPage' => $perPage,
-            'total' => $blogPostFinder->total()
+            'total' => $blogPostFinder->total(),
+            'viewType' => 'visible'
         ];
 
         return $this->view(
@@ -88,12 +88,55 @@ class Blog extends AbstractController
             'blogPosts' => $blogPostFinder->fetch(),
             'page' => $page,
             'perPage' => $perPage,
-            'total' => $blogPostFinder->total()
+            'total' => $blogPostFinder->total(),
+            'viewType' => 'scheduled'
         ];
 
         return $this->view(
             'TaylorJ\Blogs:Blog\Index',
-            'taylorj_blogs_blog_view_scheduled_posts',
+            'taylorj_blogs_blog_view',
+            $viewParams
+        );
+    }
+
+    public function actionDraftPosts(ParameterBag $params)
+    {
+        /** @var \TaylorJ\Blogs\Entity\Blog $blog */
+        $blog = $this->assertBlogExists($params->blog_id);
+
+        if (!$blog->canView() && $blog->user_id == \XF::visitor()->user_id) {
+            return $this->noPermission(\XF::phrase('permission.taylorjBlogs_viewOwn'));
+        } elseif (!$blog->canView()) {
+            return $this->noPermission(\XF::phrase('permission.taylorjBlogs_viewAny'));
+        } elseif (\XF::visitor()->user_id !== $blog->user_id) {
+            return $this->noPermission(\XF::phrase('taylorj_blogs_blog_draft_posts_view_error'));
+        }
+
+        $blogPostFinder = $this->finder('TaylorJ\Blogs:BlogPost')
+            ->where('blog_id', $params->blog_id)
+            ->where('blog_post_state', 'draft')
+            ->order('blog_post_date', 'DESC');
+
+        $page = $params->page;
+        $perPage = $this->options()->taylorjBlogPostsPerPage;
+        $blogPostFinder->limitByPage($page, $perPage);
+
+        /** @var AttachmentRepository $attachmentRepo */
+        $attachmentRepo = \XF::repository(AttachmentRepository::class);
+        $attachmentRepo->addAttachmentsToContent($blogPostFinder, 'taylorj_blogs_blog_post');
+
+        $viewParams = [
+            'blog' => $blog,
+            'blogPosts' => $blogPostFinder->fetch(),
+            'page' => $page,
+            'perPage' => $perPage,
+            'total' => $blogPostFinder->total(),
+            'viewType' => 'draft'
+        ];
+
+        return $this->view(
+            'TaylorJ\Blogs:Blog\Index',
+            'taylorj_blogs_blog_view',
             $viewParams
         );
     }
@@ -320,14 +363,14 @@ class Blog extends AbstractController
         $creator->setContent($message);
 
         $scheduledPostDateTime = $this->filter([
-            'blog_post_schedule' => 'bool',
+            'blog_post_schedule' => 'string',
             'dd' => 'str',
             'hh' => 'int',
             'mm' => 'int'
         ]);
 
         $creator->setScheduledPostDateTime($scheduledPostDateTime);
-        if ($scheduledPostDateTime['blog_post_schedule']) {
+        if ($scheduledPostDateTime['blog_post_schedule'] == 'visible') {
             $creator->sendNotifications(3);
         }
 

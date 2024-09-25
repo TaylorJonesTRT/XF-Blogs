@@ -30,12 +30,12 @@
 
 				</xf:macro>
 
-				<xf:radiorow name="blog_post_schedule"
-					value="{{ $xf.visitor.Option.interaction_watch_state == 'watch_email' ? 1 : 0}}" rowtype="noColon"
+				<xf:radiorow name="blog_post_schedule" value="visible" rowtype="noColon"
 					label="{{ phrase('taylorj_blogs_blog_post_schedule') }}">
 
-					<xf:option value="1">{{ phrase('taylorj_blogs_blog_post_schedule_now') }}</xf:option>
-					<xf:option value="0">{{ phrase('taylorj_blogs_blog_post_schedule_later') }}</xf:option>
+					<xf:option value="visible">{{ phrase('taylorj_blogs_blog_post_schedule_now') }}</xf:option>
+					<xf:option value="draft">{{ phrase('taylorj_blogs_blog_post_draft_post') }}</xf:option>
+					<xf:option value="scheduled">{{ phrase('taylorj_blogs_blog_post_schedule_later') }}</xf:option>
 				</xf:radiorow>
 
 				<xf:formrow>

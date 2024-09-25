@@ -28,9 +28,12 @@
                     </xf:if>
                 </xf:button>
             </xf:if>
-            <xf:if is="{$blog.canViewScheduledPosts()}">
-                <xf:button href="{{ link('blogs/blog', $blog) }}" class="u-pullRight button--link">
+            <xf:if is="{$blog.isOwner()}">
+                <xf:button href="{{ link('blogs/blog', $blog) }}" class="button--link">
                     {{ phrase('taylorj_blogs_visible_posts_button') }}
+                </xf:button>
+                <xf:button href="{{ link('blogs/blog/draft-posts', $blog) }}" class="button--link">
+                    {{ phrase('taylorj_blogs_draft_posts_button') }}
                 </xf:button>
             </xf:if>
         </div>
@@ -78,7 +81,7 @@
 
                                 <xf:if is="$blogPost.cover_image">
                                     <div class="taylorjBlogs-blog-post-cover-image">
-                                        <a href="{$linkUnread}" class="articlePreview-image" tabindex="-1">
+                                        <a href="{$blogPost}" class="articlePreview-image" tabindex="-1">
                                             <img src="{$blogPost.cover_image}" alt="{$blogPost.blog_post_title}"
                                                 loading="lazy" />
                                         </a>

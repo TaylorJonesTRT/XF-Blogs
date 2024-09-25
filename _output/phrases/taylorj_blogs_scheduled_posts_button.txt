@@ -1,1 +1,1 @@
-View scheduled blog posts
+Scheduled blog posts

@@ -4,10 +4,14 @@
     <default_value>10</default_value>
     <relation group_id="taylorjBlogs" display_order="1"/>
   </option>
-  <option option_id="taylorjBlogsBlogPostForum" edit_format="callback" data_type="unsigned_integer" advanced="0">
-    <default_value>0</default_value>
-    <edit_format_params>TaylorJ\Blogs\Option\ForumChoiceAction::renderOption</edit_format_params>
+  <option option_id="taylorjBlogsBlogLimit" edit_format="spinbox" data_type="integer" advanced="0">
+    <default_value>10</default_value>
     <relation group_id="taylorjBlogs" display_order="3"/>
+  </option>
+  <option option_id="taylorjBlogsBlogPostForum" edit_format="callback" data_type="unsigned_integer" advanced="0">
+    <default_value>1</default_value>
+    <edit_format_params>TaylorJ\Blogs\Option\ForumChoiceAction::renderOption</edit_format_params>
+    <relation group_id="taylorjBlogs" display_order="4"/>
   </option>
   <option option_id="taylorjBlogsPerPage" edit_format="spinbox" data_type="positive_integer" advanced="0">
     <default_value>6</default_value>

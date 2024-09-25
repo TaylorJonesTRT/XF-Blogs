@@ -70,7 +70,7 @@ class Setup extends AbstractSetup
         $this->schemaManager()->alterTable('xf_user', function (Alter $table) {
             $table->addColumn('taylorj_blogs_blog_count', 'int')->setDefault(0);
             $table->addColumn('taylorj_blogs_blog_post_count', 'int')->setDefault(0);
-            $table->addKey('taylorj_blogs_blog_count', 'blog_post_count');
+            $table->addKey('taylorj_blogs_blog_count', 'blog_count');
             $table->addKey('taylorj_blogs_blog_post_count', 'blog_post_count');
         });
     }
@@ -131,15 +131,25 @@ class Setup extends AbstractSetup
     public function upgrade1000037Step1()
     {
         $this->schemaManager()->alterTable('xf_user', function (Alter $table) {
-            $table->addKey('taylorj_blogs_blog_count', 'blog_post_count');
+            $table->addKey('taylorj_blogs_blog_count', 'blog_count');
             $table->addColumn('taylorj_blogs_blog_post_count', 'int')->setDefault(0);
             $table->addKey('taylorj_blogs_blog_post_count', 'blog_post_count');
+        });
+    }
+
+    public function upgrade1000038Step1()
+    {
+        $this->alterTable('xf_taylorj_blogs_blog_post', function (\XF\Db\Schema\Alter $table) {
+            $table->changeColumn('blog_post_state', 'enum')->values(['visible', 'scheduled', 'draft'])->setDefault('visible');
         });
     }
 
     public function uninstallStep1()
     {
         $sm = $this->schemaManager();
+
+        $this->changeDiscussionType();
+
         $sm->dropTable('xf_taylorj_blogs_blog');
         $sm->dropTable('xf_taylorj_blogs_blog_post');
         $sm->dropTable('xf_taylorj_blogs_blog_post_view');
@@ -180,5 +190,13 @@ class Setup extends AbstractSetup
                 }
             }
         }
+    }
+
+    private function changeDiscussionType()
+    {
+        $db = $this->db();
+        $db->query("
+            UPDATE xf_thread SET discussion_type = '' WHERE discussion_type = 'blogPost'
+		");
     }
 }

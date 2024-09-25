@@ -253,21 +253,10 @@
                                         </ul>
                                     </div>
 
-                                    <xf:macro id="custom_fields_macros::custom_fields_view" arg-type="resourceReviews"
-                                        arg-group="above_review"
-                                        arg-onlyInclude="{$resource.Category.review_field_cache}"
-                                        arg-set="{$review.custom_fields}"
-                                        arg-wrapperClass="message-fields message-fields--before" />
-
                                     <div class="message-body">
                                         {{ bb_code($comment.message, 'post', $comment.Thread) }}
                                     </div>
 
-                                    <xf:macro id="custom_fields_macros::custom_fields_view" arg-type="resourceReviews"
-                                        arg-group="below_review"
-                                        arg-onlyInclude="{$resource.Category.review_field_cache}"
-                                        arg-set="{$review.custom_fields}"
-                                        arg-wrapperClass="message-fields message-fields--after" />
                                 </div>
                             </div>
                         </div>

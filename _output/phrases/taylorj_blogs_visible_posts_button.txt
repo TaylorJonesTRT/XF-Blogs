@@ -1,1 +1,1 @@
-View visible blog posts
+Visible blog posts

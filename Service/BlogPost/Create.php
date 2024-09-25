@@ -2,6 +2,7 @@
 
 namespace TaylorJ\Blogs\Service\BlogPost;
 
+use LogicException;
 use TaylorJ\Blogs\Entity\Blog;
 use TaylorJ\Blogs\Entity\BlogPost;
 use XF\Entity\Forum;
@@ -74,11 +75,19 @@ class Create extends AbstractService
 		$postHour = $scheduledPostTime['hh'];
 		$postMinute = $scheduledPostTime['mm'];
 
-		if (!$scheduledPostTime['blog_post_schedule']) {
-			$dateTime = new \DateTime("$postDate $postHour:$postMinute", $tz);
+		$dateTime = new \DateTime("$postDate $postHour:$postMinute", $tz);
 
-			$this->blogPost->scheduled_post_date_time = $dateTime->format('U');
-			$this->blogPost->blog_post_state = 'scheduled';
+		if ($scheduledPostTime['blog_post_schedule'] == 'scheduled') {
+			if ($dateTime->getTimestamp() <= \XF::$time) {
+				throw new \Error(\XF::phrase('taylorj_blogs_blog_post_scheduled_time_error'));
+			} else {
+				$this->blogPost->scheduled_post_date_time = $dateTime->format('U');
+				$this->blogPost->blog_post_state = 'scheduled';
+			}
+		} elseif ($scheduledPostTime['blog_post_schedule'] == 'draft') {
+			$this->blogPost->scheduled_post_date_time = 0;
+			$this->blogPost->blog_post_date = 0;
+			$this->blogPost->blog_post_state = 'draft';
 		} else {
 			$this->blogPost->scheduled_post_date_time = 0;
 			$this->blogPost->blog_post_state = 'visible';

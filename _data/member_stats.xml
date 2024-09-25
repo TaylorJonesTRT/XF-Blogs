@@ -1,2 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<member_stats/>
+<member_stats>
+  <member_stat member_stat_key="taylorj_blogs_most_blog_posts" sort_order="taylorj_blogs_blog_post_count" sort_direction="desc" permission_limit="taylorjBlogs-viewBlogs" show_value="1" user_limit="20" display_order="55" overview_display="1" active="1" cache_lifetime="0"><![CDATA[[]]]></member_stat>
+</member_stats>

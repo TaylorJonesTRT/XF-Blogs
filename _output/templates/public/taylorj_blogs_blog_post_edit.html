@@ -25,12 +25,14 @@
 
 				</xf:macro>
 
-				<xf:if is="$blogPost.blog_post_state == 'scheduled'">
-					<xf:radiorow name="blog_post_schedule" value="{{ $blogPost.blog_post_state == 'scheduled' ? 0 : 1}}"
-						rowtype="noColon" label="{{ phrase('taylorj_blogs_blog_post_schedule') }}">
+				<xf:if is="$blogPost.blog_post_state !== 'visible'">
+					<xf:radiorow name="blog_post_schedule" value="{{ $blogPost.blog_post_state }}" rowtype="noColon"
+						label="{{ phrase('taylorj_blogs_blog_post_schedule') }}">
 
-						<xf:option value="1">{{ phrase('taylorj_blogs_blog_post_schedule_now') }}</xf:option>
-						<xf:option value="0">{{ phrase('taylorj_blogs_blog_post_schedule_later') }}</xf:option>
+						<xf:option value="visible">{{ phrase('taylorj_blogs_blog_post_schedule_now') }}</xf:option>
+						<xf:option value="draft">{{ phrase('taylorj_blogs_blog_post_draft_post') }}</xf:option>
+						<xf:option value="scheduled">{{ phrase('taylorj_blogs_blog_post_schedule_later') }}
+						</xf:option>
 					</xf:radiorow>
 
 					<xf:formrow>

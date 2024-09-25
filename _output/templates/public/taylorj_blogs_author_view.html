@@ -7,7 +7,7 @@
 		<div class="block-outer">
 			<xf:pagenav page="{$page}" perpage="{$perPage}" total="{$total}" link="blogs/authors/{$pageSelected}"
 				params="{{ {
-					'user_id': ($xf.visitor.user_id != $blogPost.User.user_id ? $blogPost.user_id : '')
+					'user_id': ($xf.visitor.user_id != $user.user_id ? $user.user_id : '')
 				} }}" wrapperclass="block-outer-main" />
 		</div>
 

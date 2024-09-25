@@ -2,13 +2,18 @@
     "legacy_addon_id": "",
     "title": "[TaylorJ] Blogs",
     "description": "A user blogging system to allow your users to express themselves",
-    "version_id": 1000036,
-    "version_string": "1.0.0 Beta 6",
+    "version_id": 1000052,
+    "version_string": "1.0.0 Release Candidate 2",
     "dev": "",
     "dev_url": "",
     "faq_url": "",
     "support_url": "",
     "extra_urls": [],
-    "require": [],
+    "require": {
+        "XF": [
+            "2.3.0",
+            "XenForo 2.3.0"
+        ]
+    },
     "icon": "fa-book"
 }

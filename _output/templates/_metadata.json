@@ -50,9 +50,9 @@
         "hash": "6e3834f2f8a905897f36f3c8f687dbfb"
     },
     "public/taylorj_blogs_blog_post_edit.html": {
-        "version_id": 1000035,
-        "version_string": "1.0.0 Beta 5",
-        "hash": "25501f0ab9c6cf277550e4d3effe97a3"
+        "version_id": 1000037,
+        "version_string": "1.0.0 Beta 7",
+        "hash": "665eeb1cbb27f9c1c1aad52dae189c48"
     },
     "public/taylorj_blogs_blog_post_edit.less": {
         "version_id": 1000034,
@@ -65,14 +65,14 @@
         "hash": "eb5833e780095f0c8995217e5d17dd30"
     },
     "public/taylorj_blogs_blog_post_new_edit.html": {
-        "version_id": 1000035,
-        "version_string": "1.0.0 Beta 5",
-        "hash": "4b2c6f13395233b5a81ed3d32c606d60"
+        "version_id": 1000037,
+        "version_string": "1.0.0 Beta 7",
+        "hash": "892553c28e655a454d4a92e8af3a3efd"
     },
     "public/taylorj_blogs_blog_post_view.html": {
-        "version_id": 1000036,
-        "version_string": "1.0.0 Beta 6",
-        "hash": "f40be0fb08c3c69ebd9ebd2984440fe5"
+        "version_id": 1000051,
+        "version_string": "1.0.0 Release Candidate 1",
+        "hash": "b4bdf61e83713d102370bab529ab92ed"
     },
     "public/taylorj_blogs_blog_post_view.less": {
         "version_id": 1000034,
@@ -80,19 +80,24 @@
         "hash": "b46b89fc8c5985296de2445f8616048d"
     },
     "public/taylorj_blogs_blog_view.html": {
-        "version_id": 1000035,
-        "version_string": "1.0.0 Beta 5",
-        "hash": "4a9dc216d9acfc86566c6ad2db793dc7"
+        "version_id": 1000037,
+        "version_string": "1.0.0 Beta 7",
+        "hash": "a096ee1c70f353c9559a6f4301f26e20"
     },
     "public/taylorj_blogs_blog_view.less": {
         "version_id": 1000035,
         "version_string": "1.0.0 Beta 5",
         "hash": "905164f1334f053bf02079970a55a6f6"
     },
+    "public/taylorj_blogs_blog_view_macros.html": {
+        "version_id": 1000037,
+        "version_string": "1.0.0 Beta 7",
+        "hash": "d41d8cd98f00b204e9800998ecf8427e"
+    },
     "public/taylorj_blogs_blog_view_scheduled_posts.html": {
-        "version_id": 1000035,
-        "version_string": "1.0.0 Beta 5",
-        "hash": "5c676cc1396debaff72026a7bf6f785e"
+        "version_id": 1000037,
+        "version_string": "1.0.0 Beta 7",
+        "hash": "b8a1345de99c045301ecbc8135beb815"
     },
     "public/taylorj_blogs_blog_watch.html": {
         "version_id": 1000034,

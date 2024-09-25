@@ -38,6 +38,11 @@ class BlogPosts extends AbstractHandler
 
         $visitor = \XF::visitor();
 
+        $watched = $request->filter('watched', 'bool');
+        if ($watched && $visitor->user_id) {
+            $filters['watched'] = true;
+        }
+
         return $filters;
     }
 

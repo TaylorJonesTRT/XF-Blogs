@@ -204,6 +204,14 @@ class Blog extends Entity
 		return true;
 	}
 
+	public function isOwner()
+	{
+		if (\XF::visitor()->user_id != $this->user_id) {
+			return false;
+		}
+
+		return true;
+	}
 
 	protected function _postSave()
 	{

@@ -340,7 +340,7 @@ class BlogPost extends Entity implements RenderableContentInterface
 			'blog_post_state' => [
 				'type' => self::STR,
 				'default' => 'visible',
-				'allowedValues' => ['visible', 'scheduled']
+				'allowedValues' => ['visible', 'scheduled', 'draft']
 			],
 			'scheduled_post_date_time' => ['type' => self::UINT, 'nullable' => true],
 			'discussion_thread_id' => ['type' => self::UINT, 'default' => 0]
