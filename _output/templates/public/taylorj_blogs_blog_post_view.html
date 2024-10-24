@@ -3,9 +3,26 @@
 
 <xf:breadcrumb source="$blogPost.getBreadcrumbs(true)" />
 
+<xf:if is="$blogPost.blog_post_state == 'moderated'">
+    <div>
+        <dl class="blockStatus blockStatus--standalone">
+            <dt>{{ phrase('status') }}</dt>
+            <xf:if contentcheck="true">
+                <xf:contentcheck>
+                    <dd class="blockStatus-message blockStatus-message--moderated">
+                        {{ phrase('awaiting_approval_before_being_displayed_publicly') }}
+                    </dd>
+                </xf:contentcheck>
+            </xf:if>
+        </dl>
+    </div>
+</xf:if>
+
+
 <xf:title>{$blogPost.blog_post_title}</xf:title>
 
 <xf:description>
+
     <div class="u-pullLeft" data-xf-init="taylorj-blogs">
         <ul class="listInline listInline--bullet">
             <li>
@@ -25,6 +42,13 @@
             <li class="taylorj-blogs-read-time">
                 {{ phrase('taylorj_blogs_blog_post_read_time', { 'readTime': $blogPostReadTime}) }}
             </li>
+            <xf:if is="$xf.options.enableTagging AND ($blogPost.canEditTags() OR $blogPost.tags)">
+                <li>
+                    <xf:macro id="tag_macros::list" arg-tags="{$blogPost.tags}"
+                        arg-tagList="tagList--thread-{$blogPost.blog_post_id}"
+                        arg-editLink="{{ $blogPost.canEditTags() ? link('blogs/post/tags', $blogPost) : '' }}" />
+                </li>
+            </xf:if>
         </ul>
     </div>
     <xf:if contentcheck="true">
@@ -60,10 +84,13 @@
     arg-canonicalUrl="{{ link('canonical:blogs/post', $blogPost) }}" />
 
 <xf:macro id="lightbox_macros::setup" arg-canViewAttachments="{$blogPost.canViewAttachments()}" />
-
-<div class="block" data-xf-init="lightbox" data-type="taylorj_blogs_blog_post">
-    <div class="block-container lbContainer js-lbContainer" data-lb-id="{$blogPost.blog_post_id}">
-        <div class="message">
+<div class="block {{ $blogPost.blog_post_state == 'moderated' ? 'is-moderated' : '' }}" data-xf-init="lightbox"
+    data-type="taylorj_blogs_blog_post">
+    <div class="block-container lbContainer js-lbContainer {{ $blogPost.blog_post_state == 'moderated' ? 'is-moderated' : '' }}"
+        data-lb-id="{$blogPost.blog_post_id}">
+        <article class="message message--article {{ $blogPost.blog_post_state == 'moderated' ? 'is-moderated' : '' }}"
+            data-author="{{ $blogPost.User.username }}" data-content="{{ $blogPost.blog_post_id }}"
+            id="js-post-{$blogPost.blog_post_id}">
             <div class="message-inner">
                 <xf:extension id="main_cell">
                     <div class="message-cell message-cell--main">
@@ -111,7 +138,8 @@
                                     <div class="message-body" data-xf-init="lightbox"
                                         data-lb-id="attach-{$blogPost.blog_post_id}"
                                         data-lb-universal="{$xf.options.lightBoxUniversal}">
-                                        {{ bb_code($blogPost.blog_post_content, 'taylorj_blogs_blog_post', $blogPost) }}
+                                        {{ bb_code($blogPost.blog_post_content, 'taylorj_blogs_blog_post',
+                                        $blogPost) }}
                                     </div>
                                     <div class="actionBar-set actionBar-set--external">
                                         <xf:react content="{$blogPost}" link="blogs/post/react"
@@ -138,82 +166,81 @@
                     </div>
                 </xf:extension>
             </div>
-        </div>
-        <aside class="message-articleUserInfo">
-            <div class="message-cell">
-                <div class="contentRow">
-                    <div class="contentRow-figure">
-                        <xf:avatar user="$blogPost.User" size="m" />
+    </div>
+    <aside class="message-articleUserInfo">
+        <div class="message-cell">
+            <div class="contentRow">
+                <div class="contentRow-figure">
+                    <xf:avatar user="$blogPost.User" size="m" />
+                </div>
+                <div class="contentRow-main">
+
+                    <div class="message-articleUserFirstLine">
+                        <div class="message-articleWrittenBy u-srOnly">{{ phrase('article_written_by') }}</div>
+                        <h3 class="message-articleUserName">
+                            <xf:username user="$blogPost.User" rich="true" />
+                        </h3>
+
+                        <xf:if contentcheck="true">
+                            <div class="message-articleUserBlurb">
+                                <xf:contentcheck>
+                                    <xf:userblurb user="$blogPost.User" tag="div" />
+                                </xf:contentcheck>
+                            </div>
+                        </xf:if>
                     </div>
-                    <div class="contentRow-main">
 
-                        <div class="message-articleUserFirstLine">
-                            <div class="message-articleWrittenBy u-srOnly">{{ phrase('article_written_by') }}</div>
-                            <h3 class="message-articleUserName">
-                                <xf:username user="$blogPost.User" rich="true" />
-                            </h3>
-
-                            <xf:if contentcheck="true">
-                                <div class="message-articleUserBlurb">
-                                    <xf:contentcheck>
-                                        <xf:userblurb user="$blogPost.User" tag="div" />
-                                    </xf:contentcheck>
-                                </div>
-                            </xf:if>
-                        </div>
-
-                        <xf:if contentcheck="true">
-                            <div class="message-articleUserAbout">
-                                <xf:contentcheck>
-                                    <xf:if is="$blogPost.User.Profile.about != ''">
-                                        {{ bb_code($blogPost.User.Profile.about, 'user:about', $blogPost.User) }}
-                                    </xf:if>
-                                </xf:contentcheck>
-                            </div>
-                        </xf:if>
-
-                        <xf:if contentcheck="true">
-                            <div class="message-articleUserBanners">
-                                <xf:contentcheck>
-                                    <xf:userbanners user="$user" />
-                                </xf:contentcheck>
-                            </div>
-                        </xf:if>
-
-                        <div class="message-articleUserStats">
-                            <ul class="listInline listInline--bullet">
-                                <!--[XF:stats:start]-->
-                                <li>
-                                    <dl class="pairs pairs--inline">
-                                        <dt>{{ phrase('taylorj_blogs_blogs_total') }}</dt>
-                                        <dd>{$blogPost.User.taylorj_blogs_blog_count|number}</dd>
-                                    </dl>
-                                </li>
-                                <!--[XF:stats:after_messages]-->
-                                <li>
-                                    <dl class="pairs pairs--inline">
-                                        <dt>{{ phrase('reaction_score') }}</dt>
-                                        <dd>{$blogPost.User.reaction_score|number}</dd>
-                                    </dl>
-                                </li>
-                                <!--[XF:stats:after_likes]-->
-                                <!--[XF:stats:after_reactions]-->
-                                <xf:if is="$xf.options.enableTrophies">
-                                    <li>
-                                        <dl class="pairs pairs--inline">
-                                            <dt>{{ phrase('points') }}</dt>
-                                            <dd>{$blogPost.User.trophy_points|number}</dd>
-                                        </dl>
-                                    </li>
+                    <xf:if contentcheck="true">
+                        <div class="message-articleUserAbout">
+                            <xf:contentcheck>
+                                <xf:if is="$blogPost.User.Profile.about != ''">
+                                    {{ bb_code($blogPost.User.Profile.about, 'user:about', $blogPost.User) }}
                                 </xf:if>
-                                <!--[XF:stats:end]-->
-                            </ul>
+                            </xf:contentcheck>
                         </div>
+                    </xf:if>
+
+                    <xf:if contentcheck="true">
+                        <div class="message-articleUserBanners">
+                            <xf:contentcheck>
+                                <xf:userbanners user="$user" />
+                            </xf:contentcheck>
+                        </div>
+                    </xf:if>
+
+                    <div class="message-articleUserStats">
+                        <ul class="listInline listInline--bullet">
+                            <!--[XF:stats:start]-->
+                            <li>
+                                <dl class="pairs pairs--inline">
+                                    <dt>{{ phrase('taylorj_blogs_blogs_total') }}</dt>
+                                    <dd>{$blogPost.User.taylorj_blogs_blog_count|number}</dd>
+                                </dl>
+                            </li>
+                            <!--[XF:stats:after_messages]-->
+                            <li>
+                                <dl class="pairs pairs--inline">
+                                    <dt>{{ phrase('reaction_score') }}</dt>
+                                    <dd>{$blogPost.User.reaction_score|number}</dd>
+                                </dl>
+                            </li>
+                            <!--[XF:stats:after_likes]-->
+                            <!--[XF:stats:after_reactions]-->
+                            <xf:if is="$xf.options.enableTrophies">
+                                <li>
+                                    <dl class="pairs pairs--inline">
+                                        <dt>{{ phrase('points') }}</dt>
+                                        <dd>{$blogPost.User.trophy_points|number}</dd>
+                                    </dl>
+                                </li>
+                            </xf:if>
+                            <!--[XF:stats:end]-->
+                        </ul>
                     </div>
                 </div>
             </div>
-        </aside>
-    </div>
+        </div>
+    </aside>
 </div>
 
 <xf:if is="$blogPost.blog_post_state == 'visible'">

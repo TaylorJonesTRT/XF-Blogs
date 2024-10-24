@@ -41,7 +41,7 @@
     <replace><![CDATA[$0
 
 <xf:if is="$xf.visitor.canViewBlogs() AND $user.taylorj_blogs_blog_post_count">
-	<li data-href="{{ link('blogs/authors', $user) }}" role="tabpanel" aria-labelledby="blogs">
+	<li data-href="{{ link('blogs/authors', $user) }}" role="tabpanel" aria-labelledby="blogPosts">
 		<div class="blockMessage">{{ phrase('loading...') }}</div>
 	</li>
 </xf:if>]]></replace>

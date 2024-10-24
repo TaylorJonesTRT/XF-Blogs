@@ -26,10 +26,12 @@ class Blogs extends AbstractController
         $blogFinder = $this->finder('TaylorJ\Blogs:Blog');
 
         if (!$visitor->hasPermission('taylorjBlogs', 'viewAny')) {
-            $blogFinder->where('user_id', \XF::visitor()->user_id);
+            $blogFinder
+                ->where('user_id', \XF::visitor()->user_id);
         }
 
         $blogFinder = $this->finder('TaylorJ\Blogs:Blog')
+            ->where('blog_state', 'visible')
             ->order('blog_creation_date', 'DESC');
 
         $page = $params->page;
@@ -94,30 +96,44 @@ class Blogs extends AbstractController
             $blog = $this->em()->create('TaylorJ\Blogs:Blog');
         }
 
-        $this->blogSaveProcess($blog)->run();
 
-        if ($upload = $this->request->getFile('upload', false, false)) {
-            $this->getBlogRepo()->setBlogHeaderImagePath($blog->blog_id, $upload);
-        }
-
-        return $this->redirect($this->buildLink('blogs', $blog));
+        return $this->blogSaveProcess($blog);
     }
 
-    protected function blogSaveProcess(\TaylorJ\Blogs\Entity\Blog $blog)
+    protected function blogSaveProcess(\TaylorJ\Blogs\Entity\Blog $newBlog)
     {
+        $visitor = \XF::visitor();
+
         $input = $this->filter([
             'blog_title' => 'str',
             'blog_description' => 'str',
         ]);
 
-        if ($this->request->getFile('upload', false, false)) {
-            $input['blog_has_header'] = true;
+        /** @var \TaylorJ\Blogs\Service\Blog\Create $creator */
+        $creator = $this->blogCreate($newBlog);
+        if (!$creator->validate($errors)) {
+            return $this->error($errors);
         }
 
-        $form = $this->formAction();
-        $form->basicEntitySave($blog, $input);
+        $this->assertNotFlooding('post');
 
-        return $form;
+        /** @var \TaylorJ\Blogs\Entity\Blog $blog */
+        $blog = $creator->save();
+
+        if ($upload = $this->request->getFile('upload', false, false)) {
+            $this->getBlogRepo()->setBlogHeaderImagePath($blog->blog_id, $upload);
+            $blog->fastUpdate('blog_has_header', '1');
+        }
+
+        if ($visitor->user_id) {
+            if ($blog->blog_state == 'moderated') {
+                $this->session()->setHasContentPendingApproval();
+            }
+        }
+
+        $creator->finalSteps();
+
+        return $this->redirect($this->buildLink('blogs/blog', $blog));
     }
 
     public function actionThreadPreview(ParameterBag $params)
@@ -148,5 +164,23 @@ class Blogs extends AbstractController
         $repo = $this->repository('TaylorJ\Blogs:Blog');
 
         return $repo;
+    }
+
+    /**
+     * @return \TaylorJ\Blogs\Service\Blog\Create
+     */
+    protected function blogCreate(\TaylorJ\Blogs\Entity\Blog $newBlog)
+    {
+        /** @var \TaylorJ\Blogs\Service\Blog\Create $creator */
+        $creator = $this->service('TaylorJ\Blogs:Blog\Create', $newBlog);
+
+        $title = $this->filter('blog_title', 'str');
+        $blog_description = $this->filter('blog_description', 'str');
+
+        $creator->setTitle($title);
+        $creator->setDescription($blog_description);
+        $creator->setState();
+
+        return $creator;
     }
 }

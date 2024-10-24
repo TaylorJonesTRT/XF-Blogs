@@ -12,13 +12,12 @@ class Blog extends Repository
     {
         $upload->requireImage();
 
-        if (!$upload->isValid($errors))
-        {
+        if (!$upload->isValid($errors)) {
             throw new \XF\PrintableException(reset($errors));
         }
 
         $dataDir = \XF::app()->config('externalDataPath');
-        $dataDir .= "://taylorj_blogs/blog_header_images/".$blog_id.".jpg";
+        $dataDir .= "://taylorj_blogs/blog_header_images/" . $blog_id . ".jpg";
 
         try {
             $image = \XF::app()->imageManager->imageFromFile($upload->getTempFile());
@@ -30,12 +29,18 @@ class Blog extends Repository
             unset($image);
 
             \XF\Util\File::copyFileToAbstractedPath($output, $dataDir);
-
-        }
-        catch (Exception $e)
-        {
+        } catch (Exception $e) {
             throw new \XF\PrintableException(\XF::phrase('unexpected_error_occurred'));
         }
     }
 
+    public function findBlogsByUser($userId)
+    {
+        $blogFinder = $this->finder('TaylorJ\Blogs:Blog')
+            ->where('user_id', $userId)
+            ->setDefaultOrder('blog_last_post_date', 'desc');
+
+        return $blogFinder;
+    }
 }
+

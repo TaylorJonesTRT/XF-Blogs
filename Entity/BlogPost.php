@@ -10,8 +10,11 @@ use XF\BbCode\RenderableContentInterface;
 use XF\Entity\ReactionTrait;
 use XF\Entity\EmbedRendererTrait;
 use XF\Entity\EmbedResolverTrait;
+use XF\Entity\ApprovalQueue;
+use XF\Entity\DatableInterface;
 
 use TaylorJ\Blogs\Utils;
+use XF\Entity\DatableTrait;
 
 /**
  * COLUMNS
@@ -47,14 +50,16 @@ use TaylorJ\Blogs\Utils;
  * @property-read \TaylorJ\Blogs\Entity\Blog|null $Blog
  * @property-read \XF\Mvc\Entity\AbstractCollection<\XF\Entity\Attachment> $Attachments
  * @property-read \XF\Entity\Thread|null $Discussion
+ * @property-read \XF\Entity\ApprovalQueue|null $ApprovalQueue
  * @property-read \XF\Mvc\Entity\AbstractCollection<\XF\Entity\ReactionContent> $Reactions
  */
-class BlogPost extends Entity implements RenderableContentInterface
+class BlogPost extends Entity implements RenderableContentInterface, DatableInterface
 {
 	use ReactionTrait;
 	use CoverImageTrait;
 	use EmbedRendererTrait;
 	use EmbedResolverTrait;
+	use DatableTrait;
 
 	public function getBreadcrumbs($includeSelf = true)
 	{
@@ -80,6 +85,22 @@ class BlogPost extends Entity implements RenderableContentInterface
 
 		$value = utf8_ucwords($value);
 
+		return true;
+	}
+
+	protected function verifyScheduledPostDateTime($value)
+	{
+		if ($value != 0) {
+			$dateTime = new \DateTime();
+			$dateTime->setTimestamp($value);
+
+			if ($dateTime->getTimestamp() <= \XF::$time) {
+				$this->error(\XF::phrase('taylorj_blogs_blog_post_scheduled_time_error'));
+				return false;
+			} else {
+				return true;
+			}
+		}
 		return true;
 	}
 
@@ -125,7 +146,7 @@ class BlogPost extends Entity implements RenderableContentInterface
 				return false;
 			}
 		} else {
-			if (!$visitor->hasPermission('taylorjBlogPost', 'deleteAny')) {
+			if (!$visitor->hasPermission('taylorjBlogPost', 'canDeleteAny')) {
 				$error = \XF::phrase('taylorj_blogs_blog_post_error_delete');
 				return false;
 			}
@@ -190,6 +211,39 @@ class BlogPost extends Entity implements RenderableContentInterface
 	{
 		$asUser = $asUser ?: \XF::visitor();
 		return $asUser->canReport($error);
+	}
+
+	public function canApproveUnapprove(&$error = null)
+	{
+		return (
+			\XF::visitor()->user_id
+			&& \XF::visitor()->hasPermission('forum', 'approveUnapprove')
+		);
+	}
+
+	public function canViewModeratedContent()
+	{
+		$visitor = \XF::visitor();
+		if ($visitor->hasPermission('taylorjBlogPost', 'viewModerated')) {
+			return true;
+		} else if ($this->user_id == $visitor->user_id) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	public function canEditTags(&$error = null)
+	{
+		$blog = $this->Blog;
+
+		return $blog ? $blog->canEditTags($this, $error) : false;
+	}
+
+	public function canUseInlineModeration(&$error = null)
+	{
+		$visitor = \XF::visitor();
+		return ($visitor->user_id && $visitor->hasPermission('taylorjBlogPost', 'inlineMod'));
 	}
 
 	public function getBbCodeRenderOptions($context, $type)
@@ -269,6 +323,26 @@ class BlogPost extends Entity implements RenderableContentInterface
 		return $this->_getterCache['Unfurls'] ?? [];
 	}
 
+	public function getNewContentState(?BlogPost $blogPost = null)
+	{
+		$visitor = \XF::visitor();
+
+		if ($visitor->user_id && $visitor->hasPermission('forum', 'approveUnapprove')) {
+			return 'visible';
+		}
+
+		if (!$visitor->hasPermission('taylorjBlogPost', 'submitWithoutApproval')) {
+			return 'moderated';
+		}
+
+		return \XF::app()->options()->taylorjBlogsBlogPostApproval ? 'moderated' : 'visible';
+	}
+
+	public function getContentDateColumn(): string
+	{
+		return 'blog_post_date';
+	}
+
 	public function setUnfurls($unfurls)
 	{
 		$this->_getterCache['Unfurls'] = $unfurls;
@@ -290,8 +364,38 @@ class BlogPost extends Entity implements RenderableContentInterface
 		}
 	}
 
+	public function hasPermission($permission)
+	{
+		/** @var \XFRM\XF\Entity\User $visitor */
+		$visitor = \XF::visitor();
+		return $visitor->hasResourceCategoryPermission($this->resource_category_id, $permission);
+	}
+
+	protected function submitHamData()
+	{
+		/** @var ContentChecker $submitter */
+		$submitter = $this->app()->container('spam.contentHamSubmitter');
+		$submitter->submitHam('taylorj_blogs_blog_post', $this->blog_post_id);
+	}
+
+	protected function _postDelete()
+	{
+		$this->adjustUserBlogPostCount(-1);
+		$this->adjustBlogPostCount(-1);
+	}
+
 	protected function _postSave()
 	{
+		$visibilityChange = $this->isStateChanged('blog_post_state', 'visible');
+		$approvalChange = $this->isStateChanged('blog_post_state', 'moderated');
+		$deletionChange = $this->isStateChanged('blog_post_state', 'deleted');
+
+		if ($approvalChange == 'enter') {
+			$approvalQueue = $this->getRelationOrDefault('ApprovalQueue', false);
+			$approvalQueue->content_date = $this->blog_post_date;
+			$approvalQueue->save();
+		}
+
 		$blogPostRepo = Utils::getBlogPostRepo();
 
 		if (!$this->isUpdate()) {
@@ -299,8 +403,25 @@ class BlogPost extends Entity implements RenderableContentInterface
 			$this->adjustUserBlogPostCount(1);
 			$this->Blog->fastUpdate('blog_last_post_date', \XF::$time);
 		}
-
 		if ($this->isUpdate()) {
+			if ($visibilityChange == 'enter') {
+				$this->adjustBlogPostCount(1);
+				$this->adjustUserBlogPostCount(1);
+				$this->Blog->fastUpdate('blog_last_post_date', \XF::$time);
+				if ($approvalChange) {
+					$this->fastUpdate('blog_post_date', \XF::$time);
+					$this->submitHamData();
+				}
+			} else if ($deletionChange == 'enter' && !$this->DeletionLog) {
+				$delLog = $this->getRelationOrDefault('DeletionLog', false);
+				$delLog->setFromVisitor();
+				$delLog->save();
+			}
+
+
+			if ($approvalChange == 'leave' && $this->ApprovalQueue) {
+				$this->ApprovalQueue->delete();
+			}
 			if ($this->isChanged('scheduled_post_date_time') && $this->blog_post_state == 'scheduled') {
 				$blogPostRepo->updateJob($this);
 			}
@@ -340,10 +461,11 @@ class BlogPost extends Entity implements RenderableContentInterface
 			'blog_post_state' => [
 				'type' => self::STR,
 				'default' => 'visible',
-				'allowedValues' => ['visible', 'scheduled', 'draft']
+				'allowedValues' => ['visible', 'scheduled', 'draft', 'moderated', 'deleted']
 			],
 			'scheduled_post_date_time' => ['type' => self::UINT, 'nullable' => true],
-			'discussion_thread_id' => ['type' => self::UINT, 'default' => 0]
+			'discussion_thread_id' => ['type' => self::UINT, 'default' => 0],
+			'tags' => ['type' => self::JSON_ARRAY, 'default' => []],
 		];
 		$structure->relations = [
 			'User' => [
@@ -373,7 +495,16 @@ class BlogPost extends Entity implements RenderableContentInterface
 				'type' => self::TO_ONE,
 				'conditions' => [['thread_id', '=', '$discussion_thread_id']],
 				'primary' => true,
-			]
+			],
+			'ApprovalQueue' => [
+				'entity' => 'XF:ApprovalQueue',
+				'type' => self::TO_ONE,
+				'conditions' => [
+					['content_type', '=', 'taylorj_blogs_blog_post'],
+					['content_id', '=', '$blog_post_id'],
+				],
+				'primary' => true,
+			],
 		];
 		$structure->defaultWith = ['User', 'Blog'];
 		$structure->getters = [
@@ -382,6 +513,7 @@ class BlogPost extends Entity implements RenderableContentInterface
 			'cover_image' => true
 		];
 		$structure->behaviors = [
+			'XF:Taggable' => ['stateField' => 'blog_post_state'],
 			'XF:Indexable' => [
 				'checkForUpdates' => ['blog_post_title', 'blog_post_id', 'blog_id', 'user_id']
 			],

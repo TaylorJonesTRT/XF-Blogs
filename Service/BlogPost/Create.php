@@ -9,6 +9,7 @@ use XF\Entity\Forum;
 use XF\Entity\Thread;
 use XF\Service\AbstractService;
 use XF\Service\Thread\Creator;
+use XF\Service\Tag\Changer;
 
 use TaylorJ\Blogs\Utils as Utils;
 
@@ -19,7 +20,7 @@ class Create extends AbstractService
 	/**
 	 * @var \TaylorJ\Blogs\Entity\BlogPost
 	 */
-	protected $blogPost;
+	public $blogPost;
 
 	/**
 	 * @var TaylorJ\Blogs\Entity\Blog 
@@ -36,6 +37,13 @@ class Create extends AbstractService
 	 */
 	protected $blog;
 
+	/**
+	 * @var Changer
+	 */
+	protected $tagChanger;
+
+	protected $performValidations = true;
+
 	public function __construct(\XF\App $app, Blog $blog)
 	{
 		parent::__construct($app);
@@ -47,6 +55,7 @@ class Create extends AbstractService
 	{
 		$blogPost = $this->blog->getNewBlogPost();
 		$this->blogPost = $blogPost;
+		$this->tagChanger = $this->service('XF:Tag\Changer', 'taylorj_blogs_blog_post', $this->blog);
 	}
 
 	public function setTitle($title)
@@ -67,6 +76,13 @@ class Create extends AbstractService
 		$preparer->pushEntityErrorIfInvalid($this->blogPost, 'blog_post_content');
 	}
 
+	public function setTags($tags)
+	{
+		if ($this->tagChanger->canEdit()) {
+			$this->tagChanger->setEditableTags($tags);
+		}
+	}
+
 	public function setScheduledPostDateTime($scheduledPostTime)
 	{
 		$tz = new \DateTimeZone(\XF::visitor()->timezone);
@@ -78,19 +94,16 @@ class Create extends AbstractService
 		$dateTime = new \DateTime("$postDate $postHour:$postMinute", $tz);
 
 		if ($scheduledPostTime['blog_post_schedule'] == 'scheduled') {
-			if ($dateTime->getTimestamp() <= \XF::$time) {
-				throw new \Error(\XF::phrase('taylorj_blogs_blog_post_scheduled_time_error'));
-			} else {
-				$this->blogPost->scheduled_post_date_time = $dateTime->format('U');
-				$this->blogPost->blog_post_state = 'scheduled';
-			}
+			$this->blogPost->scheduled_post_date_time = $dateTime->format('U');
+			$this->blogPost->blog_post_state = 'scheduled';
+			/*}*/
 		} elseif ($scheduledPostTime['blog_post_schedule'] == 'draft') {
 			$this->blogPost->scheduled_post_date_time = 0;
 			$this->blogPost->blog_post_date = 0;
 			$this->blogPost->blog_post_state = 'draft';
 		} else {
 			$this->blogPost->scheduled_post_date_time = 0;
-			$this->blogPost->blog_post_state = 'visible';
+			$this->blogPost->blog_post_state = $this->blogPost->getNewContentState();
 		}
 	}
 
@@ -105,6 +118,13 @@ class Create extends AbstractService
 	{
 		$this->blogPost->preSave();
 		$errors = $this->blogPost->getErrors();
+
+		if ($this->tagChanger->canEdit()) {
+			$tagErrors = $this->tagChanger->getErrors();
+			if ($tagErrors) {
+				$errors = array_merge($errors, $tagErrors);
+			}
+		}
 
 		return $errors;
 	}
@@ -124,6 +144,12 @@ class Create extends AbstractService
 
 				$this->afterResourceThreadCreated($thread);
 			}
+		}
+
+		if ($this->tagChanger->canEdit()) {
+			$this->tagChanger
+				->setContentId($blogPost->blog_post_id, true)
+				->save($this->performValidations);
 		}
 
 		return $blogPost;

@@ -7,6 +7,7 @@ use XF\Entity\User;
 use XF\Mvc\ParameterBag;
 use XF\Pub\Controller\AbstractController;
 use TaylorJ\Blogs\Repository\BlogPost;
+use TaylorJ\Blogs\Repository\Blog;
 use TaylorJ\Blogs\Utils;
 
 class Author extends AbstractController
@@ -46,7 +47,7 @@ class Author extends AbstractController
         /** @var User $user */
         $user = $this->assertRecordExists('XF:User', $params->user_id);
 
-        /** @var ResourceItem $blogPostRepo */
+        /** @var BlogPost $blogPostRepo */
         $blogPostRepo = Utils::getBlogPostRepo();
         $finder = $blogPostRepo->findBlogPostsByUser(
             $user->user_id,
@@ -71,6 +72,40 @@ class Author extends AbstractController
         ];
         return $this->view('TaylorJ\Blogs:Author\View', 'taylorj_blogs_author_view', $viewParams);
     }
+
+    public function actionOwner(ParameterBag $params)
+    {
+        $this->assertNotEmbeddedImageRequest();
+
+        /** @var User $user */
+        $user = $this->assertRecordExists('XF:User', $params->user_id);
+
+        /** @var Blog $blogRepo */
+        $blogRepo = Utils::getBlogRepo();
+
+        $finder = $blogRepo->findBlogsByUser($user->user_id);
+
+        $total = $finder->total();
+
+        $page = $this->filterPage();
+        $perPage = $this->options()->taylorjBlogPostsPerPage;
+
+        $this->assertValidPage($page, $perPage, $total, 'blogs/authors/owner', $user);
+        $this->assertCanonicalUrl($this->buildLink('blogs/authors/owner', $user, ['page' => $page]));
+
+        $blogs = $finder->limitByPage($page, $perPage)->fetch();
+
+        $viewParams = [
+            'user' => $user,
+            'blogs' => $blogs,
+            'page' => $page,
+            'perPage' => $perPage,
+            'total' => $total,
+        ];
+        return $this->view('TaylorJ\Blogs:Author\OwnerView', 'taylorj_blogs_author_owner_view', $viewParams);
+    }
+
+    public function actionBlogs(ParameterBag $params) {}
 
     public static function getActivityDetails(array $activities)
     {

@@ -29,6 +29,16 @@
         "version_string": "1.0.0 Beta 3",
         "hash": "0b258913e9f7f6f908b190a99234f607"
     },
+    "public/approval_item_taylorj_blogs_blog.html": {
+        "version_id": 1010070,
+        "version_string": "1.1.0",
+        "hash": "fda89da6175d4afeb7d63a9eae83d4b1"
+    },
+    "public/approval_item_taylorj_blogs_blog_post.html": {
+        "version_id": 1010070,
+        "version_string": "1.1.0",
+        "hash": "ee077437436315a3f09c5baba4442272"
+    },
     "public/report_content_taylorj_blogs_blog_post.html": {
         "version_id": 1000036,
         "version_string": "1.0.0 Beta 6",
@@ -39,10 +49,15 @@
         "version_string": "1.0.0 Beta 1",
         "hash": "eeb85e9557886e6de0685e7c362c8122"
     },
+    "public/taylorj_blogs_author_owner_view.html": {
+        "version_id": 1010070,
+        "version_string": "1.1.0",
+        "hash": "b21cb1e19617cf4476458bdee8a38498"
+    },
     "public/taylorj_blogs_author_view.html": {
-        "version_id": 1000036,
-        "version_string": "1.0.0 Beta 6",
-        "hash": "d461a7242feb0740686ccc9a7d272298"
+        "version_id": 1010070,
+        "version_string": "1.1.0",
+        "hash": "ed0e203382f4c8b31d04d4b4384bccce"
     },
     "public/taylorj_blogs_blog_edit.html": {
         "version_id": 1000035,
@@ -50,8 +65,8 @@
         "hash": "6e3834f2f8a905897f36f3c8f687dbfb"
     },
     "public/taylorj_blogs_blog_post_edit.html": {
-        "version_id": 1000037,
-        "version_string": "1.0.0 Beta 7",
+        "version_id": 1010070,
+        "version_string": "1.1.0",
         "hash": "665eeb1cbb27f9c1c1aad52dae189c48"
     },
     "public/taylorj_blogs_blog_post_edit.less": {
@@ -65,14 +80,24 @@
         "hash": "eb5833e780095f0c8995217e5d17dd30"
     },
     "public/taylorj_blogs_blog_post_new_edit.html": {
-        "version_id": 1000037,
-        "version_string": "1.0.0 Beta 7",
-        "hash": "892553c28e655a454d4a92e8af3a3efd"
+        "version_id": 1010070,
+        "version_string": "1.1.0",
+        "hash": "77151ad22847db66739a0e6da716a497"
+    },
+    "public/taylorj_blogs_blog_post_tags.html": {
+        "version_id": 1010070,
+        "version_string": "1.1.0",
+        "hash": "df55ed6f2c743f3ce6ade08cf6f2b424"
+    },
+    "public/taylorj_blogs_blog_post_tags_list.html": {
+        "version_id": 1010070,
+        "version_string": "1.1.0",
+        "hash": "170d38a9904e821945bfd31796ab90db"
     },
     "public/taylorj_blogs_blog_post_view.html": {
-        "version_id": 1000051,
-        "version_string": "1.0.0 Release Candidate 1",
-        "hash": "b4bdf61e83713d102370bab529ab92ed"
+        "version_id": 1010070,
+        "version_string": "1.1.0",
+        "hash": "542dc501352976880eefaa02c3d37df5"
     },
     "public/taylorj_blogs_blog_post_view.less": {
         "version_id": 1000034,
@@ -80,9 +105,9 @@
         "hash": "b46b89fc8c5985296de2445f8616048d"
     },
     "public/taylorj_blogs_blog_view.html": {
-        "version_id": 1000037,
-        "version_string": "1.0.0 Beta 7",
-        "hash": "a096ee1c70f353c9559a6f4301f26e20"
+        "version_id": 1010070,
+        "version_string": "1.1.0",
+        "hash": "9fb52c8cfe40f4ff1434abfcba44f148"
     },
     "public/taylorj_blogs_blog_view.less": {
         "version_id": 1000035,
@@ -105,19 +130,19 @@
         "hash": "5b623b8b47fa40ea817000f41d1a06d4"
     },
     "public/taylorj_blogs_index.html": {
-        "version_id": 1000035,
-        "version_string": "1.0.0 Beta 5",
-        "hash": "b3de0b81e0f076fea1cbde05a4942875"
+        "version_id": 1010070,
+        "version_string": "1.1.0",
+        "hash": "25f200350f81e78e13ffb008d6628a65"
     },
     "public/taylorj_blogs_index.less": {
-        "version_id": 1000034,
-        "version_string": "1.0.0 Beta 4",
-        "hash": "616043b461b3db39fff1a7edc44e2769"
+        "version_id": 1010070,
+        "version_string": "1.1.0",
+        "hash": "a04adee18efefbf446e7384fcf7a665f"
     },
     "public/taylorj_blogs_list_macros.html": {
-        "version_id": 1000036,
-        "version_string": "1.0.0 Beta 6",
-        "hash": "155ffcc4712a0cff0239ddfcbca805af"
+        "version_id": 1010070,
+        "version_string": "1.1.0",
+        "hash": "638266c4c47d9d51d047855794f3563b"
     },
     "public/taylorj_blogs_thread_view_type_blog_post.html": {
         "version_id": 1000035,

@@ -1,0 +1,32 @@
+<xf:title>Your blogs</xf:title>
+<xf:if is="$blogs is not empty">
+
+	<div class="block" data-xf-init="{{ $canInlineMod ? 'inline-mod' : '' }}" data-type="thread"
+		data-href="{{ link('inline-mod') }}">
+
+		<div class="block-outer">
+			<xf:pagenav page="{$page}" perpage="{$perPage}" total="{$total}" link="blogs/authors/owner" data="{$user}"
+				params="{{ {
+					'user_id': ($xf.visitor.user_id != $user.user_id ? $user.user_id : '')
+				} }}" wrapperclass="block-outer-main" />
+		</div>
+
+		<div class="block-container">
+			<div class="block-body">
+				<div class="structItemContainer">
+					<xf:foreach loop="$blogs" value="$blog">
+						<xf:set var="$extra" value="" />
+						<xf:macro id="taylorj_blogs_list_macros::blog" arg-blog="{$blog}"
+							arg-allowEdit="{{ false }}" />
+					</xf:foreach>
+				</div>
+			</div>
+		</div>
+
+		<xf:pagenav page="{$page}" perpage="{$perPage}" total="{$total}" link="blogs/authors/owner" data="{$user}" params="{{ {
+				'user_id': ($xf.visitor.user_id != $user.user_id ? $user.user_id : '')
+			} }}" wrapperclass="block-outer block-outer--after" />
+	</div>
+	<xf:else />
+	<div class="blockMessage">{{ phrase('there_no_threads_to_display') }}</div>
+</xf:if>

@@ -5,26 +5,37 @@ namespace TaylorJ\Blogs\Entity;
 use XF\Mvc\Entity\Entity;
 use XF\Mvc\Entity\Structure;
 use XF\Mvc\ParameterBag;
+use XF\Entity\ApprovalQueue;
+use XF\Entity\DatableInterface;
+use XF\Entity\DatableTrait;
 
 /**
  * COLUMNS
  * @property int $blog_id
  * @property int $user_id
  * @property string $blog_title
+ * @property string $blog_title_
  * @property string $blog_description
- * @property string $blog_header_image_
+ * @property string $blog_description_
  * @property int $blog_creation_date
  * @property int $blog_last_post_date
- * @property array $breadcrumb_data
+ * @property bool $blog_has_header
+ * @property int $blog_post_count
+ * @property string $blog_state
  *
  * GETTERS
- * @property string $blog_header_image
+ * @property-read string $blog_header_image
  *
  * RELATIONS
- * @property \XF\Entity\User $User
+ * @property-read \XF\Entity\User|null $User
+ * @property-read \XF\Mvc\Entity\AbstractCollection<\TaylorJ\Blogs\Entity\BlogPost> $BlogPost
+ * @property-read \XF\Mvc\Entity\AbstractCollection<\TaylorJ\Blogs\Entity\BlogWatch> $BlogWatch
+ * @property-read \XF\Entity\ApprovalQueue|null $ApprovalQueue
  */
-class Blog extends Entity
+class Blog extends Entity implements DatableInterface
 {
+
+	use DatableTrait;
 
 	public function getBreadcrumbs($includeSelf = true, $linkType = 'public')
 	{
@@ -76,7 +87,7 @@ class Blog extends Entity
 				return false;
 			}
 		} else {
-			if (!$visitor->hasPermission('taylorjBlogs', 'deleteAny')) {
+			if (!$visitor->hasPermission('taylorjBlogs', 'canDeleteAny')) {
 				$error = \XF::phrase('taylorj_blogs_blog_error_delete');
 				return false;
 			}
@@ -120,6 +131,25 @@ class Blog extends Entity
 		}
 
 		return false;
+	}
+
+	public function canEditTags(?BlogPost $blogPost = null, &$error = null)
+	{
+		$visitor = \XF::visitor();
+
+		if (!$this->app()->options()->enableTagging) {
+			return false;
+		}
+
+		// if no blog post, assume will be owned by this person
+		if ($visitor->hasPermission('taylorjBlogPost', 'canTagOwnBlogPost')) {
+			return true;
+		}
+
+		return (
+			$visitor->hasPermission('taylorjBlogPost', 'canTagAnyBlogPost')
+			|| $visitor->hasPermission('forum', 'canManageAnyTag')
+		);
 	}
 
 	public function getBlogHeaderImage(bool $canonical = false): string
@@ -181,12 +211,40 @@ class Blog extends Entity
 		return true;
 	}
 
+	public function canApproveUnapprove(&$error = null)
+	{
+		return (
+			\XF::visitor()->user_id
+			&& \XF::visitor()->hasPermission('forum', 'approveUnapprove')
+		);
+	}
+
 	public function getNewBlogPost()
 	{
 		$blogPost = $this->_em->create('TaylorJ\Blogs:BlogPost');
 		$blogPost->blog_id = $this->blog_id;
 
 		return $blogPost;
+	}
+
+	public function getNewContentState(?Blog $blog = null)
+	{
+		$visitor = \XF::visitor();
+
+		if ($visitor->user_id && $visitor->hasPermission('forum', 'approveUnapprove')) {
+			return 'visible';
+		}
+
+		if (!$visitor->hasPermission('general', 'submitWithoutApproval')) {
+			return 'moderated';
+		}
+
+		return \XF::app()->options()->taylorjBlogsBlogApproval ? 'moderated' : 'visible';
+	}
+
+	public function getContentDateColumn(): string
+	{
+		return 'blog_creation_date';
 	}
 
 	protected function adjustUserBlogCount($amount)
@@ -213,9 +271,50 @@ class Blog extends Entity
 		return true;
 	}
 
+	protected function submitHamData()
+	{
+		/** @var ContentChecker $submitter */
+		$submitter = $this->app()->container('spam.contentHamSubmitter');
+		$submitter->submitHam('taylorj_blogs_blog', $this->blog_id);
+	}
+
 	protected function _postSave()
 	{
-		$this->adjustUserBlogCount(1);
+		$visibilityChange = $this->isStateChanged('blog_state', 'visible');
+		$approvalChange = $this->isStateChanged('blog_state', 'moderated');
+		$deletionChange = $this->isStateChanged('blog_post_state', 'deleted');
+
+		if (!$this->isUpdate()) {
+			$this->adjustUserBlogCount(1);
+		}
+
+		if ($approvalChange == 'enter') {
+			$approvalQueue = $this->getRelationOrDefault('ApprovalQueue', false);
+			$approvalQueue->content_date = $this->blog_creation_date;
+			$approvalQueue->save();
+		}
+
+		if ($this->isUpdate()) {
+			if ($visibilityChange == 'enter') {
+				$this->adjustUserBlogCount(1);
+				if ($approvalChange) {
+					$this->submitHamData();
+				}
+			} else if ($deletionChange == 'enter' && !$this->DeletionLog) {
+				$delLog = $this->getRelationOrDefault('DeletionLog', false);
+				$delLog->setFromVisitor();
+				$delLog->save();
+			}
+
+			if ($approvalChange == 'leave' && $this->ApprovalQueue) {
+				$this->ApprovalQueue->delete();
+			}
+		}
+	}
+
+	protected function _postDelete()
+	{
+		$this->adjustUserBlogCount(-1);
 	}
 
 	public static function getStructure(Structure $structure): Structure
@@ -233,6 +332,11 @@ class Blog extends Entity
 			'blog_last_post_date' => ['type' => self::UINT, 'default' => 0],
 			'blog_has_header' => ['type' => self::BOOL, 'default' => false],
 			'blog_post_count' => ['type' => self::UINT, 'default' => 0],
+			'blog_state' => [
+				'type' => self::STR,
+				'default' => 'visible',
+				'allowedValues' => ['visible', 'moderated', 'deleted']
+			],
 		];
 		$structure->relations = [
 			'User' => [
@@ -253,10 +357,24 @@ class Blog extends Entity
 				'conditions' => 'blog_id',
 				'key' => 'user_id'
 			],
+			'ApprovalQueue' => [
+				'entity' => 'XF:ApprovalQueue',
+				'type' => self::TO_ONE,
+				'conditions' => [
+					['content_type', '=', 'taylorj_blogs_blog'],
+					['content_id', '=', '$blog_id'],
+				],
+				'primary' => true,
+			],
 		];
 		$structure->defaultWith = ['User'];
 		$structure->getters['blog_header_image'] = true;
-		$structure->behaviors = [];
+		$structure->behaviors = [
+			'XF:Taggable' => ['stateField' => 'blog_post_state'],
+			'XF:Indexable' => [
+				'checkForUpdates' => ['blog_title', 'blog_description', 'blog_id', 'blog_last_post_date', 'user_id']
+			],
+		];
 
 		return $structure;
 	}
@@ -279,4 +397,3 @@ class Blog extends Entity
 		return $output;
 	}
 }
-

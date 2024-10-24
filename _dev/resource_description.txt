@@ -1,0 +1,60 @@
+[HEADING=1][TaylorJ] Blogs for XenForo 2.3.0+[/HEADING]
+[HEADING=1]Description[/HEADING]
+A user blogging system to allow your users to express themselves
+[HEADING=1]Options[/HEADING]
+[HEADING=3][TaylorJ] Blogs - Options[/HEADING]
+[TABLE width="100%"]
+[TR]
+[th]Name[/th][th]Description[/th]
+[/TR]
+[TR]
+[td]Blog Posts per page[/td][td]How many blog posts to show per page on the blog view[/td]
+[/TR]
+[TR]
+[td]Blog creation limit[/td][td]Limit your users to how many blogs they can own/create[/td]
+[/TR]
+[TR]
+[td]Forum for comment thread creation[/td][td]Pick a forum that will be used to automatically create threads in for blog posts to be used as comments.[/td]
+[/TR]
+[TR]
+[td]Blogs per page[/td][td]How many blogs to display per page on the blogs index page[/td]
+[/TR]
+[/TABLE]
+[HEADING=1]Permissions[/HEADING]
+[HEADING=3][TaylorJ] Blogs permissions[/HEADING]
+[LIST]
+[*]Can view own blog
+[*]Can view blogs
+[*]Can view any blog
+[*]Can edit own blog
+[*]Can delete own blog
+[*]Can create a new blog
+[*]Can make a blog post
+[*]Can edit own blog post
+[*]Can delete own blog post
+[/LIST]
+[HEADING=3][TaylorJ] Blogs Moderator Permissions[/HEADING]
+[LIST]
+[*]Can edit any blog
+[*]Can delete any blog
+[*]Can edit any blog post
+[*]Can delete any blog post
+[/LIST]
+[HEADING=1]Widget Definitions[/HEADING]
+[TABLE width="100%"]
+[TR]
+[th]Definition[/th][th]Description[/th]
+[/TR]
+[TR]
+[td]Latest Blog Posts ([ICODE]taylorj_latest_blog_posts[/ICODE])[/td][td]Displays latest blog posts[/td]
+[/TR]
+[/TABLE]
+[HEADING=1]Cron Entries[/HEADING]
+[TABLE width="100%"]
+[TR]
+[th]Name[/th][th]Run on...[/th][th]Run at hours[/th][th]Run at minutes[/th]
+[/TR]
+[TR]
+[td]Update Blog Post View Counter[/td][td]Any day of the month[/td][td]Any[/td][td]30[/td]
+[/TR]
+[/TABLE]

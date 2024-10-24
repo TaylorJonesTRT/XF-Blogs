@@ -2,14 +2,23 @@
     "taylorj_blogs_blog-alert_handler_class.json": {
         "hash": "6ea3372f9b9b38107f98cd3981b6d378"
     },
+    "taylorj_blogs_blog-approval_queue_handler_class.json": {
+        "hash": "144563a1482997cf619b94022f9e256e"
+    },
     "taylorj_blogs_blog-entity.json": {
         "hash": "d7027a8096622e14f7a821e9a59cfd30"
     },
     "taylorj_blogs_blog-find_new_handler_class.json": {
         "hash": "1bc02606eabada8616e1424e582dbc13"
     },
+    "taylorj_blogs_blog-search_handler_class.json": {
+        "hash": "c64a79b6cc128adad5face2fa1144712"
+    },
     "taylorj_blogs_blog_post-alert_handler_class.json": {
         "hash": "81db85e86ab75d3c64af20a8c1f84464"
+    },
+    "taylorj_blogs_blog_post-approval_queue_handler_class.json": {
+        "hash": "9a659e4fb4b4d60dd64781e39556929b"
     },
     "taylorj_blogs_blog_post-attachment_handler_class.json": {
         "hash": "f08593b8c09b55644ec2765ec32bc2fc"
@@ -31,6 +40,9 @@
     },
     "taylorj_blogs_blog_post-search_handler_class.json": {
         "hash": "b7bd9cb9c38f3409ed74750b4d3c14d6"
+    },
+    "taylorj_blogs_blog_post-tag_handler_class.json": {
+        "hash": "33c6bcf7075261faac5ec8a723cf019a"
     },
     "taylorj_userblogs_post-attachment_handler_class.json": {
         "hash": "4866806c7e79173da09795495f0c49fb"

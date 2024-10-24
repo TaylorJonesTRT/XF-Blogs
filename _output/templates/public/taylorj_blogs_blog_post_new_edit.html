@@ -30,6 +30,19 @@
 
 				</xf:macro>
 
+				<xf:if is="$xf.options.enableTagging AND ($blog.canEditTags() OR $blogPost.tags)">
+					<hr class="formRowSep" />
+					<xf:tokeninputrow name="tags" value="{{ $blogPost.tags|join(', ') }}"
+						href="{{ link('misc/tag-auto-complete') }}" min-length="{$xf.options.tagLength.min}"
+						max-length="{$xf.options.tagLength.max}" max-tokens="{$xf.options.maxContentTags}"
+						label="{{ phrase('tags') }}">
+
+						<xf:explain>
+							{{ phrase('multiple_tags_may_be_separated_by_commas') }}
+						</xf:explain>
+					</xf:tokeninputrow>
+				</xf:if>
+
 				<xf:radiorow name="blog_post_schedule" value="visible" rowtype="noColon"
 					label="{{ phrase('taylorj_blogs_blog_post_schedule') }}">
 

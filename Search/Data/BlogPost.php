@@ -34,7 +34,6 @@ class BlogPost extends \XF\Search\Data\AbstractData
 
 	public function setupMetadataStructure(MetadataStructure $structure)
 	{
-		$structure->addField('blog', MetadataStructure::INT);
 		$structure->addField('blogPost', MetadataStructure::INT);
 	}
 

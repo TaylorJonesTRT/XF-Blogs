@@ -11,6 +11,7 @@ use XF\Repository\AttachmentRepository;
 use XF\ControllerPlugin\SharePlugin;
 use XF\ControllerPlugin\ReportPlugin;
 use TaylorJ\Blogs\Utils;
+use XF\Service\Tag\ChangerService;
 
 /**
  * Controller for handling a blog instance
@@ -53,7 +54,8 @@ class BlogPost extends AbstractController
             'blogPost' => $blogPost,
             'comments' => $postList,
             'discussionThread' => $discussionThread,
-            'blogPostReadTime' => $readTime
+            'blogPostReadTime' => $readTime,
+            'pendingApproval' => $this->filter('pending_approval', 'bool')
         ];
 
         return $this->view('TaylorJ\Blogs:BlogPost\Index', 'taylorj_blogs_blog_post_view', $viewParams);
@@ -146,6 +148,7 @@ class BlogPost extends AbstractController
     public function actionDelete(ParameterBag $params)
     {
         $blogPost = $this->assertBlogPostExists($params->blog_post_id);
+        $blog = $blogPost->Blog;
 
         /** @var \XF\ControllerPlugin\Delete $plugin */
         $plugin = $this->plugin('XF:Delete');
@@ -153,7 +156,7 @@ class BlogPost extends AbstractController
             $blogPost,
             $this->buildLink('blogs/post/delete', $blogPost),
             $this->buildLink('blogs/post/edit', $blogPost),
-            $this->buildLink('blogs/blog', $blogPost->blog_id),
+            $this->buildLink('blogs/blog', $blog),
             $blogPost->blog_post_title
         );
     }
@@ -214,6 +217,49 @@ class BlogPost extends AbstractController
             $this->buildLink('blogs/post/report', $blogPost),
             $this->buildLink('blogs/post', $blogPost)
         );
+    }
+
+    public function actionTags(ParameterBag $params)
+    {
+        $blogPost = $this->assertViewablePost($params->blog_post_id);
+
+        if (!$blogPost->canEditTags($error)) {
+            return $this->noPermission($error);
+        }
+
+        /** @var ChangerService $tagger */
+        $tagger = $this->service(ChangerService::class, 'taylorj_blogs_blog_post', $blogPost);
+
+        if ($this->isPost()) {
+            $tagger->setEditableTags($this->filter('tags', 'str'));
+            if ($tagger->hasErrors()) {
+                return $this->error($tagger->getErrors());
+            }
+
+            $tagger->save();
+
+            if ($this->filter('_xfInlineEdit', 'bool')) {
+                $viewParams = [
+                    'blogPost' => $blogPost,
+                ];
+                $reply = $this->view('TaylorJ\Blogs:BlogPost\TagsInline', 'taylorj_blogs_blog_post_tags_list', $viewParams);
+                $reply->setJsonParam('message', \XF::phrase('your_changes_have_been_saved'));
+                return $reply;
+            } else {
+                return $this->redirect($this->buildLink('blogs/post', $blogPost));
+            }
+        } else {
+            $grouped = $tagger->getExistingTagsByEditability();
+
+            $viewParams = [
+                'blogPost'         => $blogPost,
+                'blog'          => $blogPost->Blog,
+                'editableTags'   => $grouped['editable'],
+                'uneditableTags' => $grouped['uneditable'],
+            ];
+
+            return $this->view('TaylorJ\Blogs:BlogPost\Tags', 'taylorj_blogs_blog_post_tags', $viewParams);
+        }
     }
 
     /**
@@ -316,17 +362,13 @@ class BlogPost extends AbstractController
         $creator->setContent($message);
 
         $scheduledPostDateTime = $this->filter([
-            'blog_post_schedule' => 'bool',
+            'blog_post_schedule' => 'string',
             'dd' => 'str',
             'hh' => 'int',
             'mm' => 'int'
         ]);
 
         $creator->setScheduledPostDateTime($scheduledPostDateTime);
-
-        /*if ($blogPost->isChanged('blog_post_state')) {*/
-        /*    $test = 'hello';*/
-        /*}*/
 
         return $creator;
     }

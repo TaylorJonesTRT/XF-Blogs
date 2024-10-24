@@ -6,7 +6,7 @@
 
 <xf:pageaction>
     <xf:button href="{{ link('blogs/add') }}" icon="add" overlay="true" class="button--cta">
-       {{ phrase('taylorj_blogs_create_blog') }} 
+        {{ phrase('taylorj_blogs_create_blog') }}
     </xf:button>
 </xf:pageaction>
 
@@ -33,4 +33,6 @@
             </div>
         </div>
     </xf:foreach>
+    <xf:pagenav page="{$page}" perpage="{$perPage}" total="{$total}" link="blogs/" data="{$blog}"
+        wrapperclass="block-outer block-outer--after" />
 </div>

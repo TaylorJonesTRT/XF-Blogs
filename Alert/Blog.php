@@ -8,7 +8,7 @@ class Blog extends \XF\Alert\AbstractHandler
 {
 	public function canViewContent(Entity $entity, &$error = null)
 	{
-    /** @var \TaylorJ\Blogs\Entity\Blog $entity */
+		/** @var \TaylorJ\Blogs\Entity\Blog $entity */
 		return $entity->canView();
 	}
 
@@ -24,3 +24,4 @@ class Blog extends \XF\Alert\AbstractHandler
 		return 1000;
 	}
 }
+

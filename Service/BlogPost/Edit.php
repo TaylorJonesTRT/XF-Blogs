@@ -63,21 +63,22 @@ class Edit extends AbstractService
 
 		$blogPost->save(true, false);
 
-		if ($blogPost->blog_post_state == 'visible') {
-			$creator = $this->setupBlogPostThreadCreation($blogPost);
+		return $blogPost;
+	}
+
+	public function finalSteps()
+	{
+		if ($this->blogPost->blog_post_state == 'visible' && $this->blogPost->discussion_thread_id == 0) {
+			$creator = $this->setupBlogPostThreadCreation($this->blogPost);
 			if ($creator && $creator->validate()) {
 				$thread = $creator->save();
-				$blogPost->fastUpdate('discussion_thread_id', $thread->thread_id);
+				$this->blogPost->fastUpdate('discussion_thread_id', $thread->thread_id);
 				$this->threadCreator = $creator;
 
 				$this->afterResourceThreadCreated($thread);
 			}
 		}
-
-		return $blogPost;
 	}
-
-	public function finalSteps() {}
 
 	protected function setupBlogPostThreadCreation(BlogPost $blogPost)
 	{
@@ -154,14 +155,19 @@ class Edit extends AbstractService
 		$postHour = $scheduledPostTime['hh'];
 		$postMinute = $scheduledPostTime['mm'];
 
-		if (!$scheduledPostTime['blog_post_schedule']) {
-			$dateTime = new \DateTime("$postDate $postHour:$postMinute", $tz);
+		$dateTime = new \DateTime("$postDate $postHour:$postMinute", $tz);
 
+		if ($scheduledPostTime['blog_post_schedule'] == 'scheduled') {
 			$this->blogPost->scheduled_post_date_time = $dateTime->format('U');
 			$this->blogPost->blog_post_state = 'scheduled';
+			/*}*/
+		} elseif ($scheduledPostTime['blog_post_schedule'] == 'draft') {
+			$this->blogPost->scheduled_post_date_time = 0;
+			$this->blogPost->blog_post_date = 0;
+			$this->blogPost->blog_post_state = 'draft';
 		} else {
 			$this->blogPost->scheduled_post_date_time = 0;
-			$this->blogPost->blog_post_state = 'visible';
+			$this->blogPost->blog_post_state = $this->blogPost->getNewContentState();
 		}
 	}
 }

@@ -58,11 +58,19 @@ class Utils
     }
 
     /**
-     * @return \XF\Repository\Thread
+     * @return \TaylorJ\Blogs\Repository\BlogPost
      */
     public static function getBlogPostRepo()
     {
         return \XF::app()->repository('TaylorJ\Blogs:BlogPost');
+    }
+
+    /**
+     * @return \TaylorJ\Blogs\Repository\Blog
+     */
+    public static function getBlogRepo()
+    {
+        return \XF::app()->repository('TaylorJ\Blogs:Blog');
     }
 
     /**

@@ -29,6 +29,7 @@ class Setup extends AbstractSetup
             $table->addColumn('blog_last_post_date', 'int')->setDefault(0);
             $table->addColumn('blog_has_header', 'tinyint')->setDefault(0);
             $table->addColumn('blog_post_count', 'int')->setDefault(0);
+            $table->addColumn('blog_state', 'enum')->values(['visible', 'moderated', 'deleted'])->setDefault('visible');
         });
     }
 
@@ -49,8 +50,9 @@ class Setup extends AbstractSetup
             $table->addColumn('reactions', 'blob')->nullable();
             $table->addColumn('reaction_users', 'blob');
             $table->addColumn('scheduled_post_date_time', 'int')->nullable();
-            $table->addColumn('blog_post_state', 'enum')->values(['visible', 'scheduled', 'draft'])->setDefault('visible');
+            $table->addColumn('blog_post_state', 'enum')->values(['visible', 'scheduled', 'draft', 'moderated', 'deleted'])->setDefault('visible');
             $table->addColumn('discussion_thread_id', 'int')->setDefault(0);
+            $table->addColumn('tags', 'mediumblob');
         });
     }
 
@@ -141,6 +143,21 @@ class Setup extends AbstractSetup
     {
         $this->alterTable('xf_taylorj_blogs_blog_post', function (\XF\Db\Schema\Alter $table) {
             $table->changeColumn('blog_post_state', 'enum')->values(['visible', 'scheduled', 'draft'])->setDefault('visible');
+        });
+    }
+
+    public function upgrade1010070Step1()
+    {
+        $this->alterTable('xf_taylorj_blogs_blog_post', function (\XF\Db\Schema\Alter $table) {
+            $table->changeColumn('blog_post_state', 'enum')->values(['visible', 'scheduled', 'draft', 'moderated', 'deleted'])->setDefault('visible');
+            $table->addColumn('tags', 'mediumblob');
+        });
+    }
+
+    public function upgrade1010070Step2()
+    {
+        $this->alterTable('xf_taylorj_blogs_blog', function (\XF\Db\Schema\Alter $table) {
+            $table->addColumn('blog_state', 'enum')->values(['visible', 'moderated', 'deleted'])->setDefault('visible');
         });
     }
 

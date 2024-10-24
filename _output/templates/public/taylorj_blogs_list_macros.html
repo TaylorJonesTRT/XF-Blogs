@@ -2,7 +2,7 @@
 	<xf:css src="structured_list.less" />
 	<xf:css src="xfrm.less" />
 
-	<div class="structItem structItem--resource js-inlineModContainer js-resourceListItem-{$blogPost.blog_post_id}"
+	<div class="structItem structItem--resource js-inlineModContainer js-resourceListItem-{$blogPost.blog_post_id} {{ $blogPost.blog_post_state == 'moderated' ? 'is-moderated' : '' }}"
 		data-author="{{ $blogPost.User.username }}">
 		<div class="structItem-cell structItem-cell--icon structItem-cell--iconExpanded">
 			<div class="structItem-iconContainer">
@@ -48,6 +48,47 @@
 						{{ $blogPost.blog_post_title }}
 					</a>
 				</dd>
+			</dl>
+		</div>
+	</div>
+</xf:macro>
+
+<xf:macro id="blog" arg-blog="!">
+	<xf:css src="structured_list.less" />
+	<xf:css src="xfrm.less" />
+
+	<div class="structItem structItem--resource js-inlineModContainer js-resourceListItem-{$blog.blog_id} {{ $blog.blog_state == 'moderated' ? 'is-moderated' : '' }}"
+		data-author="{{ $blog.User.username }}">
+		<div class="structItem-cell structItem-cell--icon structItem-cell--iconExpanded">
+			<div class="structItem-iconContainer">
+				{{ blog_icon($blog, 's', link('blogs/blog', $blog)) }}
+				<xf:avatar user="$blog.User" size="s" href="" class="avatar--separated structItem-secondaryIcon" />
+			</div>
+		</div>
+		<div class="structItem-cell structItem-cell--main" data-xf-init="touch-proxy">
+
+			<div class="structItem-title">
+				<a href="{{ link('blogs/blog', $blog) }}" class="" data-tp-primary="on">{$blog.blog_title}</a>
+			</div>
+
+			<div class="structItem-minor">
+				<ul class="structItem-parts">
+					<li>
+						<xf:username user="$blog.User" />
+					</li>
+					<li class="structItem-startDate">
+						<a href="{{ link('blogs/blog', $blog) }}" rel="nofollow">
+							<xf:date time="{$blog.blog_last_post_date}" />
+						</a>
+					</li>
+				</ul>
+			</div>
+		</div>
+		<div class="structItem-cell structItem-cell--resourceMeta">
+
+			<dl class="pairs pairs--justified structItem-minor structItem-metaItem structItem-metaItem--downloads">
+				<dt>{{ phrase('taylorj_blogs_blog_post_count') }}</dt>
+				<dd>{$blog.blog_post_count|number}</dd>
 			</dl>
 		</div>
 	</div>

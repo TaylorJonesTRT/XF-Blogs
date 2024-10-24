@@ -10,7 +10,7 @@ class Blog extends \XF\Search\Data\AbstractData
 {
 	public function getIndexData(Entity $entity)
 	{
-		$index = IndexRecord::create('taylorj_blogs_blog_post', $entity->blog_post_id, [
+		$index = IndexRecord::create('taylorj_blogs_blog', $entity->blog_id, [
 			'title' => $entity->blog_title,
 			'description' => $entity->blog_description,
 			'lastPostDate' => $entity->blog_last_post_date,
@@ -20,7 +20,7 @@ class Blog extends \XF\Search\Data\AbstractData
 		return $index;
 	}
 
-	protected function getMetaData(\TaylorJ\Blogs\Entity\BlogPost $entity)
+	protected function getMetaData(\TaylorJ\Blogs\Entity\Blog $entity)
 	{
 
 		$metadata = [
@@ -37,7 +37,7 @@ class Blog extends \XF\Search\Data\AbstractData
 
 	public function getResultDate(Entity $entity)
 	{
-		return $entity->blog_last_post_date;
+		return $entity->blog_creation_date;
 	}
 
 	public function getTemplateData(Entity $entity, array $options = [])
@@ -60,6 +60,6 @@ class Blog extends \XF\Search\Data\AbstractData
 
 	public function getGroupByType()
 	{
-		return 'taylorj_blogs_blog_post';
+		return 'taylorj_blogs_blog';
 	}
 }

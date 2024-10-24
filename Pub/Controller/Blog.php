@@ -15,6 +15,8 @@ class Blog extends AbstractController
 {
     public function actionIndex(ParameterBag $params)
     {
+        $visitor = \XF::visitor();
+
         /** @var \TaylorJ\Blogs\Entity\Blog $blog */
         $blog = $this->assertBlogExists($params->blog_id);
 
@@ -24,9 +26,24 @@ class Blog extends AbstractController
             return $this->noPermission(\XF::phrase('permission.taylorjBlogs_viewAny'));
         }
 
+        $conditions = [];
+
+        if ($blog->user_id == $visitor->user_id) {
+            $conditions[] = [
+                'blog_post_state' => ['moderated', 'visible']
+            ];
+        } else {
+            $conditions[] = [
+                'blog_post_state' => [
+                    'visible'
+                ]
+            ];
+        }
+
         $blogPostFinder = $this->finder('TaylorJ\Blogs:BlogPost')
             ->where('blog_id', $params->blog_id)
-            ->where('blog_post_state', 'visible');
+            ->whereOr($conditions);
+
 
         $blogPostFinder
             ->order('blog_post_date', 'DESC');
@@ -230,6 +247,8 @@ class Blog extends AbstractController
 
     protected function blogPostSaveProcess(ParameterBag $params)
     {
+        $visitor = \XF::visitor();
+
         $input = $this->filter([
             'blog_post_title' => 'str',
             'blog_id' => 'int'
@@ -246,8 +265,18 @@ class Blog extends AbstractController
 
         $this->assertNotFlooding('post');
 
+        if ($blog->canEditTags()) {
+            $creator->setTags($this->filter('tags', 'str'));
+        }
+
         /** @var \TaylorJ\Blogs\Entity\BlogPost $blogPost */
         $blogPost = $creator->save();
+
+        if ($visitor->user_id) {
+            if ($blogPost->blog_post_state == 'moderated') {
+                $this->session()->setHasContentPendingApproval();
+            }
+        }
 
         $hash = $this->filter('attachment_hash', 'str');
         if ($hash && $blogPost->canUploadAndManageAttachments()) {

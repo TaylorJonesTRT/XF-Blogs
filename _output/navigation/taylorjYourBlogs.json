@@ -3,7 +3,7 @@
     "display_order": 1,
     "navigation_type_id": "basic",
     "type_config": {
-        "link": "{{ link('blogs/authors', $xf.visitor) }}",
+        "link": "{{ link('blogs/authors/owner', $xf.visitor) }}",
         "display_condition": "$xf.visitor.user_id",
         "extra_attributes": []
     },

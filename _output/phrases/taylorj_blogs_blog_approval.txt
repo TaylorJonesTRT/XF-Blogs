@@ -1,0 +1,1 @@
+Blog <a href="{blogLink}">{blogTitle}</a> created.

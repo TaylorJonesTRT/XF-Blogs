@@ -24,12 +24,12 @@ class Notify extends AbstractNotifier
 	{
 		parent::__construct($app);
 
-		switch ($actionType)
-		{
+		switch ($actionType) {
 			case 'update':
 			case 'newBlogPost':
 				break;
-
+			case 'blogPostApproved':
+				break;
 			default:
 				throw new \InvalidArgumentException("Unknown action type '$actionType'");
 		}
@@ -42,8 +42,7 @@ class Notify extends AbstractNotifier
 	public static function createForJob(array $extraData)
 	{
 		$update = \XF::app()->find('TaylorJ\Blogs:Blog', $extraData['updateId'], ['Blog']);
-		if (!$update)
-		{
+		if (!$update) {
 			return null;
 		}
 
@@ -68,15 +67,15 @@ class Notify extends AbstractNotifier
 	protected function loadExtraUserData(array $users)
 	{
 		$permCombinationIds = [];
-		foreach ($users AS $user)
-		{
+		foreach ($users as $user) {
 			$id = $user->permission_combination_id;
 			$permCombinationIds[$id] = $id;
 		}
 
 		$this->app->permissionCache()->cacheMultipleContentPermsForContent(
 			$permCombinationIds,
-			'taylorj_blogs_blog_post', $this->update->blog_id
+			'taylorj_blogs_blog_post',
+			$this->update->blog_id
 		);
 	}
 
@@ -84,7 +83,9 @@ class Notify extends AbstractNotifier
 	{
 		return \XF::asVisitor(
 			$user,
-			function() { return $this->update->canView(); }
+			function () {
+				return $this->update->canView();
+			}
 		);
 	}
 
@@ -94,11 +95,9 @@ class Notify extends AbstractNotifier
 
 		$endTime = $timeLimit > 0 ? microtime(true) + $timeLimit : null;
 
-		foreach ($this->getNotifiers() AS $type => $notifier)
-		{
+		foreach ($this->getNotifiers() as $type => $notifier) {
 			$data = $this->notifyData[$type];
-			if (!$data)
-			{
+			if (!$data) {
 				// already processed or nothing to do
 				continue;
 			}
@@ -106,8 +105,7 @@ class Notify extends AbstractNotifier
 			$newData = $this->notifyType($notifier, $data, $endTime);
 			$this->notifyData[$type] = $newData;
 
-			if ($endTime && microtime(true) >= $endTime)
-			{
+			if ($endTime && microtime(true) >= $endTime) {
 				break;
 			}
 		}
@@ -121,44 +119,37 @@ class Notify extends AbstractNotifier
 
 	protected function notifyType(\XF\Notifier\AbstractNotifier $notifier, array $data, $endTime = null)
 	{
-		do
-		{
+		do {
 			$notifyUsers = array_slice($data, 0, self::USERS_PER_CYCLE, true);
 			$users = $notifier->getUserData(array_keys($notifyUsers));
 
 			$this->loadExtraUserData($users);
 
-			foreach ($notifyUsers AS $userId => $notify)
-			{
+			foreach ($notifyUsers as $userId => $notify) {
 				unset($data[$userId]);
 
-				if (!isset($users[$userId]))
-				{
+				if (!isset($users[$userId])) {
 					continue;
 				}
 
 				$user = $users[$userId];
 
-				if (!$this->canUserViewContent($user) || !$notifier->canNotify($user))
-				{
+				if (!$this->canUserViewContent($user) || !$notifier->canNotify($user)) {
 					continue;
 				}
 
 				$alert = ($notify['alert'] && empty($this->alerted[$userId]));
-				if ($alert && $notifier->sendAlert($user))
-				{
+				if ($alert && $notifier->sendAlert($user)) {
 					$this->alerted[$userId] = true;
 				}
 
-				if ($endTime && microtime(true) >= $endTime)
-				{
+				if ($endTime && microtime(true) >= $endTime) {
 					return $data;
 				}
 			}
-		}
-		while ($data);
+		} while ($data);
 
 		return $data;
 	}
-
 }
+
