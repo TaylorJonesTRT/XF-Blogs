@@ -515,7 +515,7 @@ class BlogPost extends Entity implements RenderableContentInterface, DatableInte
 		$structure->behaviors = [
 			'XF:Taggable' => ['stateField' => 'blog_post_state'],
 			'XF:Indexable' => [
-				'checkForUpdates' => ['blog_post_title', 'blog_post_id', 'blog_id', 'user_id']
+				'checkForUpdates' => ['blog_post_title', 'blog_post_id', 'blog_id', 'user_id', 'blog_post_content']
 			],
 			'XF:Reactable' => [
 				'stateField' => 'blog_post_state'

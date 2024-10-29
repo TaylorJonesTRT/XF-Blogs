@@ -1,21 +1,24 @@
 {
     "taylorjBlogPostsMinTagCount.json": {
-        "hash": "5a8c1fbfcc51522bba99b8f77c2f9e5d"
+        "hash": "fd32403a7b8fe18b390bd6cf73ed3f23"
     },
     "taylorjBlogPostsPerPage.json": {
         "hash": "80c0d35dd3ef0982c2fd0262d1758bfa"
     },
     "taylorjBlogsBlogApproval.json": {
-        "hash": "57ffb033f035b6e63ff1294de7ab4da5"
+        "hash": "ded3e4da7206319f8bc9e5a602935e18"
     },
     "taylorjBlogsBlogLimit.json": {
         "hash": "97d753275914045745b6a82b4deb2fc4"
     },
     "taylorjBlogsBlogPostApproval.json": {
-        "hash": "ded3e4da7206319f8bc9e5a602935e18"
+        "hash": "e22c9b2d3cbdc2e1d49546f293ea0fa2"
+    },
+    "taylorjBlogsBlogPostComments.json": {
+        "hash": "8b0aceb29acca3a56e953a4ae0e64457"
     },
     "taylorjBlogsBlogPostForum.json": {
-        "hash": "46d7f81d83e6d9ce29fba5eb090effca"
+        "hash": "837f36452ccefcc8bc94cdd380c7249e"
     },
     "taylorjBlogsPerPage.json": {
         "hash": "4ba46c5cf300481fd2645f2fe06ab4dc"

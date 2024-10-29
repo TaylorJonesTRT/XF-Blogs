@@ -300,7 +300,7 @@ class Blog extends Entity implements DatableInterface
 				if ($approvalChange) {
 					$this->submitHamData();
 				}
-			} else if ($deletionChange == 'enter' && !$this->DeletionLog) {
+			} elseif ($deletionChange == 'enter' && !$this->DeletionLog) {
 				$delLog = $this->getRelationOrDefault('DeletionLog', false);
 				$delLog->setFromVisitor();
 				$delLog->save();

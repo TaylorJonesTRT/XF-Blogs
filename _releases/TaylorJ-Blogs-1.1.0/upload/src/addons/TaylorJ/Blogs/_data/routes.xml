@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<routes>
+  <route route_type="admin" route_prefix="blogs" controller="TaylorJ\Blogs:Blogs" context="blogs"/>
+  <route route_type="public" route_prefix="blogs" format=":page" controller="TaylorJ\Blogs:Blogs" context="taylorjBlogs"/>
+  <route route_type="public" route_prefix="blogs" sub_name="authors" format="authors/:int&lt;user_id,username&gt;/" controller="TaylorJ\Blogs:Author" context="taylorjBlogs"/>
+  <route route_type="public" route_prefix="blogs" sub_name="blog" format="blog/:int&lt;blog_id,blog_title&gt;/:page" controller="TaylorJ\Blogs:Blog" context="taylorjBlogs"/>
+  <route route_type="public" route_prefix="blogs" sub_name="post" format="post/:int&lt;blog_post_id,blog_post_title&gt;/" controller="TaylorJ\Blogs:BlogPost" context="taylorjBlogs"/>
+  <route route_type="public" route_prefix="whats-new" sub_name="blog-posts" format="blog-posts/:int&lt;find_new_id&gt;/:page" controller="TaylorJ\Blogs:WhatsNewBlogPosts" context="taylorjBlogs"/>
+</routes>

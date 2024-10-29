@@ -166,6 +166,7 @@
                     </div>
                 </xf:extension>
             </div>
+        </article>
     </div>
     <aside class="message-articleUserInfo">
         <div class="message-cell">
@@ -243,7 +244,8 @@
     </aside>
 </div>
 
-<xf:if is="$blogPost.blog_post_state == 'visible'">
+<xf:if
+    is="$blogPost.blog_post_state == 'visible' && ($blogPost.discussion_thread_id != 0 OR $xf.options.taylorjBlogsBlogPostComments)">
 
     <div class="block">
         <div class="block-container">

@@ -51,7 +51,8 @@ abstract class AbstractWidget
 	public function renderOptions()
 	{
 		$templateName = $this->getOptionsTemplate();
-		if (!$templateName) {
+		if (!$templateName)
+		{
 			return '';
 		}
 		return $this->app->templater()->renderTemplate(
@@ -82,10 +83,14 @@ abstract class AbstractWidget
 	{
 		$widgetConfig = $this->widgetConfig;
 		$title = '';
-		if ($widgetConfig->title) {
+		if ($widgetConfig->title)
+		{
 			$title = $widgetConfig->title;
-		} else {
-			if ($widgetConfig->widgetKey) {
+		}
+		else
+		{
+			if ($widgetConfig->widgetKey)
+			{
 				$title = \XF::phrase('widget.' . $widgetConfig->widgetKey)->render('html', [
 					'nameOnInvalid' => false,
 				]);

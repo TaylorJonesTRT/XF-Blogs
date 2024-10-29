@@ -4,7 +4,7 @@
 	<xf:breadcrumb source="$blogPost.getBreadcrumbs(true)" />
 </xf:if>
 
-<xf:title>Create a new blog post</xf:title>
+<xf:title>{{ phrase('taylorj_blogs_blog_post_create_new') }}</xf:title>
 <div class="block">
 	<xf:form action="{{ link('blogs/blog/post-save', $blogPost) }}" class="block" ajax="true"
 		data-xf-init="attachment-manager">

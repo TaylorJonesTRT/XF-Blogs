@@ -2,17 +2,15 @@
 
 namespace TaylorJ\Blogs\Service\BlogPost;
 
+use TaylorJ\Blogs\Entity\BlogPost;
+use TaylorJ\Blogs\Utils;
 use XF\App;
 use XF\Service\AbstractService;
-use TaylorJ\Blogs\Entity\BlogPost;
-use TaylorJ\Blogs\Service\Blog\Notify;
-
-use TaylorJ\Blogs\Utils;
 
 class Approve extends AbstractService
 {
 	/**
-	 * @var BlogPost 
+	 * @var BlogPost
 	 */
 	protected $blogPost;
 
@@ -36,13 +34,16 @@ class Approve extends AbstractService
 
 	public function approve()
 	{
-		if ($this->blogPost->blog_post_state == 'moderated') {
+		if ($this->blogPost->blog_post_state == 'moderated')
+		{
 			$this->blogPost->blog_post_state = 'visible';
 			$this->blogPost->save();
 
 			$this->onApprove();
 			return true;
-		} else {
+		}
+		else
+		{
 			return false;
 		}
 	}
@@ -52,7 +53,8 @@ class Approve extends AbstractService
 		$blog = $this->blogPost->Blog;
 
 		$creator = Utils::setupBlogPostThreadCreation($this->blogPost);
-		if ($creator && $creator->validate()) {
+		if ($creator && $creator->validate())
+		{
 			$thread = $creator->save();
 			$this->blogPost->fastUpdate('discussion_thread_id', $thread->thread_id);
 			Utils::afterResourceThreadCreated($thread);

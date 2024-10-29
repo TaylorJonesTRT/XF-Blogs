@@ -2,12 +2,10 @@
 
 namespace TaylorJ\Blogs\Service\Blog;
 
-use XF\App;
-use XF\Service\AbstractService;
 use TaylorJ\Blogs\Entity\Blog;
 use TaylorJ\Blogs\Service\BlogPost\Notify;
-
-use TaylorJ\Blogs\Utils;
+use XF\App;
+use XF\Service\AbstractService;
 
 class Approve extends AbstractService
 {
@@ -31,13 +29,16 @@ class Approve extends AbstractService
 
 	public function approve()
 	{
-		if ($this->blog->blog_state == 'moderated') {
+		if ($this->blog->blog_state == 'moderated')
+		{
 			$this->blog->blog_state = 'visible';
 			$this->blog->save();
 
 			$this->onApprove();
 			return true;
-		} else {
+		}
+		else
+		{
 			return false;
 		}
 	}
@@ -46,7 +47,8 @@ class Approve extends AbstractService
 	{
 		$blog = $this->blog;
 
-		if ($blog) {
+		if ($blog)
+		{
 			/** @var Notify $notifier */
 			/*$notifier = $this->service('TaylorJ\Blogs:BlogPost\Notify', $blog, 'taylorj_blogs_blog_post');*/
 			/*$notifier->notifyAndEnqueue($this->notifyRunTime);*/

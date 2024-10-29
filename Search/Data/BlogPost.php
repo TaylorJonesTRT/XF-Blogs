@@ -3,10 +3,11 @@
 namespace TaylorJ\Blogs\Search\Data;
 
 use XF\Mvc\Entity\Entity;
+use XF\Search\Data\AbstractData;
 use XF\Search\IndexRecord;
 use XF\Search\MetadataStructure;
 
-class BlogPost extends \XF\Search\Data\AbstractData
+class BlogPost extends AbstractData
 {
 	public function getIndexData(Entity $entity)
 	{
@@ -14,7 +15,7 @@ class BlogPost extends \XF\Search\Data\AbstractData
 			'title' => $entity->blog_post_title,
 			'message' => $entity->blog_post_content,
 			'date' => $entity->blog_post_date,
-			'metadata' => $this->getMetaData($entity)
+			'metadata' => $this->getMetaData($entity),
 		]);
 
 		return $index;
@@ -26,7 +27,7 @@ class BlogPost extends \XF\Search\Data\AbstractData
 
 		$metadata = [
 			'blog' => $blog->blog_id,
-			'blogPost' => $entity->blog_post_id
+			'blogPost' => $entity->blog_post_id,
 		];
 
 		return $metadata;
@@ -46,7 +47,7 @@ class BlogPost extends \XF\Search\Data\AbstractData
 	{
 		return [
 			'blogPost' => $entity,
-			'options' => $options
+			'options' => $options,
 		];
 	}
 

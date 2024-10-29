@@ -2,6 +2,9 @@
 
 namespace TaylorJ\Blogs\Notifier\Blog;
 
+use TaylorJ\Blogs\Entity\Blog;
+use XF\App;
+use XF\Entity\User;
 use XF\Notifier\AbstractNotifier;
 
 use function in_array;
@@ -9,7 +12,7 @@ use function in_array;
 abstract class AbstractWatch extends AbstractNotifier
 {
 	/**
-	 * @var \TaylorJ\Blogs\Entity\Blog
+	 * @var Blog
 	 */
 	protected $update;
 
@@ -20,7 +23,7 @@ abstract class AbstractWatch extends AbstractNotifier
 	abstract protected function getApplicableActionTypes();
 	abstract protected function getWatchEmailTemplateName();
 
-	public function __construct(\XF\App $app, \TaylorJ\Blogs\Entity\Blog $update, $actionType)
+	public function __construct(App $app, Blog $update, $actionType)
 	{
 		parent::__construct($app);
 
@@ -31,35 +34,40 @@ abstract class AbstractWatch extends AbstractNotifier
 
 	protected function isApplicable()
 	{
-		if (!in_array($this->actionType, $this->getApplicableActionTypes())) {
+		if (!in_array($this->actionType, $this->getApplicableActionTypes()))
+		{
 			return false;
 		}
 
-		if (!$this->update->isVisible()) {
+		if (!$this->update->isVisible())
+		{
 			return false;
 		}
 
 		return true;
 	}
 
-	public function canNotify(\XF\Entity\User $user)
+	public function canNotify(User $user)
 	{
-		if (!$this->isApplicable) {
+		if (!$this->isApplicable)
+		{
 			return false;
 		}
 
 		$update = $this->update;
 
-		if ($user->isIgnoring($update->User->user_id)) {
+		if ($user->isIgnoring($update->User->user_id))
+		{
 			return false;
 		}
 
 		return true;
 	}
 
-	public function sendEmail(\XF\Entity\User $user)
+	public function sendEmail(User $user)
 	{
-		if (!$user->email || $user->user_state != 'valid') {
+		if (!$user->email || $user->user_state != 'valid')
+		{
 			return false;
 		}
 
@@ -69,7 +77,7 @@ abstract class AbstractWatch extends AbstractNotifier
 			'update' => $update,
 			'resource' => $update->Resource,
 			'category' => $update->Resource->Category,
-			'receiver' => $user
+			'receiver' => $user,
 		];
 
 		$template = $this->getWatchEmailTemplateName();
@@ -84,7 +92,8 @@ abstract class AbstractWatch extends AbstractNotifier
 
 	public function getDefaultNotifyData()
 	{
-		if (!$this->isApplicable) {
+		if (!$this->isApplicable)
+		{
 			return [];
 		}
 

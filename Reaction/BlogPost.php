@@ -9,7 +9,6 @@ class BlogPost extends AbstractHandler
 {
     public function reactionsCounted(Entity $entity)
     {
-        return ($entity->blog_post_state === 'visible' || $entity->blog_post_state == 'scheduled');
+        return ($entity->blog_post_state == 'visible');
     }
 }
-
