@@ -1,1 +1,0 @@
-If checked blog posts will create a thread in the chosen forum below

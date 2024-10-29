@@ -77,12 +77,6 @@
         "version_string": "1.1.0",
         "hash": "f9d571e4883d256ec1eb0b72924dc007"
     },
-    "option.taylorjBlogsBlogPostComments.txt": {
-        "global_cache": false,
-        "version_id": 1010070,
-        "version_string": "1.1.0",
-        "hash": "387ad86390b87876a6770c3a3a72310c"
-    },
     "option.taylorjBlogsBlogPostForum.txt": {
         "global_cache": false,
         "version_id": 1000037,
@@ -124,12 +118,6 @@
         "version_id": 1010070,
         "version_string": "1.1.0",
         "hash": "e0165ef60334184b6cda8945014e96b4"
-    },
-    "option_explain.taylorjBlogsBlogPostComments.txt": {
-        "global_cache": false,
-        "version_id": 1010070,
-        "version_string": "1.1.0",
-        "hash": "e7c6a31058cf67e755f4761bc39e0579"
     },
     "option_explain.taylorjBlogsBlogPostForum.txt": {
         "global_cache": false,
