@@ -29,7 +29,7 @@ class BlogPost extends AbstractController
 	public function actionIndex(ParameterBag $params)
 	{
 		$blogPost = $this->assertBlogPostExists($params->blog_post_id);
-		$blogPostRepo = $this->getBlogPostRepo();
+		$blogPostRepo = (new Utils)->getBlogPostRepo();
 
 		$blogPostContent = $this->finder('TaylorJ\Blogs:BlogPost')
 			->where('blog_post_id', $params->blog_post_id);
@@ -38,36 +38,38 @@ class BlogPost extends AbstractController
 		$attachmentRepo = $this->repository(AttachmentRepository::class);
 		$attachmentRepo->addAttachmentsToContent($blogPostContent->fetch(), 'taylorj_blogs_blog_post');
 
-		if ($blogPost->blog_post_state === 'visible')
-		{
+		if ($blogPost->blog_post_state === 'visible') {
 			$discussionThread = $this->finder('XF:Thread')->where('thread_id', $blogPost->discussion_thread_id)->fetchOne();
+		} else {
+			$discussionThread = null;
+		}
+
+		if ($discussionThread) {
 			/** @var PostRepository $postRepo */
 			$postRepo = $this->getPostRepo();
-			$postList = $postRepo->findPostsForThreadView($discussionThread)
-				->order('post_date', 'DESC')
-				->fetch(5);
+			$comments = $postRepo->findPostsForThreadView($discussionThread)
+				->order('post_date', 'DESC');
+		} else {
+			$comments = null;
 		}
-		else
-		{
-			$discussionThread = null;
-			$postList = null;
-		}
-		$isPrefetchRequest = $this->request->isPrefetch();
 
-		if (!$isPrefetchRequest)
-		{
+		$isPrefetchRequest = $this->request->isPrefetch();
+		if (!$isPrefetchRequest) {
 			$blogPostRepo->logThreadView($blogPost);
 		}
 
 		$blogPostWordCount = str_word_count(strip_tags($blogPost->blog_post_content));
 		$readTime = ceil($blogPostWordCount / 225);
 
+		$ownerOtherPosts = $blogPostRepo->findOtherPostsByOwnerRandom($blogPost->user_id);
+
 		$viewParams = [
 			'blogPost' => $blogPost,
-			'comments' => $postList,
+			'comments' => $comments ? $comments->fetch(5) : null,
 			'discussionThread' => $discussionThread,
 			'blogPostReadTime' => $readTime,
 			'pendingApproval' => $this->filter('pending_approval', 'bool'),
+			'ownerOtherPosts' => $ownerOtherPosts->fetch(4),
 		];
 
 		return $this->view('TaylorJ\Blogs:BlogPost\Index', 'taylorj_blogs_blog_post_view', $viewParams);
@@ -133,8 +135,7 @@ class BlogPost extends AbstractController
 		// i do not remember why i had a isPost check on a blogPost creation
 		// if ($this->isPost()) {
 		$creator = $this->blogPostEdit($blogPost);
-		if (!$creator->validate($errors))
-		{
+		if (!$creator->validate($errors)) {
 			return $this->error($errors);
 		}
 
@@ -144,13 +145,11 @@ class BlogPost extends AbstractController
 		$blogPost = $creator->save();
 
 		$hash = $this->filter('attachment_hash', 'str');
-		if ($hash && $blogPost->canUploadAndManageAttachments())
-		{
+		if ($hash && $blogPost->canUploadAndManageAttachments()) {
 			/** @var Preparer $inserter */
 			$inserter = $this->service('XF:Attachment\Preparer');
 			$associated = $inserter->associateAttachmentsWithContent($hash, 'taylorj_blogs_blog_post', $blogPost->blog_post_id);
-			if ($associated)
-			{
+			if ($associated) {
 				$blogPost->fastUpdate('attach_count', $blogPost->attach_count + $associated);
 			}
 		}
@@ -221,8 +220,7 @@ class BlogPost extends AbstractController
 	public function actionReport(ParameterBag $params)
 	{
 		$blogPost = $this->assertViewablePost($params->blog_post_id);
-		if (!$blogPost->canReport($error))
-		{
+		if (!$blogPost->canReport($error)) {
 			return $this->noPermission($error);
 		}
 
@@ -240,40 +238,32 @@ class BlogPost extends AbstractController
 	{
 		$blogPost = $this->assertViewablePost($params->blog_post_id);
 
-		if (!$blogPost->canEditTags($error))
-		{
+		if (!$blogPost->canEditTags($error)) {
 			return $this->noPermission($error);
 		}
 
 		/** @var ChangerService $tagger */
 		$tagger = $this->service(ChangerService::class, 'taylorj_blogs_blog_post', $blogPost);
 
-		if ($this->isPost())
-		{
+		if ($this->isPost()) {
 			$tagger->setEditableTags($this->filter('tags', 'str'));
-			if ($tagger->hasErrors())
-			{
+			if ($tagger->hasErrors()) {
 				return $this->error($tagger->getErrors());
 			}
 
 			$tagger->save();
 
-			if ($this->filter('_xfInlineEdit', 'bool'))
-			{
+			if ($this->filter('_xfInlineEdit', 'bool')) {
 				$viewParams = [
 					'blogPost' => $blogPost,
 				];
 				$reply = $this->view('TaylorJ\Blogs:BlogPost\TagsInline', 'taylorj_blogs_blog_post_tags_list', $viewParams);
 				$reply->setJsonParam('message', \XF::phrase('your_changes_have_been_saved'));
 				return $reply;
-			}
-			else
-			{
+			} else {
 				return $this->redirect($this->buildLink('blogs/post', $blogPost));
 			}
-		}
-		else
-		{
+		} else {
 			$grouped = $tagger->getExistingTagsByEditability();
 
 			$viewParams = [
@@ -338,8 +328,7 @@ class BlogPost extends AbstractController
 		/** @var BlogPostEntity $blogPost */
 		$blogPost = $this->assertBlogPostExists($id, $with, $phraseKey);
 
-		if (!$blogPost->canView($error))
-		{
+		if (!$blogPost->canView($error)) {
 			throw $this->exception(
 				$this->noPermission($error)
 			);
@@ -349,26 +338,11 @@ class BlogPost extends AbstractController
 	}
 
 	/**
-	 * @return Thread
-	 */
-	protected function getBlogPostRepo()
-	{
-		return $this->repository('TaylorJ\Blogs:BlogPost');
-	}
-
-	/**
 	 * @return PostRepository
 	 */
 	protected function getPostRepo()
 	{
 		return $this->repository(PostRepository::class);
-	}
-
-	public function insertJob(BlogPostEntity $blogPost)
-	{
-		$jobid = 'taylorjblogs_scheduledpost_' . $blogPost->blog_post_id . '_' . \XF::$time;
-		$app = \XF::app();
-		$app->jobManager()->enqueueLater($jobid, $blogPost->scheduled_post_date_time, 'TaylorJ\Blogs:PostBlogPost', ['blog_post_id' => $blogPost->blog_post_id]);
 	}
 
 	/**

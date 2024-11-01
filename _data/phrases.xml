@@ -12,7 +12,6 @@
   <phrase title="option.taylorjBlogsBlogApproval" version_id="1010070" version_string="1.1.0"><![CDATA[Moderate blog creation]]></phrase>
   <phrase title="option.taylorjBlogsBlogLimit" version_id="1000037" version_string="1.0.0 Beta 7"><![CDATA[Blog creation limit]]></phrase>
   <phrase title="option.taylorjBlogsBlogPostApproval" version_id="1010070" version_string="1.1.0"><![CDATA[Moderate blog post creation]]></phrase>
-  <phrase title="option.taylorjBlogsBlogPostComments" version_id="1010070" version_string="1.1.0"><![CDATA[Allow comments on blog posts]]></phrase>
   <phrase title="option.taylorjBlogsBlogPostForum" version_id="1000037" version_string="1.0.0 Beta 7"><![CDATA[Forum for comment thread creation]]></phrase>
   <phrase title="option.taylorjBlogsPerPage" version_id="1000031" version_string="1.0.0 Beta 1"><![CDATA[Blogs per page]]></phrase>
   <phrase title="option_explain.taylorjBlogPostsMinTagCount" version_id="1010070" version_string="1.1.0"><![CDATA[How many tags must a blog post have to be able to be posted]]></phrase>
@@ -20,7 +19,6 @@
   <phrase title="option_explain.taylorjBlogsBlogApproval" version_id="1000070" version_string="1.0.0"><![CDATA[Force all new blog creations into the approval queue]]></phrase>
   <phrase title="option_explain.taylorjBlogsBlogLimit" version_id="1000037" version_string="1.0.0 Beta 7"><![CDATA[Limit your users to how many blogs they can own/create]]></phrase>
   <phrase title="option_explain.taylorjBlogsBlogPostApproval" version_id="1010070" version_string="1.1.0"><![CDATA[Force all new visible blog posts to the approval queue]]></phrase>
-  <phrase title="option_explain.taylorjBlogsBlogPostComments" version_id="1010070" version_string="1.1.0"><![CDATA[If checked blog posts will create a thread in the chosen forum below]]></phrase>
   <phrase title="option_explain.taylorjBlogsBlogPostForum" version_id="1000035" version_string="1.0.0 Beta 5"><![CDATA[Pick a forum that will be used to automatically create threads in for blog posts to be used as comments.]]></phrase>
   <phrase title="option_explain.taylorjBlogsPerPage" version_id="1000031" version_string="1.0.0 Beta 1"><![CDATA[How many blogs to display per page on the blogs index page]]></phrase>
   <phrase title="option_group.taylorjBlogs" version_id="1000031" version_string="1.0.0 Beta 1"><![CDATA[[TaylorJ] Blogs - Options]]></phrase>

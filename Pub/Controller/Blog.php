@@ -2,11 +2,16 @@
 
 namespace TaylorJ\Blogs\Pub\Controller;
 
-use XF\Pub\Controller\AbstractController;
-use XF\Repository\AttachmentRepository;
+use TaylorJ\Blogs\Entity\BlogPost;
+use TaylorJ\Blogs\Repository\BlogWatch;
+use TaylorJ\Blogs\Service\BlogPost\Create;
+use TaylorJ\Blogs\Utils;
+use XF\ControllerPlugin\Delete;
 use XF\Mvc\ParameterBag;
-
-use TaylorJ\Blogs\Utils as Utils;
+use XF\Pub\Controller\AbstractController;
+use XF\Repository\Attachment;
+use XF\Repository\AttachmentRepository;
+use XF\Service\Attachment\Preparer;
 
 /**
  * Controller for handling a blog instance
@@ -22,7 +27,7 @@ class Blog extends AbstractController
 
 		if (!$blog->canView() && $blog->user_id == \XF::visitor()->user_id) {
 			return $this->noPermission(\XF::phrase('permission.taylorjBlogs_viewOwn'));
-		} elseif (!$blog->canView()) {
+		} else if (!$blog->canView()) {
 			return $this->noPermission(\XF::phrase('permission.taylorjBlogs_viewAny'));
 		}
 
@@ -30,13 +35,13 @@ class Blog extends AbstractController
 
 		if ($blog->user_id == $visitor->user_id) {
 			$conditions[] = [
-				'blog_post_state' => ['moderated', 'visible']
+				'blog_post_state' => ['moderated', 'visible'],
 			];
 		} else {
 			$conditions[] = [
 				'blog_post_state' => [
-					'visible'
-				]
+					'visible',
+				],
 			];
 		}
 
@@ -62,7 +67,7 @@ class Blog extends AbstractController
 			'page' => $page,
 			'perPage' => $perPage,
 			'total' => $blogPostFinder->total(),
-			'viewType' => 'visible'
+			'viewType' => 'visible',
 		];
 
 		return $this->view(
@@ -79,9 +84,9 @@ class Blog extends AbstractController
 
 		if (!$blog->canView() && $blog->user_id == \XF::visitor()->user_id) {
 			return $this->noPermission(\XF::phrase('permission.taylorjBlogs_viewOwn'));
-		} elseif (!$blog->canView()) {
+		} else if (!$blog->canView()) {
 			return $this->noPermission(\XF::phrase('permission.taylorjBlogs_viewAny'));
-		} elseif (\XF::visitor()->user_id !== $blog->user_id) {
+		} else if (\XF::visitor()->user_id !== $blog->user_id) {
 			return $this->noPermission(\XF::phrase('taylorj_blogs_blog_scheduled_posts_view_error'));
 		}
 
@@ -106,7 +111,7 @@ class Blog extends AbstractController
 			'page' => $page,
 			'perPage' => $perPage,
 			'total' => $blogPostFinder->total(),
-			'viewType' => 'scheduled'
+			'viewType' => 'scheduled',
 		];
 
 		return $this->view(
@@ -123,9 +128,9 @@ class Blog extends AbstractController
 
 		if (!$blog->canView() && $blog->user_id == \XF::visitor()->user_id) {
 			return $this->noPermission(\XF::phrase('permission.taylorjBlogs_viewOwn'));
-		} elseif (!$blog->canView()) {
+		} else if (!$blog->canView()) {
 			return $this->noPermission(\XF::phrase('permission.taylorjBlogs_viewAny'));
-		} elseif (\XF::visitor()->user_id !== $blog->user_id) {
+		} else if (\XF::visitor()->user_id !== $blog->user_id) {
 			return $this->noPermission(\XF::phrase('taylorj_blogs_blog_draft_posts_view_error'));
 		}
 
@@ -148,7 +153,7 @@ class Blog extends AbstractController
 			'page' => $page,
 			'perPage' => $perPage,
 			'total' => $blogPostFinder->total(),
-			'viewType' => 'draft'
+			'viewType' => 'draft',
 		];
 
 		return $this->view(
@@ -169,7 +174,7 @@ class Blog extends AbstractController
 	{
 		$blog = $this->assertBlogExists($params->blog_id);
 
-		/** @var \XF\ControllerPlugin\Delete $plugin */
+		/** @var Delete $plugin */
 		$plugin = $this->plugin('XF:Delete');
 		return $plugin->actionDelete(
 			$blog,
@@ -204,9 +209,9 @@ class Blog extends AbstractController
 		return $this->view('TaylorJ\Blogs:Blog\Edit', 'taylorj_blogs_blog_edit', $viewParams);
 	}
 
-	protected function blogPostAdd(\TaylorJ\Blogs\Entity\BlogPost $blogPost, $blog_id)
+	protected function blogPostAdd(BlogPost $blogPost, $blog_id)
 	{
-		/** @var \XF\Repository\Attachment $attachmentRepo */
+		/** @var Attachment $attachmentRepo */
 		$attachmentRepo = $this->repository('XF:Attachment');
 		$attachmentData = $attachmentRepo->getEditorData(
 			'taylorj_blogs_blog_post',
@@ -232,7 +237,7 @@ class Blog extends AbstractController
 			'minutes' => $minutes,
 			'dt' => $dt,
 			'hh_value' => $hh_value,
-			'mm_value' => $mm_value
+			'mm_value' => $mm_value,
 		];
 
 		return $this->view('TaylorJ\Blogs:BlogPost\Edit', 'taylorj_blogs_blog_post_new_edit', $viewParams);
@@ -251,13 +256,10 @@ class Blog extends AbstractController
 
 		$input = $this->filter([
 			'blog_post_title' => 'str',
-			'blog_id' => 'int'
+			'blog_id' => 'int',
 		]);
 		$blog = $this->assertBlogExists($input['blog_id']);
 
-		// uncomment the below lines if this ends up breaking something
-		// i do not remember why i had a isPost check on a blogPost creation
-		// if ($this->isPost()) {
 		$creator = $this->blogPostCreate($blog);
 		if (!$creator->validate($errors)) {
 			return $this->error($errors);
@@ -269,7 +271,7 @@ class Blog extends AbstractController
 			$creator->setTags($this->filter('tags', 'str'));
 		}
 
-		/** @var \TaylorJ\Blogs\Entity\BlogPost $blogPost */
+		/** @var BlogPost $blogPost */
 		$blogPost = $creator->save();
 
 		if ($visitor->user_id) {
@@ -280,7 +282,7 @@ class Blog extends AbstractController
 
 		$hash = $this->filter('attachment_hash', 'str');
 		if ($hash && $blogPost->canUploadAndManageAttachments()) {
-			/** @var \XF\Service\Attachment\Preparer $inserter */
+			/** @var Preparer $inserter */
 			$inserter = $this->service('XF:Attachment\Preparer');
 			$associated = $inserter->associateAttachmentsWithContent($hash, 'taylorj_blogs_blog_post', $blogPost->blog_post_id);
 			if ($associated) {
@@ -290,7 +292,6 @@ class Blog extends AbstractController
 		$creator->finalSteps();
 
 		return $this->redirect($this->buildLink('blogs/post', $blogPost), \XF::phrase('taylorj_blogs_post_successful'));
-		// }
 	}
 
 	public function actionWatch(ParameterBag $params)
@@ -302,36 +303,17 @@ class Blog extends AbstractController
 		}
 
 		$blog = $this->assertBlogExists($params->blog_id);
-		// if (!$blog->canWatch($error))
-		// {
-		// 	return $this->noPermission($error);
-		// }
 
-		/** @var \TaylorJ\Blogs\Repository\BlogWatch $blogWatchRepo */
+		if (!$blog->canWatch($error)) {
+			return $this->noPermission($error);
+		}
+
+		/** @var BlogWatch $blogWatchRepo */
 		$blogWatchRepo = $this->repository('TaylorJ\Blogs:BlogWatch');
 		$blogWatchRepo->setWatchState($blog, $visitor);
 
 		$redirect = $this->redirect($this->buildLink('blogs/blog', $blog));
 		return $redirect;
-	}
-
-
-	/**
-	 * @param \TaylorJ\Blogs\Entity\Blog $blog
-	 *
-	 * @return \TaylorJ\Blogs\Service\Blog\Creator
-	 */
-	protected function setupBlogPostCreate(\TaylorJ\Blogs\Entity\Blog $blog)
-	{
-		$title = $this->filter('title', 'str');
-		$message = $this->plugin('XF:Editor')->fromInput('message');
-
-		/** @var \XF\Service\Thread\Creator $creator */
-		$creator = $this->service('XF:Thread\Creator', $blog);
-
-		$creator->setContent($title, $message);
-
-		return $creator;
 	}
 
 	public function actionAddPreview(ParameterBag $params)
@@ -343,7 +325,7 @@ class Blog extends AbstractController
 		$blogPost = $blog->getNewBlogPost();
 
 		$tempHash = $this->filter('attachment_hash', 'str');
-		/** @var \XF\Repository\Attachment $attachmentRepo */
+		/** @var Attachment $attachmentRepo */
 		$attachmentRepo = $this->repository('XF:Attachment');
 		$attachmentData = $attachmentRepo->getEditorData('taylorj_blogs_blog_post', $blogPost, $tempHash);
 		$attachments = $attachmentData['attachments'];
@@ -363,26 +345,14 @@ class Blog extends AbstractController
 		return $blog;
 	}
 
-	protected function assertBlogPostExists($id, $with = null, $phraseKey = null)
-	{
-		return $this->assertRecordExists('TaylorJ\Blogs:BlogPost', $id, $with, $phraseKey);
-	}
-
-	public function insertJob(\TaylorJ\Blogs\Entity\BlogPost $blogPost)
-	{
-		$jobid = 'taylorjblogs_scheduledpost_' . $blogPost->blog_post_id . '_' . \XF::$time;
-		$app = \XF::app();
-		$app->jobManager()->enqueueLater($jobid, $blogPost->scheduled_post_date_time, 'TaylorJ\Blogs:PostBlogPost', ['blog_post_id' => $blogPost->blog_post_id]);
-	}
-
 	/**
 	 * @param \TaylorJ\Blogs\Entity\Blog $blog
 	 *
-	 * @return \TaylorJ\Blogs\Service\BlogPost\Create
+	 * @return Create
 	 */
 	protected function blogPostCreate(\TaylorJ\Blogs\Entity\Blog $blog)
 	{
-		/** @var \TaylorJ\Blogs\Service\BlogPost\Create $creator */
+		/** @var Create $creator */
 		$creator = $this->service('TaylorJ\Blogs:BlogPost\Create', $blog);
 
 		$title = $this->filter('blog_post_title', 'str');
@@ -391,15 +361,19 @@ class Blog extends AbstractController
 		$message = $this->plugin('XF:Editor')->fromInput('message');
 		$creator->setContent($message);
 
-		$scheduledPostDateTime = $this->filter([
-			'blog_post_schedule' => 'string',
-			'dd' => 'str',
-			'hh' => 'int',
-			'mm' => 'int'
-		]);
+		$blogPostState = $this->filter('blog_post_schedule', 'str');
+		$creator->setBlogPostState($blogPostState);
 
-		$creator->setScheduledPostDateTime($scheduledPostDateTime);
-		if ($scheduledPostDateTime['blog_post_schedule'] == 'visible') {
+		if ($blogPostState == 'scheduled') {
+			$scheduledPostDateTime = $this->filter([
+				'dd' => 'str',
+				'hh' => 'int',
+				'mm' => 'int',
+			]);
+			$creator->setScheduledPostDateTime($scheduledPostDateTime);
+		}
+
+		if ($blogPostState == 'visible') {
 			$creator->sendNotifications(3);
 		}
 

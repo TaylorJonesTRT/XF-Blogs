@@ -14,8 +14,14 @@
     "taylorjBlogsBlogPostApproval.json": {
         "hash": "e22c9b2d3cbdc2e1d49546f293ea0fa2"
     },
+    "taylorjBlogsBlogPostComments.json": {
+        "hash": "4d040c31a675180f03f588b45a34d64a"
+    },
     "taylorjBlogsBlogPostForum.json": {
         "hash": "837f36452ccefcc8bc94cdd380c7249e"
+    },
+    "taylorjBlogsBlogPostOther.json": {
+        "hash": "7bc79db57ac1b96b1aeaa645e16b13ef"
     },
     "taylorjBlogsPerPage.json": {
         "hash": "4ba46c5cf300481fd2645f2fe06ab4dc"

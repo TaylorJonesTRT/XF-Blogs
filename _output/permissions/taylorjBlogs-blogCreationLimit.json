@@ -1,0 +1,6 @@
+{
+    "permission_type": "integer",
+    "interface_group_id": "taylorjBlogsPermissions",
+    "display_order": 11,
+    "depend_permission_id": ""
+}

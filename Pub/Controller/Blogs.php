@@ -56,8 +56,12 @@ class Blogs extends AbstractController
             return $this->noPermission(\XF::phrase('permission.taylorjBlogs_canCreate'));
         }
 
-        if ($visitor->taylorj_blogs_blog_count >= $this->options()->taylorjBlogsBlogLimit) {
-            return $this->noPermission(\XF::phrase('taylorj_blogs_blog_limit_reached'));
+        $blogLimit = $visitor->hasPermission('taylorjBlogs', 'blogCreationLimit');
+
+        if ($blogLimit != -1) {
+            if ($visitor->taylorj_blogs_blog_count >= $blogLimit) {
+                return $this->noPermission(\XF::phrase('taylorj_blogs_blog_limit_reached'));
+            }
         }
 
         $blog = $this->em()->create('TaylorJ\Blogs:Blog');

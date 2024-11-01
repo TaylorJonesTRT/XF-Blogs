@@ -2,12 +2,15 @@
 
 namespace TaylorJ\Blogs\Entity;
 
-use XF\Mvc\Entity\Entity;
-use XF\Mvc\Entity\Structure;
-use XF\Mvc\ParameterBag;
+use TaylorJ\Blogs\Utils;
 use XF\Entity\ApprovalQueue;
 use XF\Entity\DatableInterface;
 use XF\Entity\DatableTrait;
+use XF\Entity\User;
+use XF\Mvc\Entity\Entity;
+use XF\Mvc\Entity\Structure;
+use XF\Mvc\Router;
+use XF\Util\File;
 
 /**
  * COLUMNS
@@ -27,19 +30,19 @@ use XF\Entity\DatableTrait;
  * @property-read string $blog_header_image
  *
  * RELATIONS
- * @property-read \XF\Entity\User|null $User
+ * @property-read User|null $User
  * @property-read \XF\Mvc\Entity\AbstractCollection<\TaylorJ\Blogs\Entity\BlogPost> $BlogPost
  * @property-read \XF\Mvc\Entity\AbstractCollection<\TaylorJ\Blogs\Entity\BlogWatch> $BlogWatch
- * @property-read \XF\Entity\ApprovalQueue|null $ApprovalQueue
+ * @property-read ApprovalQueue|null $ApprovalQueue
  */
 class Blog extends Entity implements DatableInterface
 {
-
 	use DatableTrait;
 
 	public function getBreadcrumbs($includeSelf = true, $linkType = 'public')
 	{
-		if ($linkType == 'public') {
+		if ($linkType == 'public')
+		{
 			$link = 'blogs/blog';
 		}
 		return $this->_getBreadcrumbs($includeSelf, $linkType, $link);
@@ -49,7 +52,8 @@ class Blog extends Entity implements DatableInterface
 	{
 		$visitor = \XF::visitor();
 
-		if (!$visitor->hasPermission('taylorjBlogs', 'viewOwn') || !$visitor->hasPermission('taylorjBlogs', 'viewAny')) {
+		if (!$visitor->hasPermission('taylorjBlogs', 'viewOwn') || !$visitor->hasPermission('taylorjBlogs', 'viewAny'))
+		{
 			return false;
 		}
 
@@ -60,16 +64,23 @@ class Blog extends Entity implements DatableInterface
 	{
 		$visitor = \XF::visitor();
 
-		if ($visitor->user_id == $this->user_id) {
-			if (!$visitor->hasPermission('taylorjBlogs', 'canEditOwn')) {
+		if ($visitor->user_id == $this->user_id)
+		{
+			if (!$visitor->hasPermission('taylorjBlogs', 'canEditOwn'))
+			{
 				$error = \XF::phrase('taylorj_blogs_blog_error_edit');
 				return false;
 			}
-		} else {
-			if ($visitor->hasPermission('taylorjBlogs', 'canEditAny')) {
+		}
+		else
+		{
+			if ($visitor->hasPermission('taylorjBlogs', 'canEditAny'))
+			{
 				$error = \XF::phrase('taylorj_blogs_blog_error_edit');
 				return false;
-			} else {
+			}
+			else
+			{
 				return false;
 			}
 		}
@@ -81,13 +92,18 @@ class Blog extends Entity implements DatableInterface
 	{
 		$visitor = \XF::visitor();
 
-		if ($visitor->user_id == $this->user_id) {
-			if (!$visitor->hasPermission('taylorjBlogs', 'canDeleteOwn')) {
+		if ($visitor->user_id == $this->user_id)
+		{
+			if (!$visitor->hasPermission('taylorjBlogs', 'canDeleteOwn'))
+			{
 				$error = \XF::phrase('taylorj_blogs_blog_error_delete');
 				return false;
 			}
-		} else {
-			if (!$visitor->hasPermission('taylorjBlogs', 'canDeleteAny')) {
+		}
+		else
+		{
+			if (!$visitor->hasPermission('taylorjBlogs', 'canDeleteAny'))
+			{
 				$error = \XF::phrase('taylorj_blogs_blog_error_delete');
 				return false;
 			}
@@ -100,11 +116,15 @@ class Blog extends Entity implements DatableInterface
 	{
 		$visitor = \XF::visitor();
 
-		if ($this->user_id === $visitor->user_id) {
-			if (!$visitor->hasPermission('taylorjBlogPost', 'canPost')) {
+		if ($this->user_id === $visitor->user_id)
+		{
+			if (!$visitor->hasPermission('taylorjBlogPost', 'canPost'))
+			{
 				$error = \XF::phrase('taylorj_blogs_blog_post_error_new');
 				return false;
-			} else {
+			}
+			else
+			{
 				return true;
 			}
 		}
@@ -115,7 +135,8 @@ class Blog extends Entity implements DatableInterface
 	{
 		$visitor = \XF::visitor();
 
-		if ($this->user_id === $visitor->user_id) {
+		if ($this->user_id === $visitor->user_id)
+		{
 			return false;
 		}
 
@@ -126,7 +147,8 @@ class Blog extends Entity implements DatableInterface
 	{
 		$visitor = \XF::visitor();
 
-		if ($this->user_id === $visitor->user_id) {
+		if ($this->user_id === $visitor->user_id)
+		{
 			return true;
 		}
 
@@ -137,12 +159,14 @@ class Blog extends Entity implements DatableInterface
 	{
 		$visitor = \XF::visitor();
 
-		if (!$this->app()->options()->enableTagging) {
+		if (!$this->app()->options()->enableTagging)
+		{
 			return false;
 		}
 
 		// if no blog post, assume will be owned by this person
-		if ($visitor->hasPermission('taylorjBlogPost', 'canTagOwnBlogPost')) {
+		if ($visitor->hasPermission('taylorjBlogPost', 'canTagOwnBlogPost'))
+		{
 			return true;
 		}
 
@@ -159,7 +183,8 @@ class Blog extends Entity implements DatableInterface
 			$canonical
 		);
 
-		if (!$this->blog_has_header) {
+		if (!$this->blog_has_header)
+		{
 			return false;
 		}
 
@@ -171,13 +196,16 @@ class Blog extends Entity implements DatableInterface
 	{
 		$app = $this->app();
 
-		if ($this->blog_header_image) {
+		if ($this->blog_header_image)
+		{
 			$group = floor($this->blog_id);
 			return $app->applyExternalDataUrl(
 				"taylorj_blogs/blog_header_images/{$this->blog_id}.jpg?{$this->blog_creation_date}",
 				$canonical
 			);
-		} else {
+		}
+		else
+		{
 			return null;
 		}
 	}
@@ -192,7 +220,8 @@ class Blog extends Entity implements DatableInterface
 
 	protected function verifyTitle(&$value)
 	{
-		if (strlen($value) < 10) {
+		if (strlen($value) < 10)
+		{
 			$this->error(\XF::phrase('taylorj_blogs_titile_verification_error'), 'title');
 			return false;
 		}
@@ -231,11 +260,13 @@ class Blog extends Entity implements DatableInterface
 	{
 		$visitor = \XF::visitor();
 
-		if ($visitor->user_id && $visitor->hasPermission('forum', 'approveUnapprove')) {
+		if ($visitor->user_id && $visitor->hasPermission('forum', 'approveUnapprove'))
+		{
 			return 'visible';
 		}
 
-		if (!$visitor->hasPermission('general', 'submitWithoutApproval')) {
+		if (!$visitor->hasPermission('general', 'submitWithoutApproval'))
+		{
 			return 'moderated';
 		}
 
@@ -247,16 +278,6 @@ class Blog extends Entity implements DatableInterface
 		return 'blog_creation_date';
 	}
 
-	protected function adjustUserBlogCount($amount)
-	{
-		if (
-			$this->user_id
-			&& $this->User
-		) {
-			$this->User->fastUpdate('taylorj_blogs_blog_count', max(0, $this->User->taylorj_blogs_blog_count + $amount));
-		}
-	}
-
 	public function isVisible()
 	{
 		return true;
@@ -264,7 +285,8 @@ class Blog extends Entity implements DatableInterface
 
 	public function isOwner()
 	{
-		if (\XF::visitor()->user_id != $this->user_id) {
+		if (\XF::visitor()->user_id != $this->user_id)
+		{
 			return false;
 		}
 
@@ -284,29 +306,37 @@ class Blog extends Entity implements DatableInterface
 		$approvalChange = $this->isStateChanged('blog_state', 'moderated');
 		$deletionChange = $this->isStateChanged('blog_post_state', 'deleted');
 
-		if (!$this->isUpdate()) {
-			$this->adjustUserBlogCount(1);
+		if (!$this->isUpdate())
+		{
+			(new Utils())->adjustUserBlogCount($this, 1);
 		}
 
-		if ($approvalChange == 'enter') {
+		if ($approvalChange == 'enter')
+		{
 			$approvalQueue = $this->getRelationOrDefault('ApprovalQueue', false);
 			$approvalQueue->content_date = $this->blog_creation_date;
 			$approvalQueue->save();
 		}
 
-		if ($this->isUpdate()) {
-			if ($visibilityChange == 'enter') {
-				$this->adjustUserBlogCount(1);
-				if ($approvalChange) {
+		if ($this->isUpdate())
+		{
+			if ($visibilityChange == 'enter')
+			{
+				(new Utils())->adjustUserBlogCount($this, 1);
+				if ($approvalChange)
+				{
 					$this->submitHamData();
 				}
-			} elseif ($deletionChange == 'enter' && !$this->DeletionLog) {
+			}
+			else if ($deletionChange == 'enter' && !$this->DeletionLog)
+			{
 				$delLog = $this->getRelationOrDefault('DeletionLog', false);
 				$delLog->setFromVisitor();
 				$delLog->save();
 			}
 
-			if ($approvalChange == 'leave' && $this->ApprovalQueue) {
+			if ($approvalChange == 'leave' && $this->ApprovalQueue)
+			{
 				$this->ApprovalQueue->delete();
 			}
 		}
@@ -314,7 +344,12 @@ class Blog extends Entity implements DatableInterface
 
 	protected function _postDelete()
 	{
-		$this->adjustUserBlogCount(-1);
+		(new Utils())->adjustUserBlogCount($this, -1);
+		(new Utils())->adjustUserBlogPostCount($this, $this->blog_post_count);
+
+		$dataDir = \XF::app()->config('externalDataPath');
+		$dataDir .= "://taylorj_blogs/blog_header_images/" . $this->blog_id . ".jpg";
+		File::deleteFromAbstractedPath($dataDir);
 	}
 
 	public static function getStructure(Structure $structure): Structure
@@ -335,7 +370,7 @@ class Blog extends Entity implements DatableInterface
 			'blog_state' => [
 				'type' => self::STR,
 				'default' => 'visible',
-				'allowedValues' => ['visible', 'moderated', 'deleted']
+				'allowedValues' => ['visible', 'moderated', 'deleted'],
 			],
 		];
 		$structure->relations = [
@@ -343,19 +378,19 @@ class Blog extends Entity implements DatableInterface
 				'entity'     => 'XF:User',
 				'type'       => self::TO_ONE,
 				'conditions' => 'user_id',
-				'primary'    => true
+				'primary'    => true,
 			],
 			'BlogPost' => [
 				'entity'	=> 'TaylorJ\Blogs:BlogPost',
 				'type'		=> self::TO_MANY,
 				'conditions' => 'blog_post_id',
-				'primary'	=> true
+				'primary'	=> true,
 			],
 			'BlogWatch' => [
 				'entity' => 'TaylorJ\Blogs:BlogWatch',
 				'type' => self::TO_MANY,
 				'conditions' => 'blog_id',
-				'key' => 'user_id'
+				'key' => 'user_id',
 			],
 			'ApprovalQueue' => [
 				'entity' => 'XF:ApprovalQueue',
@@ -372,7 +407,7 @@ class Blog extends Entity implements DatableInterface
 		$structure->behaviors = [
 			'XF:Taggable' => ['stateField' => 'blog_post_state'],
 			'XF:Indexable' => [
-				'checkForUpdates' => ['blog_title', 'blog_description', 'blog_id', 'blog_last_post_date', 'user_id']
+				'checkForUpdates' => ['blog_title', 'blog_description', 'blog_id', 'blog_last_post_date', 'user_id'],
 			],
 		];
 
@@ -381,16 +416,17 @@ class Blog extends Entity implements DatableInterface
 
 	protected function _getBreadcrumbs($includeSelf, $linkType, $link)
 	{
-		/** @var \XF\Mvc\Router $router */
+		/** @var Router $router */
 		$router = $this->app()->container('router.' . $linkType);
 		$structure = $this->structure();
 
 		$output = [];
-		if ($includeSelf) {
+		if ($includeSelf)
+		{
 			$output[] = [
 				'value' => $this->blog_title,
 				'href' => $router->buildLink($link, $this),
-				$structure->primaryKey => $this->{$structure->primaryKey}
+				$structure->primaryKey => $this->{$structure->primaryKey},
 			];
 		}
 

@@ -81,4 +81,16 @@ class BlogPost extends Repository
 
 		return $blogPostFinder;
 	}
+
+	public function findOtherPostsByOwnerRandom($userId)
+	{
+		/** @var \TaylorJ\Blogs\Finder\BlogPost $finder */
+		$finder = $this->finder('TaylorJ\Blogs:BlogPost');
+
+		$randomBlogPosts = $finder
+			->where('user_id', $userId)
+			->order($finder->expression('RAND()'));
+
+		return $randomBlogPosts;
+	}
 }

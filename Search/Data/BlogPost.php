@@ -53,7 +53,21 @@ class BlogPost extends AbstractData
 
 	public function getSearchableContentTypes()
 	{
-		return ['taylorj_blogs_blog_page'];
+		return ['taylorj_blogs_blog_post'];
+	}
+
+	public function getSearchFormTab()
+	{
+		/** @var User $visitor */
+		$visitor = \XF::visitor();
+		if (!method_exists($visitor, 'canViewBlogs') || !$visitor->canViewBlogs()) {
+			return null;
+		}
+
+		return [
+			'title' => \XF::phrase('taylorj_blogs_search_blog_posts'),
+			'order' => 3000,
+		];
 	}
 
 	public function getSectionContext()

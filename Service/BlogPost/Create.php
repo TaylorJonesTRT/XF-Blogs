@@ -2,28 +2,28 @@
 
 namespace TaylorJ\Blogs\Service\BlogPost;
 
-use LogicException;
 use TaylorJ\Blogs\Entity\Blog;
 use TaylorJ\Blogs\Entity\BlogPost;
-use XF\Entity\Forum;
+use TaylorJ\Blogs\Service\Blog\Notify;
+use XF\App;
 use XF\Entity\Thread;
 use XF\Service\AbstractService;
-use XF\Service\Thread\Creator;
+use XF\Service\Message\PreparerService;
 use XF\Service\Tag\Changer;
-
-use TaylorJ\Blogs\Utils as Utils;
+use XF\Service\Thread\Creator;
+use XF\Service\ValidateAndSavableTrait;
 
 class Create extends AbstractService
 {
-	use \XF\Service\ValidateAndSavableTrait;
+	use ValidateAndSavableTrait;
 
 	/**
-	 * @var \TaylorJ\Blogs\Entity\BlogPost
+	 * @var BlogPost
 	 */
 	public $blogPost;
 
 	/**
-	 * @var TaylorJ\Blogs\Entity\Blog 
+	 * @var TaylorJ\Blogs\Entity\Blog
 	 */
 	protected $update;
 
@@ -33,7 +33,7 @@ class Create extends AbstractService
 	protected $threadCreator;
 
 	/**
-	 * @var Blog 
+	 * @var Blog
 	 */
 	protected $blog;
 
@@ -44,7 +44,7 @@ class Create extends AbstractService
 
 	protected $performValidations = true;
 
-	public function __construct(\XF\App $app, Blog $blog)
+	public function __construct(App $app, Blog $blog)
 	{
 		parent::__construct($app);
 		$this->blog = $blog;
@@ -66,7 +66,7 @@ class Create extends AbstractService
 	public function setContent($content)
 	{
 		$preparer = \XF::service(
-			\XF\Service\Message\PreparerService::class,
+			PreparerService::class,
 			'taylorj_blogs_blog_post',
 			$this->blogPost
 		);
@@ -83,6 +83,20 @@ class Create extends AbstractService
 		}
 	}
 
+	public function setBlogPostState($state)
+	{
+		if ($state == 'visible') {
+			$this->blogPost->scheduled_post_date_time = 0;
+			$this->blogPost->blog_post_state = $this->blogPost->getNewContentState();
+		} else if ($state == 'scheduled') {
+			$this->blogPost->blog_post_state = $state;
+		} else {
+			$this->blogPost->blog_post_state = $state;
+			$this->blogPost->scheduled_post_date_time = 0;
+			$this->blogPost->blog_post_date = 0;
+		}
+	}
+
 	public function setScheduledPostDateTime($scheduledPostTime)
 	{
 		$tz = new \DateTimeZone(\XF::visitor()->timezone);
@@ -93,18 +107,7 @@ class Create extends AbstractService
 
 		$dateTime = new \DateTime("$postDate $postHour:$postMinute", $tz);
 
-		if ($scheduledPostTime['blog_post_schedule'] == 'scheduled') {
-			$this->blogPost->scheduled_post_date_time = $dateTime->format('U');
-			$this->blogPost->blog_post_state = 'scheduled';
-			/*}*/
-		} elseif ($scheduledPostTime['blog_post_schedule'] == 'draft') {
-			$this->blogPost->scheduled_post_date_time = 0;
-			$this->blogPost->blog_post_date = 0;
-			$this->blogPost->blog_post_state = 'draft';
-		} else {
-			$this->blogPost->scheduled_post_date_time = 0;
-			$this->blogPost->blog_post_state = $this->blogPost->getNewContentState();
-		}
+		$this->blogPost->scheduled_post_date_time = $dateTime->format('U');
 	}
 
 	public function finalSteps()
@@ -135,7 +138,7 @@ class Create extends AbstractService
 
 		$blogPost->save(true, false);
 
-		if ($blogPost->blog_post_state == 'visible') {
+		if ($blogPost->blog_post_state == 'visible' && \XF::options()->taylorjBlogsBlogPostComments) {
 			$creator = $this->setupBlogPostThreadCreation();
 			if ($creator && $creator->validate()) {
 				$thread = $creator->save();
@@ -165,7 +168,7 @@ class Create extends AbstractService
 	public function sendNotifications()
 	{
 		if ($this->blog->isVisible()) {
-			/** @var \TaylorJ\Blogs\Service\Blog\Notify $notifier */
+			/** @var Notify $notifier */
 			$notifier = $this->service('TaylorJ\Blogs:Blog\Notify', $this->blog, $this->blogPost, 'newBlogPost');
 			$notifier->notifyAndEnqueue();
 		}

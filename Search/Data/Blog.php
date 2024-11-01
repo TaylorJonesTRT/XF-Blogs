@@ -51,7 +51,7 @@ class Blog extends AbstractData
 
 	public function getSearchableContentTypes()
 	{
-		return ['taylorj_blogs_blog_page'];
+		return ['taylorj_blogs_blog'];
 	}
 
 	public function getSectionContext()

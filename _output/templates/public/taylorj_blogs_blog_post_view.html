@@ -244,15 +244,13 @@
     </aside>
 </div>
 
-<xf:if
-    is="$blogPost.blog_post_state == 'visible' && ($blogPost.discussion_thread_id != 0 OR $xf.options.taylorjBlogsBlogPostComments)">
-
+<xf:if is="$comments is not empty">
     <div class="block">
         <div class="block-container">
-            <h3 class="block-header">{{ phrase('taylorj_blogs_blog_post_latest_comments') }}</h3>
+            <h3 class="block-header"><a href="{{ link('threads', $blogPost.Discussion) }}"> {{
+                    phrase('taylorj_blogs_blog_post_latest_comments') }}</a></h3>
             <div class="block-body">
                 <xf:foreach loop="$comments" value="$comment">
-                    <xf:css src="message.less" />
                     <xf:js src="xf/comment.js" min="1" />
 
                     <div class="message message--simple{{ $comment.isIgnored() ? ' is-ignored' : '' }}">
@@ -294,7 +292,21 @@
             </div>
         </div>
     </div>
-    <xf:button href="{{ link('threads', $blogPost.Discussion) }}" fa="fa-plus-square" class="u-pullRight button--cta">
-        {{ phrase('taylorj_blogs_blog_post_add_comment') }}
-    </xf:button>
+</xf:if>
+
+<xf:if is="$xf.options.taylorjBlogsBlogPostOther">
+    <div class="block">
+        <div class="block-container">
+            <h3 class="block-header">{{ phrase('taylorj_blogs_blog_post_random_blogs') }}</h3>
+            <div class="block-body">
+                <div class="structItemContainer">
+                    <xf:foreach loop="$ownerOtherPosts" value="$blogPost">
+                        <xf:set var="$extra" value="" />
+                        <xf:macro id="taylorj_blogs_list_macros::blogPost" arg-blogPost="{$blogPost}"
+                            arg-allowEdit="{{ false }}" />
+                    </xf:foreach>
+                </div>
+            </div>
+        </div>
+    </div>
 </xf:if>

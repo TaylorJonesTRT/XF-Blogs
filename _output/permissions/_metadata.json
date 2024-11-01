@@ -65,6 +65,9 @@
     "taylorjBlogPost-submitWithoutApproval.json": {
         "hash": "b9a89ff5be4a56a9244550146123b25b"
     },
+    "taylorjBlogs-blogCreationLimit.json": {
+        "hash": "d5e24decfe598badb35090d3bbe24528"
+    },
     "taylorjBlogs-canCreate.json": {
         "hash": "026d93cb3a3477adcc744a1d03c6ca70"
     },

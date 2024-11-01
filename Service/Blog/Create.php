@@ -2,7 +2,6 @@
 
 namespace TaylorJ\Blogs\Service\Blog;
 
-use LogicException;
 use TaylorJ\Blogs\Entity\Blog;
 use XF\Service\AbstractService;
 use XF\Service\Thread\Creator;

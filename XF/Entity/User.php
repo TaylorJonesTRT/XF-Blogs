@@ -13,6 +13,11 @@ class User extends XFCP_User
         return $this->hasPermission('taylorjBlogs', 'viewBlogs');
     }
 
+    public function canViewBlogPosts(&$error = null)
+    {
+        return $this->hasPermission('taylorjBlogs', 'viewBlogs');
+    }
+
     public function canCreateBlog(&$error = null)
     {
         return $this->hasPermission('taylorjBlogs', 'canCreate');

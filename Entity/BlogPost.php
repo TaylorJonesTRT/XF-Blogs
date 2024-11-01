@@ -5,7 +5,6 @@ namespace TaylorJ\Blogs\Entity;
 use XF\Mvc\Entity\Entity;
 use XF\Mvc\Entity\Structure;
 use XF\Entity\CoverImageTrait;
-use XF\Mvc\ParameterBag;
 use XF\BbCode\RenderableContentInterface;
 use XF\Entity\ReactionTrait;
 use XF\Entity\EmbedRendererTrait;
@@ -15,6 +14,7 @@ use XF\Entity\DatableInterface;
 
 use TaylorJ\Blogs\Utils;
 use XF\Entity\DatableTrait;
+use XF\Entity\User;
 
 /**
  * COLUMNS
@@ -261,16 +261,6 @@ class BlogPost extends Entity implements RenderableContentInterface, DatableInte
 		return $renderOptions;
 	}
 
-	protected function adjustBlogPostCount($amount)
-	{
-		if (
-			$this->user_id
-			&& $this->User
-		) {
-			$this->Blog->fastUpdate('blog_post_count', max(0, $this->Blog->blog_post_count + $amount));
-		}
-	}
-
 	public function getScheduled(): bool
 	{
 		if ($this->blog_post_state === 'scheduled') {
@@ -380,8 +370,8 @@ class BlogPost extends Entity implements RenderableContentInterface, DatableInte
 
 	protected function _postDelete()
 	{
-		$this->adjustUserBlogPostCount(-1);
-		$this->adjustBlogPostCount(-1);
+		(new Utils)->adjustUserBlogPostCount($this->Blogs, -1);
+		(new Utils)->adjustBlogPostCount($this->Blogs, -1);
 	}
 
 	protected function _postSave()
@@ -399,14 +389,14 @@ class BlogPost extends Entity implements RenderableContentInterface, DatableInte
 		$blogPostRepo = Utils::getBlogPostRepo();
 
 		if (!$this->isUpdate()) {
-			$this->adjustBlogPostCount(1);
-			$this->adjustUserBlogPostCount(1);
+			(new Utils)->adjustBlogPostCount($this->Blog, 1);
+			(new Utils)->adjustUserBlogPostCount($this->Blog, 1);
 			$this->Blog->fastUpdate('blog_last_post_date', \XF::$time);
 		}
 		if ($this->isUpdate()) {
 			if ($visibilityChange == 'enter') {
-				$this->adjustBlogPostCount(1);
-				$this->adjustUserBlogPostCount(1);
+				(new Utils)->adjustBlogPostCount($this->Blog, 1);
+				(new Utils)->adjustUserBlogPostCount($this->Blog, 1);
 				$this->Blog->fastUpdate('blog_last_post_date', \XF::$time);
 				if ($approvalChange) {
 					$this->fastUpdate('blog_post_date', \XF::$time);
@@ -428,16 +418,6 @@ class BlogPost extends Entity implements RenderableContentInterface, DatableInte
 			if ($this->isChanged('blog_post_state') && $this->blog_post_state == 'visible') {
 				$blogPostRepo->removeJob($this);
 			}
-		}
-	}
-
-	protected function adjustUserBlogPostCount($amount)
-	{
-		if (
-			$this->user_id
-			&& $this->User
-		) {
-			$this->User->fastUpdate('taylorj_blogs_blog_post_count', max(0, $this->User->taylorj_blogs_blog_post_count + $amount));
 		}
 	}
 

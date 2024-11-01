@@ -2,12 +2,12 @@
 
 namespace TaylorJ\Blogs\Service\BlogPost;
 
+use TaylorJ\Blogs\Entity\BlogPost;
 use XF\App;
+use XF\Entity\Forum;
+use XF\Entity\Thread;
 use XF\Service\AbstractService;
 use XF\Service\ValidateAndSavableTrait;
-use XF\Entity\Thread;
-use TaylorJ\Blogs\Service\BlogPost\ThreadCreator;
-use TaylorJ\Blogs\Entity\BlogPost;
 
 class Edit extends AbstractService
 {
@@ -68,7 +68,7 @@ class Edit extends AbstractService
 
 	public function finalSteps()
 	{
-		if ($this->blogPost->blog_post_state == 'visible' && $this->blogPost->discussion_thread_id == 0) {
+		if ($this->blogPost->blog_post_state == 'visible' && $this->blogPost->discussion_thread_id == 0 && \XF::options()->taylorjBlogsBlogPostComments) {
 			$creator = $this->setupBlogPostThreadCreation($this->blogPost);
 			if ($creator && $creator->validate()) {
 				$thread = $creator->save();
@@ -161,7 +161,7 @@ class Edit extends AbstractService
 			$this->blogPost->scheduled_post_date_time = $dateTime->format('U');
 			$this->blogPost->blog_post_state = 'scheduled';
 			/*}*/
-		} elseif ($scheduledPostTime['blog_post_schedule'] == 'draft') {
+		} else if ($scheduledPostTime['blog_post_schedule'] == 'draft') {
 			$this->blogPost->scheduled_post_date_time = 0;
 			$this->blogPost->blog_post_date = 0;
 			$this->blogPost->blog_post_state = 'draft';
