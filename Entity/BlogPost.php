@@ -2,19 +2,20 @@
 
 namespace TaylorJ\Blogs\Entity;
 
-use XF\Mvc\Entity\Entity;
-use XF\Mvc\Entity\Structure;
-use XF\Entity\CoverImageTrait;
+use TaylorJ\Blogs\Utils;
 use XF\BbCode\RenderableContentInterface;
-use XF\Entity\ReactionTrait;
+use XF\Entity\ApprovalQueue;
+use XF\Entity\Attachment;
+use XF\Entity\CoverImageTrait;
+use XF\Entity\DatableInterface;
+use XF\Entity\DatableTrait;
 use XF\Entity\EmbedRendererTrait;
 use XF\Entity\EmbedResolverTrait;
-use XF\Entity\ApprovalQueue;
-use XF\Entity\DatableInterface;
-
-use TaylorJ\Blogs\Utils;
-use XF\Entity\DatableTrait;
+use XF\Entity\ReactionTrait;
+use XF\Entity\Thread;
 use XF\Entity\User;
+use XF\Mvc\Entity\Entity;
+use XF\Mvc\Entity\Structure;
 
 /**
  * COLUMNS
@@ -46,11 +47,11 @@ use XF\Entity\User;
  * @property-read array $Embeds
  *
  * RELATIONS
- * @property-read \XF\Entity\User|null $User
- * @property-read \TaylorJ\Blogs\Entity\Blog|null $Blog
+ * @property-read User|null $User
+ * @property-read Blog|null $Blog
  * @property-read \XF\Mvc\Entity\AbstractCollection<\XF\Entity\Attachment> $Attachments
- * @property-read \XF\Entity\Thread|null $Discussion
- * @property-read \XF\Entity\ApprovalQueue|null $ApprovalQueue
+ * @property-read Thread|null $Discussion
+ * @property-read ApprovalQueue|null $ApprovalQueue
  * @property-read \XF\Mvc\Entity\AbstractCollection<\XF\Entity\ReactionContent> $Reactions
  */
 class BlogPost extends Entity implements RenderableContentInterface, DatableInterface
@@ -64,11 +65,12 @@ class BlogPost extends Entity implements RenderableContentInterface, DatableInte
 	public function getBreadcrumbs($includeSelf = true)
 	{
 		$breadcrumbs = $this->Blog ? $this->Blog->getBreadcrumbs() : [];
-		if ($includeSelf) {
+		if ($includeSelf)
+		{
 			$breadcrumbs[] = [
 				'href' => $this->app()->router()->buildLink('blogs/post', $this),
 				'value' => $this->blog_post_title,
-				'blog_post_id' => $this->blog_post_id
+				'blog_post_id' => $this->blog_post_id,
 			];
 		}
 
@@ -77,7 +79,8 @@ class BlogPost extends Entity implements RenderableContentInterface, DatableInte
 
 	protected function verifyTitle(&$value)
 	{
-		if (strlen($value) < 10) {
+		if (strlen($value) < 10)
+		{
 			//          the error below needs to be changed to use a phrase rather than hard coded text
 			$this->error(\XF::phrase('taylorj_blogs_blog_post_title_verification_error'), 'title');
 			return false;
@@ -90,14 +93,18 @@ class BlogPost extends Entity implements RenderableContentInterface, DatableInte
 
 	protected function verifyScheduledPostDateTime($value)
 	{
-		if ($value != 0) {
+		if ($value != 0)
+		{
 			$dateTime = new \DateTime();
 			$dateTime->setTimestamp($value);
 
-			if ($dateTime->getTimestamp() <= \XF::$time) {
+			if ($dateTime->getTimestamp() <= \XF::$time)
+			{
 				$this->error(\XF::phrase('taylorj_blogs_blog_post_scheduled_time_error'));
 				return false;
-			} else {
+			}
+			else
+			{
 				return true;
 			}
 		}
@@ -108,7 +115,8 @@ class BlogPost extends Entity implements RenderableContentInterface, DatableInte
 	{
 		$visitor = \XF::visitor();
 
-		if (!$visitor->hasPermission('taylorjBlogs', 'viewBlogs')) {
+		if (!$visitor->hasPermission('taylorjBlogs', 'viewBlogs'))
+		{
 			return false;
 		}
 
@@ -119,16 +127,23 @@ class BlogPost extends Entity implements RenderableContentInterface, DatableInte
 	{
 		$visitor = \XF::visitor();
 
-		if ($visitor->user_id == $this->user_id) {
-			if (!$visitor->hasPermission('taylorjBlogPost', 'canEditOwnPost')) {
+		if ($visitor->user_id == $this->user_id)
+		{
+			if (!$visitor->hasPermission('taylorjBlogPost', 'canEditOwnPost'))
+			{
 				$error = \XF::phrase('taylorj_blogs_blog_post_error_edit');
 				return false;
 			}
-		} else {
-			if ($visitor->hasPermission('taylorjBlogs', 'canEditAny')) {
+		}
+		else
+		{
+			if ($visitor->hasPermission('taylorjBlogs', 'canEditAny'))
+			{
 				$error = \XF::phrase('taylorj_blogs_blog_post_error_edit');
 				return false;
-			} else {
+			}
+			else
+			{
 				return false;
 			}
 		}
@@ -140,13 +155,18 @@ class BlogPost extends Entity implements RenderableContentInterface, DatableInte
 	{
 		$visitor = \XF::visitor();
 
-		if ($visitor->user_id == $this->user_id) {
-			if (!$visitor->hasPermission('taylorjBlogPost', 'canDeleteOwnPost')) {
+		if ($visitor->user_id == $this->user_id)
+		{
+			if (!$visitor->hasPermission('taylorjBlogPost', 'canDeleteOwnPost'))
+			{
 				$error = \XF::phrase('taylorj_blogs_blog_post_error_delete');
 				return false;
 			}
-		} else {
-			if (!$visitor->hasPermission('taylorjBlogPost', 'canDeleteAny')) {
+		}
+		else
+		{
+			if (!$visitor->hasPermission('taylorjBlogPost', 'canDeleteAny'))
+			{
 				$error = \XF::phrase('taylorj_blogs_blog_post_error_delete');
 				return false;
 			}
@@ -157,11 +177,13 @@ class BlogPost extends Entity implements RenderableContentInterface, DatableInte
 
 	public function isAttachmentEmbedded($attachmentId)
 	{
-		if (!$this->embed_metadata) {
+		if (!$this->embed_metadata)
+		{
 			return false;
 		}
 
-		if ($attachmentId instanceof \XF\Entity\Attachment) {
+		if ($attachmentId instanceof Attachment)
+		{
 			$attachmentId = $attachmentId->attachment_id;
 		}
 
@@ -187,20 +209,24 @@ class BlogPost extends Entity implements RenderableContentInterface, DatableInte
 	{
 		$visitor = \XF::visitor();
 
-		if (!$visitor->user_id) {
+		if (!$visitor->user_id)
+		{
 			return false;
 		}
 
-		if ($this->blog_post_state != 'visible') {
+		if ($this->blog_post_state != 'visible')
+		{
 			return false;
 		}
 
-		if ($this->user_id == $visitor->user_id) {
+		if ($this->user_id == $visitor->user_id)
+		{
 			$error = \XF::phraseDeferred('reacting_to_your_own_content_is_considered_cheating');
 			return false;
 		}
 
-		if (!$this->Blog) {
+		if (!$this->Blog)
+		{
 			return false;
 		}
 
@@ -224,11 +250,16 @@ class BlogPost extends Entity implements RenderableContentInterface, DatableInte
 	public function canViewModeratedContent()
 	{
 		$visitor = \XF::visitor();
-		if ($visitor->hasPermission('taylorjBlogPost', 'viewModerated')) {
+		if ($visitor->hasPermission('taylorjBlogPost', 'viewModerated'))
+		{
 			return true;
-		} else if ($this->user_id == $visitor->user_id) {
+		}
+		else if ($this->user_id == $visitor->user_id)
+		{
 			return true;
-		} else {
+		}
+		else
+		{
 			return false;
 		}
 	}
@@ -263,7 +294,8 @@ class BlogPost extends Entity implements RenderableContentInterface, DatableInte
 
 	public function getScheduled(): bool
 	{
-		if ($this->blog_post_state === 'scheduled') {
+		if ($this->blog_post_state === 'scheduled')
+		{
 			return true;
 		}
 
@@ -283,7 +315,8 @@ class BlogPost extends Entity implements RenderableContentInterface, DatableInte
 		$template = '';
 		$options = $this->app()->options();
 
-		if (!$template) {
+		if (!$template)
+		{
 			$template = '{title}';
 		}
 
@@ -317,11 +350,13 @@ class BlogPost extends Entity implements RenderableContentInterface, DatableInte
 	{
 		$visitor = \XF::visitor();
 
-		if ($visitor->user_id && $visitor->hasPermission('forum', 'approveUnapprove')) {
+		if ($visitor->user_id && $visitor->hasPermission('forum', 'approveUnapprove'))
+		{
 			return 'visible';
 		}
 
-		if (!$visitor->hasPermission('taylorjBlogPost', 'submitWithoutApproval')) {
+		if (!$visitor->hasPermission('taylorjBlogPost', 'submitWithoutApproval'))
+		{
 			return 'moderated';
 		}
 
@@ -333,6 +368,12 @@ class BlogPost extends Entity implements RenderableContentInterface, DatableInte
 		return 'blog_post_date';
 	}
 
+	public function getContentUrl(bool $canonical = false, array $extraParams = [], $hash = null)
+	{
+		$route = ($canonical ? 'canonical:' : '') . 'blogs/post';
+		return $this->app()->router('public')->buildLink($route, $this, $extraParams, $hash);
+	}
+
 	public function setUnfurls($unfurls)
 	{
 		$this->_getterCache['Unfurls'] = $unfurls;
@@ -342,10 +383,13 @@ class BlogPost extends Entity implements RenderableContentInterface, DatableInte
 	{
 		$blogPosts = \XF::app()->finder('TaylorJ\Blogs:BlogPost')->fetch();
 
-		foreach ($blogPosts as $blogPost) {
-			if ($blogPost->discussion_thread_id == 0) {
+		foreach ($blogPosts AS $blogPost)
+		{
+			if ($blogPost->discussion_thread_id == 0)
+			{
 				$creator = Utils::setupBlogPostThreadCreation($blogPost);
-				if ($creator && $creator->validate()) {
+				if ($creator && $creator->validate())
+				{
 					$thread = $creator->save();
 					$blogPost->fastUpdate('discussion_thread_id', $thread->thread_id);
 					Utils::afterResourceThreadCreated($thread);
@@ -370,8 +414,8 @@ class BlogPost extends Entity implements RenderableContentInterface, DatableInte
 
 	protected function _postDelete()
 	{
-		(new Utils)->adjustUserBlogPostCount($this->Blogs, -1);
-		(new Utils)->adjustBlogPostCount($this->Blogs, -1);
+		(new Utils())->adjustUserBlogPostCount($this->Blogs, -1);
+		(new Utils())->adjustBlogPostCount($this->Blogs, -1);
 	}
 
 	protected function _postSave()
@@ -380,7 +424,8 @@ class BlogPost extends Entity implements RenderableContentInterface, DatableInte
 		$approvalChange = $this->isStateChanged('blog_post_state', 'moderated');
 		$deletionChange = $this->isStateChanged('blog_post_state', 'deleted');
 
-		if ($approvalChange == 'enter') {
+		if ($approvalChange == 'enter')
+		{
 			$approvalQueue = $this->getRelationOrDefault('ApprovalQueue', false);
 			$approvalQueue->content_date = $this->blog_post_date;
 			$approvalQueue->save();
@@ -388,34 +433,43 @@ class BlogPost extends Entity implements RenderableContentInterface, DatableInte
 
 		$blogPostRepo = Utils::getBlogPostRepo();
 
-		if (!$this->isUpdate()) {
-			(new Utils)->adjustBlogPostCount($this->Blog, 1);
-			(new Utils)->adjustUserBlogPostCount($this->Blog, 1);
+		if (!$this->isUpdate())
+		{
+			(new Utils())->adjustBlogPostCount($this->Blog, 1);
+			(new Utils())->adjustUserBlogPostCount($this->Blog, 1);
 			$this->Blog->fastUpdate('blog_last_post_date', \XF::$time);
 		}
-		if ($this->isUpdate()) {
-			if ($visibilityChange == 'enter') {
-				(new Utils)->adjustBlogPostCount($this->Blog, 1);
-				(new Utils)->adjustUserBlogPostCount($this->Blog, 1);
+		if ($this->isUpdate())
+		{
+			if ($visibilityChange == 'enter')
+			{
+				(new Utils())->adjustBlogPostCount($this->Blog, 1);
+				(new Utils())->adjustUserBlogPostCount($this->Blog, 1);
 				$this->Blog->fastUpdate('blog_last_post_date', \XF::$time);
-				if ($approvalChange) {
+				if ($approvalChange)
+				{
 					$this->fastUpdate('blog_post_date', \XF::$time);
 					$this->submitHamData();
 				}
-			} else if ($deletionChange == 'enter' && !$this->DeletionLog) {
+			}
+			else if ($deletionChange == 'enter' && !$this->DeletionLog)
+			{
 				$delLog = $this->getRelationOrDefault('DeletionLog', false);
 				$delLog->setFromVisitor();
 				$delLog->save();
 			}
 
 
-			if ($approvalChange == 'leave' && $this->ApprovalQueue) {
+			if ($approvalChange == 'leave' && $this->ApprovalQueue)
+			{
 				$this->ApprovalQueue->delete();
 			}
-			if ($this->isChanged('scheduled_post_date_time') && $this->blog_post_state == 'scheduled') {
+			if ($this->isChanged('scheduled_post_date_time') && $this->blog_post_state == 'scheduled')
+			{
 				$blogPostRepo->updateJob($this);
 			}
-			if ($this->isChanged('blog_post_state') && $this->blog_post_state == 'visible') {
+			if ($this->isChanged('blog_post_state') && $this->blog_post_state == 'visible')
+			{
 				$blogPostRepo->removeJob($this);
 			}
 		}
@@ -441,7 +495,7 @@ class BlogPost extends Entity implements RenderableContentInterface, DatableInte
 			'blog_post_state' => [
 				'type' => self::STR,
 				'default' => 'visible',
-				'allowedValues' => ['visible', 'scheduled', 'draft', 'moderated', 'deleted']
+				'allowedValues' => ['visible', 'scheduled', 'draft', 'moderated', 'deleted'],
 			],
 			'scheduled_post_date_time' => ['type' => self::UINT, 'nullable' => true],
 			'discussion_thread_id' => ['type' => self::UINT, 'default' => 0],
@@ -452,23 +506,23 @@ class BlogPost extends Entity implements RenderableContentInterface, DatableInte
 				'entity'     => 'XF:User',
 				'type'       => self::TO_ONE,
 				'conditions' => 'user_id',
-				'primary'    => true
+				'primary'    => true,
 			],
 			'Blog' => [
 				'entity'    => 'TaylorJ\Blogs:Blog',
 				'type'      => self::TO_ONE,
 				'conditions' => 'blog_id',
-				'primary'   => true
+				'primary'   => true,
 			],
 			'Attachments' => [
 				'entity' => 'XF:Attachment',
 				'type' => self::TO_MANY,
 				'conditions' => [
 					['content_type', '=', 'taylorj_blogs_blog_post'],
-					['content_id', '=', '$blog_post_id']
+					['content_id', '=', '$blog_post_id'],
 				],
 				'with' => 'Data',
-				'order' => 'attach_date'
+				'order' => 'attach_date',
 			],
 			'Discussion' => [
 				'entity' => 'XF:Thread',
@@ -490,23 +544,25 @@ class BlogPost extends Entity implements RenderableContentInterface, DatableInte
 		$structure->getters = [
 			'Unfurls' => true,
 			'scheduled' => true,
-			'cover_image' => true
+			'cover_image' => true,
 		];
 		$structure->behaviors = [
 			'XF:Taggable' => ['stateField' => 'blog_post_state'],
 			'XF:Indexable' => [
-				'checkForUpdates' => ['blog_post_title', 'blog_post_id', 'blog_id', 'user_id', 'blog_post_content']
+				'checkForUpdates' => ['blog_post_title', 'blog_post_id', 'blog_id', 'user_id', 'blog_post_content'],
 			],
 			'XF:Reactable' => [
-				'stateField' => 'blog_post_state'
-			]
+				'stateField' => 'blog_post_state',
+			],
 		];
 
 		$structure->withAliases = [
 			'full' => [
-				function () {
+				function ()
+				{
 					$userId = \XF::visitor()->user_id;
-					if ($userId) {
+					if ($userId)
+					{
 						return [
 							'Reactions|' . $userId,
 						];

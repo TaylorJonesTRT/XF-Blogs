@@ -18,7 +18,9 @@ Options
 | Moderate blog creation | Force all new blog creations into the approval queue |
 | Blog creation limit | Limit your users to how many blogs they can own/create |
 | Moderate blog post creation | Force all new visible blog posts to the approval queue |
+| Blog post comments | When turned on blogs will be created with comment threads in forum specified below, when off blogs will not have comments |
 | Forum for comment thread creation | Pick a forum that will be used to automatically create threads in for blog posts to be used as comments. |
+| Show other posts by blog post author | If turned on this will show a random list of other blog posts by that author in any blog. |
 | Blogs per page | How many blogs to display per page on the blogs index page |
 
 Permissions
@@ -37,6 +39,7 @@ Permissions
 - Can delete own blog post
 - Can tag own blog post
 - Can submit blog posts without approval
+- Blog limit
 
 #### \[TaylorJ\] Blogs Moderator Permissions
 

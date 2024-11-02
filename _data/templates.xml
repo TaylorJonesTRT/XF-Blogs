@@ -144,6 +144,13 @@
 	</dl>
 </div>
 ]]></template>
+  <template type="public" title="search_form_taylorj_blogs_blog_post" version_id="1010170" version_string="1.1.1"><![CDATA[<xf:title>{{ phrase('search_profile_posts') }}</xf:title>
+
+<xf:macro id="search_form_macros::keywords" arg-input="{$input}" arg-canTitleLimit="{{ false }}" />
+
+<xf:macro id="search_form_macros::user" arg-input="{$input}" />
+
+<xf:macro id="search_form_macros::date" arg-input="{$input}" />]]></template>
   <template type="public" title="search_result_taylorj_blogs_blog" version_id="1010070" version_string="1.1.0"><![CDATA[<li class="block-row block-row--separated js-inlineModContainer" data-author="{{ $blog.User.username }}">
 	<div class="contentRow">
 		<span class="contentRow-figure">
@@ -495,7 +502,7 @@
 	arg-tags="{$blogPost.tags}"
 	arg-tagList="tagList--resource-{$blogPost.blog_post_id}"
 	arg-editLink="{{ $blogPost.canEditTags() ? link('blogs/post/tags', $blogPost) : '' }}" />]]></template>
-  <template type="public" title="taylorj_blogs_blog_post_view" version_id="1010070" version_string="1.1.0"><![CDATA[<xf:css src="taylorj_blogs_blog_post_view.less" />
+  <template type="public" title="taylorj_blogs_blog_post_view" version_id="1010170" version_string="1.1.1"><![CDATA[<xf:css src="taylorj_blogs_blog_post_view.less" />
 <xf:css src="message.less" />
 
 <xf:breadcrumb source="$blogPost.getBreadcrumbs(true)" />
@@ -741,15 +748,13 @@
     </aside>
 </div>
 
-<xf:if
-    is="$blogPost.blog_post_state == 'visible' && ($blogPost.discussion_thread_id != 0 OR $xf.options.taylorjBlogsBlogPostComments)">
-
+<xf:if is="$comments is not empty">
     <div class="block">
         <div class="block-container">
-            <h3 class="block-header">{{ phrase('taylorj_blogs_blog_post_latest_comments') }}</h3>
+            <h3 class="block-header"><a href="{{ link('threads', $blogPost.Discussion) }}"> {{
+                    phrase('taylorj_blogs_blog_post_latest_comments') }}</a></h3>
             <div class="block-body">
                 <xf:foreach loop="$comments" value="$comment">
-                    <xf:css src="message.less" />
                     <xf:js src="xf/comment.js" min="1" />
 
                     <div class="message message--simple{{ $comment.isIgnored() ? ' is-ignored' : '' }}">
@@ -791,15 +796,29 @@
             </div>
         </div>
     </div>
-    <xf:button href="{{ link('threads', $blogPost.Discussion) }}" fa="fa-plus-square" class="u-pullRight button--cta">
-        {{ phrase('taylorj_blogs_blog_post_add_comment') }}
-    </xf:button>
+</xf:if>
+
+<xf:if is="$xf.options.taylorjBlogsBlogPostOther">
+    <div class="block">
+        <div class="block-container">
+            <h3 class="block-header">{{ phrase('taylorj_blogs_blog_post_random_blogs') }}</h3>
+            <div class="block-body">
+                <div class="structItemContainer">
+                    <xf:foreach loop="$ownerOtherPosts" value="$blogPost">
+                        <xf:set var="$extra" value="" />
+                        <xf:macro id="taylorj_blogs_list_macros::blogPost" arg-blogPost="{$blogPost}"
+                            arg-allowEdit="{{ false }}" />
+                    </xf:foreach>
+                </div>
+            </div>
+        </div>
+    </div>
 </xf:if>
 ]]></template>
   <template type="public" title="taylorj_blogs_blog_post_view.less" version_id="1000034" version_string="1.0.0 Beta 4"><![CDATA[.taylorJUserBlogs-post-content {
     padding: @xf-paddingLarge;
 }]]></template>
-  <template type="public" title="taylorj_blogs_blog_view" version_id="1010070" version_string="1.1.0"><![CDATA[<xf:css src="taylorj_blogs_blog_view.less" />
+  <template type="public" title="taylorj_blogs_blog_view" version_id="1010170" version_string="1.1.1"><![CDATA[<xf:css src="taylorj_blogs_blog_view.less" />
 <xf:css src="structured_list.less" />
 <xf:css src="message.less" />
 
@@ -889,8 +908,6 @@
         </div>
     </div>
 </div>
-
-<xf:css src="message.less" />
 
 <div class="block taylorjUserBlogs-block">
     <div class="taylorjUserBlogs-blog-posts">
@@ -1431,7 +1448,7 @@ h1 {
 }
 
 ]]></template>
-  <template type="public" title="taylorj_blogs_list_macros" version_id="1010070" version_string="1.1.0"><![CDATA[<xf:macro id="blogPost" arg-blogPost="!">
+  <template type="public" title="taylorj_blogs_list_macros" version_id="1010170" version_string="1.1.1"><![CDATA[<xf:macro id="blogPost" arg-blogPost="!">
 	<xf:css src="structured_list.less" />
 	<xf:css src="xfrm.less" />
 
@@ -1478,7 +1495,7 @@ h1 {
 				<dt>{{ phrase('taylorj_blogs_blog') }}</dt>
 				<dd>
 					<a href="{{ link('blogs/blog', $blogPost->Blog) }}" class="u-concealed">
-						{{ $blogPost.blog_post_title }}
+						{{ $blogPost.Blog.blog_title }}
 					</a>
 				</dd>
 			</dl>

@@ -4,11 +4,15 @@ namespace TaylorJ\Blogs\Search\Data;
 
 use XF\Mvc\Entity\Entity;
 use XF\Search\Data\AbstractData;
+use XF\Search\Data\AutoCompletableInterface;
+use XF\Search\Data\AutoCompletableTrait;
 use XF\Search\IndexRecord;
 use XF\Search\MetadataStructure;
 
-class BlogPost extends AbstractData
+class BlogPost extends AbstractData implements AutoCompletableInterface
 {
+	use AutoCompletableTrait;
+
 	public function getIndexData(Entity $entity)
 	{
 		$index = IndexRecord::create('taylorj_blogs_blog_post', $entity->blog_post_id, [
@@ -26,7 +30,6 @@ class BlogPost extends AbstractData
 		$blog = $entity->Blog;
 
 		$metadata = [
-			'blog' => $blog->blog_id,
 			'blogPost' => $entity->blog_post_id,
 		];
 
@@ -60,7 +63,8 @@ class BlogPost extends AbstractData
 	{
 		/** @var User $visitor */
 		$visitor = \XF::visitor();
-		if (!method_exists($visitor, 'canViewBlogs') || !$visitor->canViewBlogs()) {
+		if (!method_exists($visitor, 'canViewBlogs') || !$visitor->canViewBlogs())
+		{
 			return null;
 		}
 
@@ -78,5 +82,18 @@ class BlogPost extends AbstractData
 	public function getGroupByType()
 	{
 		return 'taylorj_blogs_blog_post';
+	}
+
+	public function getAutoCompleteResult(
+		Entity $entity,
+		array $options = []
+	): ?array
+	{
+		return $this->getSimpleAutoCompleteResult(
+			$entity->blog_post_title,
+			$entity->getContentUrl(),
+			$entity->blog_post_content,
+			$entity->User
+		);
 	}
 }

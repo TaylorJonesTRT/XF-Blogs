@@ -11,6 +11,7 @@
   <permission permission_group_id="taylorjBlogPost" permission_id="canViewModerated" permission_type="flag" interface_group_id="taylorjBlogsModeratorPermissions" display_order="8"/>
   <permission permission_group_id="taylorjBlogPost" permission_id="inlineMod" permission_type="flag" interface_group_id="taylorjBlogsModeratorPermissions" display_order="7"/>
   <permission permission_group_id="taylorjBlogPost" permission_id="submitWithoutApproval" permission_type="flag" interface_group_id="taylorjBlogsPermissions" display_order="10"/>
+  <permission permission_group_id="taylorjBlogs" permission_id="blogCreationLimit" permission_type="integer" interface_group_id="taylorjBlogsPermissions" display_order="11"/>
   <permission permission_group_id="taylorjBlogs" permission_id="canCreate" permission_type="flag" interface_group_id="taylorjBlogsPermissions" display_order="5"/>
   <permission permission_group_id="taylorjBlogs" permission_id="canDeleteAny" permission_type="flag" interface_group_id="taylorjBlogsModeratorPermissions" display_order="2"/>
   <permission permission_group_id="taylorjBlogs" permission_id="canDeleteOwn" permission_type="flag" interface_group_id="taylorjBlogsPermissions" display_order="4"/>
