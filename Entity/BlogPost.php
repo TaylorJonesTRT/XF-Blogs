@@ -414,8 +414,11 @@ class BlogPost extends Entity implements RenderableContentInterface, DatableInte
 
 	protected function _postDelete()
 	{
-		(new Utils())->adjustUserBlogPostCount($this->Blogs, -1);
-		(new Utils())->adjustBlogPostCount($this->Blogs, -1);
+		if ($this->Blog)
+		{
+			(new Utils())->adjustUserBlogPostCount($this->Blog, -1);
+			(new Utils())->adjustBlogPostCount($this->Blog, -1);
+		}
 	}
 
 	protected function _postSave()

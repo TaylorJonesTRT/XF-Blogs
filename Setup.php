@@ -189,6 +189,7 @@ class Setup extends AbstractSetup
 		$sm->alterTable('xf_user', function (Alter $table)
 		{
 			$table->dropColumns('taylorj_blogs_blog_count');
+			$table->dropColumns('taylorj_blogs_blog_post_count');
 		});
 	}
 

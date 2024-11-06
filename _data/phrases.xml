@@ -72,8 +72,11 @@
   <phrase title="taylorj_blogs_blog_post" version_id="1010070" version_string="1.1.0"><![CDATA[Blog post]]></phrase>
   <phrase title="taylorj_blogs_blog_post_add_comment" version_id="1000035" version_string="1.0.0 Beta 5"><![CDATA[Join the conversation]]></phrase>
   <phrase title="taylorj_blogs_blog_post_approval" version_id="1010070" version_string="1.1.0"><![CDATA[Blog post <a href="{blogPostLink}">{blogPostTitle}</a> posted in blog <a href="{blogLink}">{blogTitle}</a>]]></phrase>
+  <phrase title="taylorj_blogs_blog_post_cleanup" version_id="1020170" version_string="1.2.1"><![CDATA[Cleanup blog posts that were not removed on blog deletion]]></phrase>
+  <phrase title="taylorj_blogs_blog_post_cleanup_job" version_id="1020170" version_string="1.2.1"><![CDATA[Blogs without a blog]]></phrase>
   <phrase title="taylorj_blogs_blog_post_comment_thread_creation" version_id="1000036" version_string="1.0.0 Beta 6"><![CDATA[Create Blog Post Comment Threads]]></phrase>
   <phrase title="taylorj_blogs_blog_post_count" version_id="1000036" version_string="1.0.0 Beta 6"><![CDATA[Blog post count]]></phrase>
+  <phrase title="taylorj_blogs_blog_post_count_update" version_id="1020170" version_string="1.2.1"><![CDATA[Rebuild users blog post count totals]]></phrase>
   <phrase title="taylorj_blogs_blog_post_create_new" version_id="1010070" version_string="1.1.0"><![CDATA[Create a new blog post]]></phrase>
   <phrase title="taylorj_blogs_blog_post_delete" version_id="1000031" version_string="1.0.0 Beta 1"><![CDATA[Delete blog post]]></phrase>
   <phrase title="taylorj_blogs_blog_post_draft_post" version_id="1000037" version_string="1.0.0 Beta 7"><![CDATA[Draft]]></phrase>
@@ -99,6 +102,7 @@
 [url={blog_post_link}]Read the full blog post here...[/url]]]></phrase>
   <phrase title="taylorj_blogs_blog_post_thread_creation_job" version_id="1000036" version_string="1.0.0 Beta 6"><![CDATA[Creating comment threads for needed blog posts]]></phrase>
   <phrase title="taylorj_blogs_blog_post_title_verification_error" version_id="1000031" version_string="1.0.0 Beta 1"><![CDATA[Blog titles need to be at least 10 characters long]]></phrase>
+  <phrase title="taylorj_blogs_blog_post_user_counts" version_id="1020170" version_string="1.2.1"><![CDATA[User blog post counts]]></phrase>
   <phrase title="taylorj_blogs_blog_posts" version_id="1000036" version_string="1.0.0 Beta 6"><![CDATA[Blog Posts]]></phrase>
   <phrase title="taylorj_blogs_blog_scheduled_posts_view_error" version_id="1000035" version_string="1.0.0 Beta 5"><![CDATA[You can not view the scheduled posts of a blog that is not yours]]></phrase>
   <phrase title="taylorj_blogs_blog_total_blog_posts" version_id="1000034" version_string="1.0.0 Beta 4"><![CDATA[Blog Posts]]></phrase>
