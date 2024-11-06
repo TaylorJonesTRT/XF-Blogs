@@ -1,0 +1,11 @@
+{
+    "route_type": "public",
+    "route_prefix": "blogs",
+    "sub_name": "",
+    "format": ":page",
+    "build_class": "",
+    "build_method": "",
+    "controller": "TaylorJ\\Blogs:Blogs",
+    "context": "taylorjBlogs",
+    "action_prefix": ""
+}

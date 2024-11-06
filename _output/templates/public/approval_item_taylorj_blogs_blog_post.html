@@ -1,0 +1,20 @@
+<xf:set var="$messageHtml">
+	<h4 class="message-title"><a href="{{ link('blogs/post', $content) }}">{$content.blog_post_title}</a></h4>
+	{{ bb_code($content.blog_post_content, 'taylorj_blogs_blog_post', $content.blog_post_content) }}
+</xf:set>
+
+<xf:macro id="approval_queue_macros::item_message_type"
+	arg-content="{$content}"
+	arg-contentDate="{$content.blog_post_date}"
+	arg-user="{$content.User}"
+	arg-messageHtml="{$messageHtml}"
+	arg-typePhraseHtml="{{ phrase('taylorj_blogs_blog_post') }}"
+	arg-spamDetails="{$spamDetails}"
+	arg-unapprovedItem="{$unapprovedItem}"
+	arg-handler="{$handler}"
+	arg-headerPhraseHtml="{{ phrase('taylorj_blogs_blog_post_approval', {
+		'blogPostLink': link('blogs/post', $content),
+		'blogPostTitle': $content.blog_post_title,
+		'blogLink': link('blogs/blog', $content.Blog),
+		'blogTitle': $content.Blog.blog_title
+	}) }}"/>

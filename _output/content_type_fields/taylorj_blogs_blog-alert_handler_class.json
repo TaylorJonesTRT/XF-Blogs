@@ -1,0 +1,5 @@
+{
+    "content_type": "taylorj_blogs_blog",
+    "field_name": "alert_handler_class",
+    "field_value": "TaylorJ\\Blogs\\Alert\\Blog"
+}

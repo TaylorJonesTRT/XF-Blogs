@@ -1,0 +1,85 @@
+<xf:breadcrumb source="$blogPost.getBreadcrumbs(true)" />
+<xf:title>{{ phrase('taylorj_blogs_blog_post_edit_post') }}</xf:title>
+<div class="block">
+	<xf:form action="{{ link('blogs/post/save', $blogPost) }}" class="block" ajax="true"
+		data-xf-init="attachment-manager">
+		<div class="block-container">
+			<div class="block-body">
+				<xf:textboxrow name="blog_post_title" value="{$blogPost.blog_post_title}" rowtype="fullWidth noLabel"
+					class="input--title" maxlength="40" placeholder="{{ phrase('title...') }}"
+					label="{{ phrase('title') }}" />
+
+				<xf:editorrow name="message" value="{$blogPost.blog_post_content}" label="message"
+					attachments="{{ $attachmentData ? $attachmentData.attachments : [] }}"
+					rowtype="fullWidth noLabel mergePrev"
+					data-preview-url="{{ link('blogs/post/add-preview', $blogPost) }}" />
+
+				<xf:formrow rowtype="fullWidth noLabel mergePrev">
+					<xf:macro template="helper_attach_upload" name="upload_block"
+						arg-attachmentData="{$attachmentData}" />
+				</xf:formrow>
+
+				<xf:macro name="watch_input" arg-thread="!" arg-rowType="" arg-label="{{ phrase('options') }}"
+					arg-explain="" arg-forceWatchChecked="{{ null }}" arg-forceWatchEmailChecked="{{ null }}"
+					arg-visible="{{ true }}">
+
+				</xf:macro>
+
+				<xf:if is="$blogPost.blog_post_state !== 'visible'">
+					<xf:radiorow name="blog_post_schedule" value="{{ $blogPost.blog_post_state }}" rowtype="noColon"
+						label="{{ phrase('taylorj_blogs_blog_post_schedule') }}">
+
+						<xf:option value="visible">{{ phrase('taylorj_blogs_blog_post_schedule_now') }}</xf:option>
+						<xf:option value="draft">{{ phrase('taylorj_blogs_blog_post_draft_post') }}</xf:option>
+						<xf:option value="scheduled">{{ phrase('taylorj_blogs_blog_post_schedule_later') }}
+						</xf:option>
+					</xf:radiorow>
+
+					<xf:formrow>
+						<div class=" inputGroup">
+							<xf:radio name="now" value="true" label="now" />
+							<xf:dateinput name="dd" value="{{date($dt, 'picker')}}" />
+							<span class="inputGroup-text">
+								{{ phrase('taylorj_blogs_time:') }}
+							</span>
+							<span class="inputGroup" dir="ltr">
+								<xf:select name="hh" value="{$hh_value}" class="input--inline input--autoSize">
+									<xf:foreach loop="$hours" value="$hour">
+										<xf:option value="{$hour}" label="{$hour}" />
+									</xf:foreach>
+								</xf:select>
+								<span class="inputGroup-text">:</span>
+								<xf:select name="mm" value="{$mm_value}" class="input--inline input--autoSize">
+									<xf:foreach loop="$minutes" value="$minute">
+										<xf:option value="{$minute}" label="{$minute}" />
+									</xf:foreach>
+								</xf:select>
+							</span>
+						</div>
+					</xf:formrow>
+					<dl class="formRow formRow--input">
+						<dt>
+							<div class="formRow-labelWrapper"></div>
+						</dt>
+						<dd>
+							<div class="blockMessage blockMessage--warning">
+								{{phrase('taylorj_blogs_user_tz', {'tz': $xf.visitor.timezone})}}
+							</div>
+						</dd>
+					</dl>
+					<xf:else />
+
+					<xf:hiddenval name="blog_post_schedule" autocomplete="off">
+						<xf:radiorow name="blog_post_schedule" value="1" rowtype="noColon"
+							label="{{ phrase('taylorj_blogs_blog_post_schedule') }}">
+
+							<xf:option value="1">{{ phrase('taylorj_blogs_blog_post_schedule_now') }}</xf:option>
+						</xf:radiorow>
+					</xf:hiddenval>
+				</xf:if>
+			</div>
+		</div>
+		<xf:hiddenval name="blog_id" autocomplete="off">{$blog_id}</xf:hiddenval>
+		<xf:submitrow submit="{{ phrase('save') }}" fa="fa-save" icon="save" />
+	</xf:form>
+</div>

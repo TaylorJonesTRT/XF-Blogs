@@ -1,0 +1,22 @@
+<li class="block-row block-row--separated js-inlineModContainer" data-author="{{ $blogPost.User.username }}">
+	<div class="contentRow">
+		<span class="contentRow-figure">
+			<xf:avatar user="{$blogPost.User}" size="s" />
+		</span>
+		<div class="contentRow-main">
+			<h3 class="contentRow-title">
+				<a href="{{ link('blogs/post', $blogPost) }}">{{ highlight($blogPost.blog_post_title, $options.term) }}</a>
+			</h3>
+
+			<div class="contentRow-snippet">{{ snippet($blogPost.blog_post_content, 300, {'term': $options.term, 'stripQuote': true}) }}</div>
+
+			<div class="contentRow-minor contentRow-minor--hideLinks">
+				<ul class="listInline listInline--bullet">
+					<li><xf:username user="{$blogPost.User}" /></li>
+					<li><xf:date time="{$blogPost.blog_post_date}" /></li>
+					<li>{{ phrase('taylorj_blogs_blog:') }} <a href="{{ link('blogs/blog', $blogPost.Blog) }}">{$blogPost.Blog.blog_title}</a></li>
+				</ul>
+			</div>
+		</div>
+	</div>
+</li>

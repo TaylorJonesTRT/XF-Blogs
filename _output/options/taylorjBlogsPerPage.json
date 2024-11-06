@@ -1,0 +1,13 @@
+{
+    "edit_format": "spinbox",
+    "edit_format_params": "",
+    "data_type": "positive_integer",
+    "sub_options": [],
+    "validation_class": "",
+    "validation_method": "",
+    "advanced": false,
+    "default_value": "6",
+    "relations": {
+        "taylorjBlogs": 2
+    }
+}

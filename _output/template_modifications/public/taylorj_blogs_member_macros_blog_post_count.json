@@ -1,0 +1,9 @@
+{
+    "template": "member_macros",
+    "description": "Add the blog post count to the member stats.",
+    "execution_order": 10,
+    "enabled": true,
+    "action": "str_replace",
+    "find": "<!--[XF:stat_pairs:above_likes]-->",
+    "replace": "$0\n<xf:if is=\"$xf.visitor.canViewBlogs() && $user.taylorj_blogs_blog_post_count\">\n\t<dl class=\"pairs pairs--rows pairs--rows--centered menu-fauxLinkRow\">\n\t\t<dt>{{ phrase('taylorj_blogs_blog_posts') }}</dt>\n\t\t<dd>\n\t\t\t<a href=\"{{ link('blogs/authors', $user) }}\" class=\"menu-fauxLinkRow-linkRow u-concealed\">\n\t\t\t\t{$user.taylorj_blogs_blog_post_count|number}\n\t\t\t</a>\n\t\t</dd>\n\t</dl>\n</xf:if>\n"
+}

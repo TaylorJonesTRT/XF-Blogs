@@ -1,0 +1,9 @@
+{
+    "event_id": "member_stat_result_prepare",
+    "execute_order": 10,
+    "callback_class": "TaylorJ\\Blogs\\Listener",
+    "callback_method": "memberStatResultPrepare",
+    "active": true,
+    "hint": "",
+    "description": "Formats the blog post member statistic sort orders"
+}

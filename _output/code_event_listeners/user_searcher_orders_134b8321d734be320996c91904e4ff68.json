@@ -1,0 +1,9 @@
+{
+    "event_id": "user_searcher_orders",
+    "execute_order": 10,
+    "callback_class": "TaylorJ\\Blogs\\Listener",
+    "callback_method": "userSearcherOrders",
+    "active": true,
+    "hint": "",
+    "description": "Add blog post count to user searcher orders."
+}

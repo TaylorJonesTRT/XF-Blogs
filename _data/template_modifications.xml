@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<template_modifications>
+  <modification type="public" template="member_list_macros" modification_key="taylorj_member_list_macros_blog_post_count" description="Add the blog post count to member stats." execution_order="20" enabled="1" action="str_replace">
+    <find><![CDATA[<!--[XF:stats:after_messages]-->]]></find>
+    <replace><![CDATA[$0
+<xf:if is="$xf.visitor.canViewBlogs() AND $user.taylorj_blogs_blog_post_count">
+	<li><dl class="pairs pairs--inline">
+		<dt>{{ phrase('taylorj_blogs_blog_posts') }}</dt>
+		<dd>{$user.taylorj_blogs_blog_post_count|number}</dd>
+	</dl></li>
+</xf:if>]]></replace>
+  </modification>
+  <modification type="public" template="member_macros" modification_key="taylorj_blogs_member_macros_blog_post_count" description="Add the blog post count to the member stats." execution_order="10" enabled="1" action="str_replace">
+    <find><![CDATA[<!--[XF:stat_pairs:above_likes]-->]]></find>
+    <replace><![CDATA[$0
+<xf:if is="$xf.visitor.canViewBlogs() && $user.taylorj_blogs_blog_post_count">
+	<dl class="pairs pairs--rows pairs--rows--centered menu-fauxLinkRow">
+		<dt>{{ phrase('taylorj_blogs_blog_posts') }}</dt>
+		<dd>
+			<a href="{{ link('blogs/authors', $user) }}" class="menu-fauxLinkRow-linkRow u-concealed">
+				{$user.taylorj_blogs_blog_post_count|number}
+			</a>
+		</dd>
+	</dl>
+</xf:if>
+]]></replace>
+  </modification>
+  <modification type="public" template="member_view" modification_key="taylorj_blogs_member_view_add_tab" description="Add the &quot;blog posts&quot; tab." execution_order="10" enabled="1" action="str_replace">
+    <find><![CDATA[<!--[XF:tabs:after_recent_content]-->]]></find>
+    <replace><![CDATA[$0
+
+<xf:if is="$xf.visitor.canViewBlogs() AND $user.taylorj_blogs_blog_post_count">
+	<a href="{{ link('blogs/authors', $user) }}"
+	   class="tabs-tab"
+	   id="blogs"
+	   role="tab">{{ phrase('taylorj_blogs_blog_posts') }}</a>
+</xf:if>]]></replace>
+  </modification>
+  <modification type="public" template="member_view" modification_key="taylorj_blogs_member_view_add_tab_pane" description="Add the &quot;blog posts&quot; tab pane." execution_order="10" enabled="1" action="str_replace">
+    <find><![CDATA[<!--[XF:tab_panes:after_recent_content]-->]]></find>
+    <replace><![CDATA[$0
+
+<xf:if is="$xf.visitor.canViewBlogs() AND $user.taylorj_blogs_blog_post_count">
+	<li data-href="{{ link('blogs/authors', $user) }}" role="tabpanel" aria-labelledby="blogPosts">
+		<div class="blockMessage">{{ phrase('loading...') }}</div>
+	</li>
+</xf:if>]]></replace>
+  </modification>
+  <modification type="admin" template="tools_rebuild" modification_key="taylorj_blogs_blog_post_cleanup" description="Cleanup blog posts that blogs no longer exist" execution_order="10" enabled="1" action="str_replace">
+    <find><![CDATA[<!--[XF:after_users]-->
+]]></find>
+    <replace><![CDATA[<xf:macro name="rebuild_job"
+	arg-header="{{ phrase('taylorj_blogs_blog_post_cleanup') }}"
+	arg-job="TaylorJ\Blogs:CleanOldBlogPosts" />
+
+$0]]></replace>
+  </modification>
+  <modification type="admin" template="tools_rebuild" modification_key="taylorj_blogs_blog_posts_thread_creation" description="Create comment threads for blog posts from an earlier beta version" execution_order="10" enabled="1" action="str_replace">
+    <find><![CDATA[<!--[XF:after_users]-->
+]]></find>
+    <replace><![CDATA[<xf:macro name="rebuild_job"
+	arg-header="{{ phrase('taylorj_blogs_blog_post_comment_thread_creation') }}"
+	arg-job="TaylorJ\Blogs:BlogPostThreadCreation" />
+
+$0]]></replace>
+  </modification>
+  <modification type="admin" template="tools_rebuild" modification_key="taylorj_blogs_user_blog_post_count" description="Rebuild users blog post count total" execution_order="10" enabled="1" action="str_replace">
+    <find><![CDATA[<!--[XF:after_users]-->
+]]></find>
+    <replace><![CDATA[<xf:macro name="rebuild_job"
+	arg-header="{{ phrase('taylorj_blogs_blog_post_count_update') }}"
+	arg-job="TaylorJ\Blogs:UserBlogPostCountTotal" />
+
+$0]]></replace>
+  </modification>
+  <modification type="public" template="whats_new_wrapper" modification_key="taylorj_blogs_whats_new_wrapper_link" description="Add the &quot;new blog posts&quot; link to what's new pages." execution_order="10" enabled="1" action="str_replace">
+    <find><![CDATA[<!--[XF:links:after_thread]-->]]></find>
+    <replace><![CDATA[$0
+<xf:if is="$xf.visitor.canViewBlogs()">
+	<a class="{$baseClass} {{ $pageSelected == 'new_blog_posts' ? {$selectedClass} : '' }}" href="{{ link('whats-new/blog-posts') }}" rel="nofollow">{{ phrase('taylorj_blogs_new_blog_posts') }}</a>
+</xf:if>]]></replace>
+  </modification>
+</template_modifications>

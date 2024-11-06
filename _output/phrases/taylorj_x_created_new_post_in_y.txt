@@ -1,0 +1,1 @@
+{name} created a new blog post in <a {blog}>{blogTitle}</a>.

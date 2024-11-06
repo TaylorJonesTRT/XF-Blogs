@@ -1,0 +1,16 @@
+{
+    "criteria": [],
+    "sort_order": "taylorj_blogs_blog_post_count",
+    "sort_direction": "desc",
+    "permission_limit": "taylorjBlogs-viewBlogs",
+    "callback_class": "",
+    "callback_method": "",
+    "visibility_class": "",
+    "visibility_method": "",
+    "show_value": true,
+    "overview_display": true,
+    "active": true,
+    "user_limit": 20,
+    "display_order": 55,
+    "cache_lifetime": 0
+}

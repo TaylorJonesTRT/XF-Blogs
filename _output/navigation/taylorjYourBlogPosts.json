@@ -1,0 +1,11 @@
+{
+    "parent_navigation_id": "taylorjBlogs",
+    "display_order": 2,
+    "navigation_type_id": "basic",
+    "type_config": {
+        "link": "{{ link('blogs/authors', $xf.visitor) }}",
+        "display_condition": "$xf.visitor.user_id",
+        "extra_attributes": []
+    },
+    "enabled": true
+}

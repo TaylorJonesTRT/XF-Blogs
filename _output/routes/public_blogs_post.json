@@ -1,0 +1,11 @@
+{
+    "route_type": "public",
+    "route_prefix": "blogs",
+    "sub_name": "post",
+    "format": "post/:int<blog_post_id,blog_post_title>/",
+    "build_class": "",
+    "build_method": "",
+    "controller": "TaylorJ\\Blogs:BlogPost",
+    "context": "taylorjBlogs",
+    "action_prefix": ""
+}
