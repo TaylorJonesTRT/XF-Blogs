@@ -2,10 +2,9 @@
 
 namespace TaylorJ\Blogs\Repository;
 
-use XF\Mvc\Entity\Repository;
-use XF\Entity\Thread;
 use TaylorJ\Blogs\Finder\BlogPost as BlogPostFinder;
-use XF\Util\File;
+use XF\Entity\Thread;
+use XF\Mvc\Entity\Repository;
 
 class BlogPost extends Repository
 {
@@ -34,7 +33,7 @@ class BlogPost extends Repository
 
 	public function findBlogPostForThread(Thread $thread)
 	{
-		/** @var \TaylorJ\Blogs\Finder\BlogPost $finder */
+		/** @var BlogPostFinder $finder */
 		$finder = $this->finder('TaylorJ\Blogs:BlogPost');
 
 		$finder->where('discussion_thread_id', $thread->thread_id);
@@ -84,7 +83,7 @@ class BlogPost extends Repository
 
 	public function findOtherPostsByOwnerRandom($userId)
 	{
-		/** @var \TaylorJ\Blogs\Finder\BlogPost $finder */
+		/** @var BlogPostFinder $finder */
 		$finder = $this->finder('TaylorJ\Blogs:BlogPost');
 
 		$randomBlogPosts = $finder
@@ -92,5 +91,15 @@ class BlogPost extends Repository
 			->order($finder->expression('RAND()'));
 
 		return $randomBlogPosts;
+	}
+
+	public function getUserBlogPostCount($userId)
+	{
+		return $this->db()->fetchOne("
+			SELECT COUNT(*)
+			FROM xf_taylorj_blogs_blog_post
+			WHERE user_id = ?
+				AND blog_post_state = 'visible'
+		", $userId);
 	}
 }

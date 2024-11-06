@@ -46,12 +46,30 @@
 	</li>
 </xf:if>]]></replace>
   </modification>
+  <modification type="admin" template="tools_rebuild" modification_key="taylorj_blogs_blog_post_cleanup" description="Cleanup blog posts that blogs no longer exist" execution_order="10" enabled="1" action="str_replace">
+    <find><![CDATA[<!--[XF:after_users]-->
+]]></find>
+    <replace><![CDATA[<xf:macro name="rebuild_job"
+	arg-header="{{ phrase('taylorj_blogs_blog_post_cleanup') }}"
+	arg-job="TaylorJ\Blogs:CleanOldBlogPosts" />
+
+$0]]></replace>
+  </modification>
   <modification type="admin" template="tools_rebuild" modification_key="taylorj_blogs_blog_posts_thread_creation" description="Create comment threads for blog posts from an earlier beta version" execution_order="10" enabled="1" action="str_replace">
     <find><![CDATA[<!--[XF:after_users]-->
 ]]></find>
     <replace><![CDATA[<xf:macro name="rebuild_job"
 	arg-header="{{ phrase('taylorj_blogs_blog_post_comment_thread_creation') }}"
 	arg-job="TaylorJ\Blogs:BlogPostThreadCreation" />
+
+$0]]></replace>
+  </modification>
+  <modification type="admin" template="tools_rebuild" modification_key="taylorj_blogs_user_blog_post_count" description="Rebuild users blog post count total" execution_order="10" enabled="1" action="str_replace">
+    <find><![CDATA[<!--[XF:after_users]-->
+]]></find>
+    <replace><![CDATA[<xf:macro name="rebuild_job"
+	arg-header="{{ phrase('taylorj_blogs_blog_post_count_update') }}"
+	arg-job="TaylorJ\Blogs:UserBlogPostCountTotal" />
 
 $0]]></replace>
   </modification>

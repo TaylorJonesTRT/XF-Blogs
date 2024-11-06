@@ -342,10 +342,19 @@ class Blog extends Entity implements DatableInterface
 		}
 	}
 
+	protected function _preDelete()
+	{
+		foreach ($this->BlogPosts AS $blogPost)
+		{
+			$blogPost->delete();
+		}
+
+	}
+
 	protected function _postDelete()
 	{
 		(new Utils())->adjustUserBlogCount($this, -1);
-		(new Utils())->adjustUserBlogPostCount($this, $this->blog_post_count);
+		(new Utils())->adjustUserBlogPostCount($this, -$this->blog_post_count);
 
 		$dataDir = \XF::app()->config('externalDataPath');
 		$dataDir .= "://taylorj_blogs/blog_header_images/" . $this->blog_id . ".jpg";
@@ -380,10 +389,10 @@ class Blog extends Entity implements DatableInterface
 				'conditions' => 'user_id',
 				'primary'    => true,
 			],
-			'BlogPost' => [
+			'BlogPosts' => [
 				'entity'	=> 'TaylorJ\Blogs:BlogPost',
 				'type'		=> self::TO_MANY,
-				'conditions' => 'blog_post_id',
+				'conditions' => 'blog_id',
 				'primary'	=> true,
 			],
 			'BlogWatch' => [

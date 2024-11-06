@@ -1,6 +1,12 @@
 {
+    "admin/taylorj_blogs_blog_post_cleanup.json": {
+        "hash": "998af94f097a4eac145e7da9afffec3a"
+    },
     "admin/taylorj_blogs_blog_posts_thread_creation.json": {
         "hash": "e7ade84a957c68ad0305fd4082205ea3"
+    },
+    "admin/taylorj_blogs_user_blog_post_count.json": {
+        "hash": "b7072291ac0ef66ab7ccfc59d00a7384"
     },
     "public/taylorj_blogs_member_macros_blog_post_count.json": {
         "hash": "206fd94544973bd663d5db52858758b6"

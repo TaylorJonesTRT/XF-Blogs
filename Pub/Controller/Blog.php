@@ -25,19 +25,25 @@ class Blog extends AbstractController
 		/** @var \TaylorJ\Blogs\Entity\Blog $blog */
 		$blog = $this->assertBlogExists($params->blog_id);
 
-		if (!$blog->canView() && $blog->user_id == \XF::visitor()->user_id) {
+		if (!$blog->canView() && $blog->user_id == \XF::visitor()->user_id)
+		{
 			return $this->noPermission(\XF::phrase('permission.taylorjBlogs_viewOwn'));
-		} else if (!$blog->canView()) {
+		}
+		else if (!$blog->canView())
+		{
 			return $this->noPermission(\XF::phrase('permission.taylorjBlogs_viewAny'));
 		}
 
 		$conditions = [];
 
-		if ($blog->user_id == $visitor->user_id) {
+		if ($blog->user_id == $visitor->user_id)
+		{
 			$conditions[] = [
 				'blog_post_state' => ['moderated', 'visible'],
 			];
-		} else {
+		}
+		else
+		{
 			$conditions[] = [
 				'blog_post_state' => [
 					'visible',
@@ -82,11 +88,16 @@ class Blog extends AbstractController
 		/** @var \TaylorJ\Blogs\Entity\Blog $blog */
 		$blog = $this->assertBlogExists($params->blog_id);
 
-		if (!$blog->canView() && $blog->user_id == \XF::visitor()->user_id) {
+		if (!$blog->canView() && $blog->user_id == \XF::visitor()->user_id)
+		{
 			return $this->noPermission(\XF::phrase('permission.taylorjBlogs_viewOwn'));
-		} else if (!$blog->canView()) {
+		}
+		else if (!$blog->canView())
+		{
 			return $this->noPermission(\XF::phrase('permission.taylorjBlogs_viewAny'));
-		} else if (\XF::visitor()->user_id !== $blog->user_id) {
+		}
+		else if (\XF::visitor()->user_id !== $blog->user_id)
+		{
 			return $this->noPermission(\XF::phrase('taylorj_blogs_blog_scheduled_posts_view_error'));
 		}
 
@@ -126,11 +137,16 @@ class Blog extends AbstractController
 		/** @var \TaylorJ\Blogs\Entity\Blog $blog */
 		$blog = $this->assertBlogExists($params->blog_id);
 
-		if (!$blog->canView() && $blog->user_id == \XF::visitor()->user_id) {
+		if (!$blog->canView() && $blog->user_id == \XF::visitor()->user_id)
+		{
 			return $this->noPermission(\XF::phrase('permission.taylorjBlogs_viewOwn'));
-		} else if (!$blog->canView()) {
+		}
+		else if (!$blog->canView())
+		{
 			return $this->noPermission(\XF::phrase('permission.taylorjBlogs_viewAny'));
-		} else if (\XF::visitor()->user_id !== $blog->user_id) {
+		}
+		else if (\XF::visitor()->user_id !== $blog->user_id)
+		{
 			return $this->noPermission(\XF::phrase('taylorj_blogs_blog_draft_posts_view_error'));
 		}
 
@@ -190,10 +206,14 @@ class Blog extends AbstractController
 		$visitor = \XF::visitor();
 		$blog = $this->assertBlogExists($params->blog_id);
 
-		if ($blog->user_id === $visitor->user_id) {
-			if (!$visitor->hasPermission('taylorjBlogPost', 'canPost')) {
+		if ($blog->user_id === $visitor->user_id)
+		{
+			if (!$visitor->hasPermission('taylorjBlogPost', 'canPost'))
+			{
 				return $this->noPermission(\XF::phrase('taylorj_blogs_blog_post_error_new'));
-			} else {
+			}
+			else
+			{
 				$blogPost = $this->em()->create('TaylorJ\Blogs:BlogPost');
 				return $this->blogPostAdd($blogPost, $params->blog_id);
 			}
@@ -261,31 +281,37 @@ class Blog extends AbstractController
 		$blog = $this->assertBlogExists($input['blog_id']);
 
 		$creator = $this->blogPostCreate($blog);
-		if (!$creator->validate($errors)) {
+		if (!$creator->validate($errors))
+		{
 			return $this->error($errors);
 		}
 
 		$this->assertNotFlooding('post');
 
-		if ($blog->canEditTags()) {
+		if ($blog->canEditTags())
+		{
 			$creator->setTags($this->filter('tags', 'str'));
 		}
 
 		/** @var BlogPost $blogPost */
 		$blogPost = $creator->save();
 
-		if ($visitor->user_id) {
-			if ($blogPost->blog_post_state == 'moderated') {
+		if ($visitor->user_id)
+		{
+			if ($blogPost->blog_post_state == 'moderated')
+			{
 				$this->session()->setHasContentPendingApproval();
 			}
 		}
 
 		$hash = $this->filter('attachment_hash', 'str');
-		if ($hash && $blogPost->canUploadAndManageAttachments()) {
+		if ($hash && $blogPost->canUploadAndManageAttachments())
+		{
 			/** @var Preparer $inserter */
 			$inserter = $this->service('XF:Attachment\Preparer');
 			$associated = $inserter->associateAttachmentsWithContent($hash, 'taylorj_blogs_blog_post', $blogPost->blog_post_id);
-			if ($associated) {
+			if ($associated)
+			{
 				$blogPost->fastUpdate('attach_count', $blogPost->attach_count + $associated);
 			}
 		}
@@ -298,13 +324,15 @@ class Blog extends AbstractController
 	{
 
 		$visitor = \XF::visitor();
-		if (!$visitor->user_id) {
+		if (!$visitor->user_id)
+		{
 			return $this->noPermission();
 		}
 
 		$blog = $this->assertBlogExists($params->blog_id);
 
-		if (!$blog->canWatch($error)) {
+		if (!$blog->canWatch($error))
+		{
 			return $this->noPermission($error);
 		}
 
@@ -364,7 +392,8 @@ class Blog extends AbstractController
 		$blogPostState = $this->filter('blog_post_schedule', 'str');
 		$creator->setBlogPostState($blogPostState);
 
-		if ($blogPostState == 'scheduled') {
+		if ($blogPostState == 'scheduled')
+		{
 			$scheduledPostDateTime = $this->filter([
 				'dd' => 'str',
 				'hh' => 'int',
@@ -373,7 +402,8 @@ class Blog extends AbstractController
 			$creator->setScheduledPostDateTime($scheduledPostDateTime);
 		}
 
-		if ($blogPostState == 'visible') {
+		if ($blogPostState == 'visible')
+		{
 			$creator->sendNotifications(3);
 		}
 
