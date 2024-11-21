@@ -1,0 +1,1 @@
+Displays a block containing a list of X blog posts which are similar to the current one being viewed. This widget will only work in "blog post view" positions.

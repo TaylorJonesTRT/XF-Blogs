@@ -1,6 +1,6 @@
-[HEADING=1][TaylorJ] Blogs for XenForo 2.3.0+[/HEADING]
+[HEADING=1][TaylorJ] Blogs - Premium for XenForo 2.3.0+[/HEADING]
 [HEADING=1]Description[/HEADING]
-A user blogging system to allow your users to express themselves
+A premium user blogging system to allow your users to express themselves
 [HEADING=1]Options[/HEADING]
 [HEADING=3][TaylorJ] Blogs - Options[/HEADING]
 [TABLE width="100%"]
@@ -8,13 +8,28 @@ A user blogging system to allow your users to express themselves
 [th]Name[/th][th]Description[/th]
 [/TR]
 [TR]
+[td]Minimum tag amount[/td][td]How many tags must a blog post have to be able to be posted[/td]
+[/TR]
+[TR]
 [td]Blog Posts per page[/td][td]How many blog posts to show per page on the blog view[/td]
+[/TR]
+[TR]
+[td]Moderate blog creation[/td][td]Force all new blog creations into the approval queue[/td]
 [/TR]
 [TR]
 [td]Blog creation limit[/td][td]Limit your users to how many blogs they can own/create[/td]
 [/TR]
 [TR]
+[td]Moderate blog post creation[/td][td]Force all new visible blog posts to the approval queue[/td]
+[/TR]
+[TR]
+[td]Blog post comments[/td][td]When turned on blogs will be created with comment threads in forum specified below, when off blogs will not have comments[/td]
+[/TR]
+[TR]
 [td]Forum for comment thread creation[/td][td]Pick a forum that will be used to automatically create threads in for blog posts to be used as comments.[/td]
+[/TR]
+[TR]
+[td]Show other posts by blog post author[/td][td]If turned on this will show a random list of other blog posts by that author in any blog.[/td]
 [/TR]
 [TR]
 [td]Blogs per page[/td][td]How many blogs to display per page on the blogs index page[/td]
@@ -32,6 +47,9 @@ A user blogging system to allow your users to express themselves
 [*]Can make a blog post
 [*]Can edit own blog post
 [*]Can delete own blog post
+[*]Can tag own blog post
+[*]Can submit blog posts without approval
+[*]Blog limit
 [/LIST]
 [HEADING=3][TaylorJ] Blogs Moderator Permissions[/HEADING]
 [LIST]
@@ -39,11 +57,27 @@ A user blogging system to allow your users to express themselves
 [*]Can delete any blog
 [*]Can edit any blog post
 [*]Can delete any blog post
+[*]Can tag any blog post
+[*]Can manage any blog posts tags
+[*]Use inline moderation on resources
+[*]Can view moderated content
 [/LIST]
+[HEADING=1]Widget Positions[/HEADING]
+[TABLE width="100%"]
+[TR]
+[th]Position[/th][th]Description[/th]
+[/TR]
+[TR]
+[td]Blog post view: Below post ([ICODE]taylorj_blogs_blog_post_below_post[/ICODE])[/td][td]A position in the main content area of the blog post view, below the messages. Widget templates rendered in this position can use the current thread entity in the [ICODE]{$context.blogPost}[/ICODE] param.[/td]
+[/TR]
+[/TABLE]
 [HEADING=1]Widget Definitions[/HEADING]
 [TABLE width="100%"]
 [TR]
 [th]Definition[/th][th]Description[/th]
+[/TR]
+[TR]
+[td][TaylorJ] Blogs: Similar blog posts ([ICODE]taylorj_blogs_similarpost[/ICODE])[/td][td]Displays a block containing a list of X blog posts which are similar to the current one being viewed. This widget will only work in "blog post view" positions.[/td]
 [/TR]
 [TR]
 [td]Latest Blog Posts ([ICODE]taylorj_latest_blog_posts[/ICODE])[/td][td]Displays latest blog posts[/td]
@@ -53,6 +87,9 @@ A user blogging system to allow your users to express themselves
 [TABLE width="100%"]
 [TR]
 [th]Name[/th][th]Run on...[/th][th]Run at hours[/th][th]Run at minutes[/th]
+[/TR]
+[TR]
+[td][TaylorJ] Blogs: Update similar blog posts caches[/td][td]Any day of the month[/td][td]Any[/td][td]32[/td]
 [/TR]
 [TR]
 [td]Update Blog Post View Counter[/td][td]Any day of the month[/td][td]Any[/td][td]30[/td]

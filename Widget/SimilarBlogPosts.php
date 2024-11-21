@@ -2,15 +2,15 @@
 
 namespace TaylorJ\Blogs\Widget;
 
-use XF\Entity\Thread;
+use TaylorJ\Blogs\Entity\BlogPost;
+use TaylorJ\Blogs\Entity\BlogPostSimilar;
 use XF\Http\Request;
 use XF\Phrase;
 use XF\Repository\NodeRepository;
 use XF\Widget\AbstractWidget;
 use XF\Widget\WidgetRenderer;
-use XFES\Entity\ThreadSimilar;
 
-use function array_slice, count, in_array;
+use function array_slice, count;
 
 class SimilarBlogPosts extends AbstractWidget
 {
@@ -57,72 +57,48 @@ class SimilarBlogPosts extends AbstractWidget
 			return '';
 		}
 
-		$blogPost = $this->contextParams['taylorj_blogs_blog_post'] ?? null;
+		$blogPost = $this->contextParams['blogPost'] ?? null;
 		if (!$blogPost)
 		{
 			return '';
 		}
 
 		$cache = $this->getSimilarBlogPostCache($blogPost);
-		if (!$cache || !$cache->similar_thread_ids)
+		if (!$cache || !$cache->similar_blog_post_ids)
 		{
 			return '';
 		}
 
 		$visitor = \XF::visitor();
 
-		$similarThreadIds = array_slice(
-			$cache->similar_thread_ids,
+		$similarBlogPostIds = array_slice(
+			$cache->similar_blog_post_ids,
 			0,
 			max($this->options['limit'] * 4, 20)
 		);
 
-		$finder = $this->finder('XF:Thread')
+		$finder = $this->finder('TaylorJ\Blogs:BlogPost')
 			->with('User')
-			->with('Forum')
-			->with("Forum.Node.Permissions|{$visitor->permission_combination_id}")
-			->whereIds($similarThreadIds)
-			->where('discussion_state', 'visible')
-			->where('discussion_type', '<>', 'redirect')
-			->order('thread_id');
+			->with('Blog')
+			->whereIds($similarBlogPostIds)
+			->where('blog_post_state', 'visible')
+			->order('blog_post_id');
 
-		if ($this->options['style'] == 'full')
-		{
-			$finder->with('fullForum');
-		}
-
-		if (
-			$this->options['node_ids'] &&
-			!in_array(0, $this->options['node_ids'])
-		)
-		{
-			$finder->where('node_id', $this->options['node_ids']);
-		}
-
-		if ($this->options['date_limit_days'])
-		{
-			$finder->where(
-				'post_date',
-				'>=',
-				\XF::$time - ($this->options['date_limit_days'] * 86400)
-			);
-		}
-
-		$threads = $finder
+		$blogPosts = $finder
 			->fetch()
-			->sortByList($similarThreadIds);
+			->sortByList($similarBlogPostIds);
 
-		foreach ($threads AS $threadId => $blogPost)
+		foreach ($blogPosts AS $blogPostId => $blogPost)
 		{
-			/** @var Thread $blogPost */
-			if (!$blogPost->canView() || $blogPost->isIgnored())
+			/** @var BlogPost $blogPost */
+			if (!$blogPost->canView())
 			{
-				unset($threads[$threadId]);
+				unset($blogPosts[$blogPostId]);
 			}
 		}
-		$threads = $threads->slice(0, $this->options['limit'], true);
+		$blogPosts = $blogPosts->slice(0, $this->options['limit'], true);
 
-		if (!count($threads))
+		if (!count($blogPosts))
 		{
 			return '';
 		}
@@ -130,19 +106,19 @@ class SimilarBlogPosts extends AbstractWidget
 		$viewParams = [
 			'title' => $this->getTitle(),
 			'style' => $this->options['style'],
-			'threads' => $threads,
+			'blogPosts' => $blogPosts,
 		];
-		return $this->renderer('xfes_widget_similar_threads', $viewParams);
+		return $this->renderer('taylorj_blogs_widget_similar_blog_posts', $viewParams);
 	}
 
 	/**
-	 * @param Thread $thread
+	 * @param BlogPost $blogPost
 	 *
-	 * @return ThreadSimilar|null
+	 * @return BlogPostSimilar|null
 	 */
-	protected function getSimilarBlogPostCache(Thread $thread)
+	protected function getSimilarBlogPostCache(BlogPost $blogPost)
 	{
-		$cache = $thread->XFES_SimilarThreads;
+		$cache = $blogPost->SimilarBlogPosts;
 
 		$isRobot = $this->app->request()->getRobotName() ? true : false;
 		if ($isRobot)
@@ -150,27 +126,27 @@ class SimilarBlogPosts extends AbstractWidget
 			return $cache;
 		}
 
-		/** @var \XFES\XF\Repository\Thread $threadRepo */
-		$threadRepo = $this->repository('XF:Thread');
+		/** @var \TaylorJ\Blogs\Repository\BlogPost $blogPostRepo */
+		$blogPostRepo = $this->repository('TaylorJ\Blogs:BlogPost');
 
 		if (!$cache)
 		{
 			try
 			{
-				$cache = $threadRepo->rebuildSimilarThreadsCache($thread);
+				$cache = $blogPostRepo->rebuildSimilarBlogPostsCache($blogPost);
 			}
 			catch (\Exception $e)
 			{
 				// Intentionally not logging this as it could flood the logs. The rebuild job will trigger
 				// some logs if this keep happening.
 
-				/** @var ThreadSimilar $cache */
-				$cache = $thread->getRelationOrDefault('XFES_SimilarThreads');
+				/** @var BlogPostSimilar $cache */
+				$cache = $blogPost->getRelationOrDefault('SimilarBlogPosts');
 				$cache->reset(); // possible our error occurred during save so wipe out the pending values
 
 				if (!$cache->exists())
 				{
-					$cache->thread_id = $thread->thread_id;
+					$cache->blog_post_id = $blogPost->blog_post_id;
 				}
 
 				$cache->pending_rebuild = true;
@@ -189,7 +165,7 @@ class SimilarBlogPosts extends AbstractWidget
 			return $cache;
 		}
 
-		$threadRepo->flagIfSimilarThreadsCacheNeedsRebuild($thread);
+		$blogPostRepo->flagIfSimilarBlogPostsCacheNeedsRebuild($blogPost);
 		return $cache;
 	}
 
@@ -209,14 +185,8 @@ class SimilarBlogPosts extends AbstractWidget
 		$options = $request->filter([
 			'limit' => 'posint',
 			'style' => 'str',
-			'node_ids' => 'array-uint',
 			'date_limit_days' => 'uint',
 		]);
-
-		if (in_array(0, $options['node_ids']))
-		{
-			$options['node_ids'] = [0];
-		}
 
 		return true;
 	}

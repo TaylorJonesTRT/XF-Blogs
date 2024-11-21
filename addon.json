@@ -4,10 +4,10 @@
     "description": "A premium user blogging system to allow your users to express themselves",
     "version_id": 1000070,
     "version_string": "1.0.0",
-    "dev": "",
-    "dev_url": "",
+    "dev": "TaylorJ",
+    "dev_url": "https://xenforo.com/community/members/taylor-j.657/",
     "faq_url": "",
-    "support_url": "",
+    "support_url": "https://xenforo.taylorwjones.com/forums/blogs.5/",
     "extra_urls": [],
     "require": {
         "XF": [

@@ -542,6 +542,13 @@ class BlogPost extends Entity implements RenderableContentInterface, DatableInte
 				],
 				'primary' => true,
 			],
+			'SimilarBlogPosts' => [
+				'entity' => 'TaylorJ\Blogs:BlogPostSimilar',
+				'type' => self::TO_ONE,
+				'conditions' => 'blog_post_id',
+				'primary' => true,
+				'cascadeDelete' => true,
+			],
 		];
 		$structure->defaultWith = ['User', 'Blog'];
 		$structure->getters = [

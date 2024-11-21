@@ -2,6 +2,7 @@
 <phrases>
   <phrase title="admin_navigation.blogs" version_id="1000035" version_string="1.0.0 Beta 5"><![CDATA[Blogs]]></phrase>
   <phrase title="admin_navigation.taylorjBlogsSettings" version_id="1000035" version_string="1.0.0 Beta 5"><![CDATA[Settings]]></phrase>
+  <phrase title="cron_entry.taylorjBlogsSimilarPosts" version_id="1000070" version_string="1.0.0"><![CDATA[[TaylorJ] Blogs: Update similar blog posts caches]]></phrase>
   <phrase title="cron_entry.userblogs" version_id="1000031" version_string="1.0.0 Beta 1"><![CDATA[Update Blog Post View Counter]]></phrase>
   <phrase title="member_stat.taylorj_blogs_most_blog_posts" version_id="1000036" version_string="1.0.0 Beta 6"><![CDATA[Most blog posts]]></phrase>
   <phrase title="nav.taylorjBlogs" version_id="1000031" version_string="1.0.0 Beta 1"><![CDATA[Blogs]]></phrase>
@@ -115,6 +116,7 @@
   <phrase title="taylorj_blogs_owned_blogs" version_id="1010070" version_string="1.1.0"><![CDATA[Your blogs]]></phrase>
   <phrase title="taylorj_blogs_scheduled_posts_button" version_id="1000037" version_string="1.0.0 Beta 7"><![CDATA[Scheduled blog posts]]></phrase>
   <phrase title="taylorj_blogs_search_blog_posts" version_id="1010170" version_string="1.1.1"><![CDATA[Search blog posts]]></phrase>
+  <phrase title="taylorj_blogs_similar_blog_posts" version_id="1000070" version_string="1.0.0"><![CDATA[Similar blog posts]]></phrase>
   <phrase title="taylorj_blogs_time" version_id="1000034" version_string="1.0.0 Beta 4"><![CDATA[Time]]></phrase>
   <phrase title="taylorj_blogs_titile_verification_error" version_id="1000031" version_string="1.0.0 Beta 1"><![CDATA[Blog titles need to be at least 10 characters long]]></phrase>
   <phrase title="taylorj_blogs_user_tz" version_id="1000034" version_string="1.0.0 Beta 4"><![CDATA[This date/time value will be according to the <strong>{tz}</strong> timezone.]]></phrase>
@@ -122,6 +124,10 @@
   <phrase title="taylorj_x_created_new_post_in_y" version_id="1000034" version_string="1.0.0 Beta 4"><![CDATA[{name} created a new blog post in <a {blog}>{blogTitle}</a>.]]></phrase>
   <phrase title="taylorj_x_reacted_to_your_blogpost" version_id="1000033" version_string="1.0.0 Beta 3"><![CDATA[{name} reacted to <a {posterParams}>your blog post</a> {title} with {reaction}.]]></phrase>
   <phrase title="widget.taylorj_blogs_latest_blog_posts" version_id="1000035" version_string="1.0.0 Beta 5"><![CDATA[Latest blog posts]]></phrase>
+  <phrase title="widget_def.taylorj_blogs_similarpost" version_id="1000070" version_string="1.0.0"><![CDATA[[TaylorJ] Blogs: Similar blog posts]]></phrase>
   <phrase title="widget_def.taylorj_latest_blog_posts" version_id="1000035" version_string="1.0.0 Beta 5"><![CDATA[Latest Blog Posts]]></phrase>
+  <phrase title="widget_def_desc.taylorj_blogs_similarpost" version_id="1000070" version_string="1.0.0"><![CDATA[Displays a block containing a list of X blog posts which are similar to the current one being viewed. This widget will only work in "blog post view" positions.]]></phrase>
   <phrase title="widget_def_desc.taylorj_latest_blog_posts" version_id="1000035" version_string="1.0.0 Beta 5"><![CDATA[Displays latest blog posts]]></phrase>
+  <phrase title="widget_pos.taylorj_blogs_blog_post_below_post" version_id="1000070" version_string="1.0.0"><![CDATA[Blog post view: Below post]]></phrase>
+  <phrase title="widget_pos_desc.taylorj_blogs_blog_post_below_post" version_id="1000070" version_string="1.0.0"><![CDATA[A position in the main content area of the blog post view, below the messages. Widget templates rendered in this position can use the current thread entity in the <code>{$context.blogPost}</code> param.]]></phrase>
 </phrases>

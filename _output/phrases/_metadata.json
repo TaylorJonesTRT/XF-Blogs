@@ -11,6 +11,12 @@
         "version_string": "1.0.0 Beta 5",
         "hash": "f4f70727dc34561dfde1a3c529b6205c"
     },
+    "cron_entry.taylorjBlogsSimilarPosts.txt": {
+        "global_cache": false,
+        "version_id": 1000070,
+        "version_string": "1.0.0",
+        "hash": "fe81cd181a838a87a9218f26600f56ce"
+    },
     "cron_entry.userblogs.txt": {
         "global_cache": false,
         "version_id": 1000031,
@@ -737,6 +743,12 @@
         "version_string": "1.1.1",
         "hash": "e831f0eac582a69c407a621f6b177970"
     },
+    "taylorj_blogs_similar_blog_posts.txt": {
+        "global_cache": false,
+        "version_id": 1000070,
+        "version_string": "1.0.0",
+        "hash": "2d0795298d8eb0a1efbfceb1cdc1f55f"
+    },
     "taylorj_blogs_time.txt": {
         "global_cache": false,
         "version_id": 1000034,
@@ -845,16 +857,40 @@
         "version_string": "1.0.0 Beta 5",
         "hash": "bb5cf8edf3e6c94e11597e754cefaa15"
     },
+    "widget_def.taylorj_blogs_similarpost.txt": {
+        "global_cache": false,
+        "version_id": 1000070,
+        "version_string": "1.0.0",
+        "hash": "be64af847a6b5077f461250938a1c9fb"
+    },
     "widget_def.taylorj_latest_blog_posts.txt": {
         "global_cache": false,
         "version_id": 1000035,
         "version_string": "1.0.0 Beta 5",
         "hash": "91032b2e3391be864a93f0164065be76"
     },
+    "widget_def_desc.taylorj_blogs_similarpost.txt": {
+        "global_cache": false,
+        "version_id": 1000070,
+        "version_string": "1.0.0",
+        "hash": "3820d602e31332f96bcc0dbffb72acca"
+    },
     "widget_def_desc.taylorj_latest_blog_posts.txt": {
         "global_cache": false,
         "version_id": 1000035,
         "version_string": "1.0.0 Beta 5",
         "hash": "4c04ec9863e9625c42370a21122c8df2"
+    },
+    "widget_pos.taylorj_blogs_blog_post_below_post.txt": {
+        "global_cache": false,
+        "version_id": 1000070,
+        "version_string": "1.0.0",
+        "hash": "cc5655f959dffd8f5c3c741e063402e8"
+    },
+    "widget_pos_desc.taylorj_blogs_blog_post_below_post.txt": {
+        "global_cache": false,
+        "version_id": 1000070,
+        "version_string": "1.0.0",
+        "hash": "0a36a4ed3732c92cf92630a7f2e28ea9"
     }
 }

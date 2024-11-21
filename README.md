@@ -1,10 +1,10 @@
-\[TaylorJ\] Blogs for XenForo 2.3.0+
-====================================
+\[TaylorJ\] Blogs - Premium for XenForo 2.3.0+
+==============================================
 
 Description
 -----------
 
-A user blogging system to allow your users to express themselves
+A premium user blogging system to allow your users to express themselves
 
 Options
 -------
@@ -52,11 +52,19 @@ Permissions
 - Use inline moderation on resources
 - Can view moderated content
 
+Widget Positions
+----------------
+
+| Position | Description |
+|---|---|
+| Blog post view: Below post (`taylorj_blogs_blog_post_below_post`) | A position in the main content area of the blog post view, below the messages. Widget templates rendered in this position can use the current thread entity in the `{$context.blogPost}` param. |
+
 Widget Definitions
 ------------------
 
 | Definition | Description |
 |---|---|
+| \[TaylorJ\] Blogs: Similar blog posts (`taylorj_blogs_similarpost`) | Displays a block containing a list of X blog posts which are similar to the current one being viewed. This widget will only work in "blog post view" positions. |
 | Latest Blog Posts (`taylorj_latest_blog_posts`) | Displays latest blog posts |
 
 Cron Entries
@@ -64,4 +72,5 @@ Cron Entries
 
 | Name | Run on... | Run at hours | Run at minutes |
 |---|---|---|---|
+| \[TaylorJ\] Blogs: Update similar blog posts caches | Any day of the month | Any | 32 |
 | Update Blog Post View Counter | Any day of the month | Any | 30 |

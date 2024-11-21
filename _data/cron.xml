@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <cron>
+  <entry entry_id="taylorjBlogsSimilarPosts" cron_class="TaylorJ\Blogs\Cron\SimilarBlogPosts" cron_method="updateCaches" active="1"><![CDATA[{"day_type":"dom","dom":[-1],"hours":[-1],"minutes":[32]}]]></entry>
   <entry entry_id="userblogs" cron_class="TaylorJ\Blogs\Cron\BlogPost" cron_method="runViewUpdate" active="1"><![CDATA[{"day_type":"dom","dom":[-1],"hours":[-1],"minutes":[30]}]]></entry>
 </cron>

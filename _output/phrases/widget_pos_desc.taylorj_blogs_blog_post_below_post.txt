@@ -1,0 +1,1 @@
+A position in the main content area of the blog post view, below the messages. Widget templates rendered in this position can use the current thread entity in the <code>{$context.blogPost}</code> param.
