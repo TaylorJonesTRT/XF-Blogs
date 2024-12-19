@@ -261,7 +261,7 @@
 	<div class="blockMessage">{{ phrase('there_no_threads_to_display') }}</div>
 </xf:if>
 ]]></template>
-  <template type="public" title="taylorj_blogs_blog_edit" version_id="1000035" version_string="1.0.0 Beta 5"><![CDATA[<xf:title>
+  <template type="public" title="taylorj_blogs_blog_edit" version_id="1020370" version_string="1.2.3"><![CDATA[<xf:title>
     <xf:if is="$blog.blog_id">
         {{ phrase('taylorj_blogs_blog_edit', { 'blogTitle': $blog.blog_title }) }}
         <xf:else />
@@ -271,7 +271,8 @@
 
 
 
-<xf:form action="{{ link('blogs/save', $blog) }}" class="block" ajax="1">
+
+<xf:form action="{{ link('blogs/save', $blog, { 'blog': $blog }) }}" class="block" ajax="1">
     <div class="block-container">
         <xf:textboxrow name="blog_title" value="{$blog.blog_title}"
             label="{{ phrase('taylorj_blogs_blog_edit_title') }}" />

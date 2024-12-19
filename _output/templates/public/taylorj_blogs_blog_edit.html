@@ -8,7 +8,8 @@
 
 
 
-<xf:form action="{{ link('blogs/save', $blog) }}" class="block" ajax="1">
+
+<xf:form action="{{ link('blogs/save', $blog, { 'blog': $blog }) }}" class="block" ajax="1">
     <div class="block-container">
         <xf:textboxrow name="blog_title" value="{$blog.blog_title}"
             label="{{ phrase('taylorj_blogs_blog_edit_title') }}" />

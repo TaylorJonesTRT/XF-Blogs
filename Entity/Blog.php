@@ -280,7 +280,7 @@ class Blog extends Entity implements DatableInterface
 
 	public function isVisible()
 	{
-		return true;
+		return ($this->blog_state == 'visible');
 	}
 
 	public function isOwner()

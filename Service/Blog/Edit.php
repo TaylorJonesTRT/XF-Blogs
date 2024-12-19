@@ -6,6 +6,7 @@ use TaylorJ\Blogs\Entity\Blog;
 use XF\App;
 use XF\Service\AbstractService;
 use XF\Service\ValidateAndSavableTrait;
+use XF\Util\File;
 
 class Edit extends AbstractService
 {
@@ -20,6 +21,11 @@ class Edit extends AbstractService
 	{
 		parent::__construct($app);
 		$this->blog = $blog;
+	}
+
+	public function setHasBlogHeader()
+	{
+		$this->blog->blog_has_header = 1;
 	}
 
 	public function setTitle($title)
@@ -56,4 +62,13 @@ class Edit extends AbstractService
 	public function finalSteps()
 	{
 	}
+
+	protected function deleteBlogHeaderImageFiles()
+	{
+		if ($this->blog->blog_has_header)
+		{
+			File::deleteFromAbstractedPath($this->blog->getBlogHeaderImage);
+		}
+	}
+
 }

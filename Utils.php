@@ -6,6 +6,7 @@ use TaylorJ\Blogs\Entity\Blog;
 use TaylorJ\Blogs\Entity\BlogPost;
 use XF\Entity\Thread;
 use XF\Repository\PostRepository;
+use XF\Util\File;
 
 class Utils
 {
@@ -27,7 +28,8 @@ class Utils
 	public static function hours()
 	{
 		$hours = [];
-		for ($i = 0; $i < 24; $i++) {
+		for ($i = 0; $i < 24; $i++)
+		{
 			$hh = str_pad($i, 2, '0', STR_PAD_LEFT);
 			$hours[$hh] = $hh;
 		}
@@ -38,7 +40,8 @@ class Utils
 	public static function minutes()
 	{
 		$minutes = [];
-		for ($i = 0; $i < 60; $i += 1) {
+		for ($i = 0; $i < 60; $i += 1)
+		{
 			$mm = str_pad($i, 2, '0', STR_PAD_LEFT);
 			$minutes[$mm] = $mm;
 		}
@@ -134,7 +137,8 @@ class Utils
 		if (
 			$blog->user_id
 			&& $blog->User
-		) {
+		)
+		{
 			$blog->fastUpdate('blog_post_count', max(0, $blog->blog_post_count + $amount));
 		}
 	}
@@ -144,7 +148,8 @@ class Utils
 		if (
 			$blog->user_id
 			&& $blog->User
-		) {
+		)
+		{
 			$blog->User->fastUpdate('taylorj_blogs_blog_post_count', max(0, $blog->User->taylorj_blogs_blog_post_count + $amount));
 		}
 	}
@@ -154,8 +159,18 @@ class Utils
 		if (
 			$blog->user_id
 			&& $blog->User
-		) {
+		)
+		{
 			$blog->User->fastUpdate('taylorj_blogs_blog_count', max(0, $blog->User->taylorj_blogs_blog_count + $amount));
 		}
 	}
+
+	protected function deleteBlogHeaderFiles(Blog $blog)
+	{
+		if ($blog->avatar_date)
+		{
+			File::deleteFromAbstractedPath($blog->blog_header_image);
+		}
+	}
+
 }

@@ -183,15 +183,22 @@ class Blog extends AbstractController
 	{
 		$blogFinder = $this->finder('TaylorJ\Blogs:Blog')
 			->where('blog_id', $params->blog_id)->fetchOne();
-		return $this->blogEdit($blogFinder, $params->blog_id);
+		return $this->blogEdit($blogFinder);
 	}
 
 	public function actionDelete(ParameterBag $params)
 	{
 		$blog = $this->assertBlogExists($params->blog_id);
 
+
+		if (!$blog->canDelete($error))
+		{
+			return $this->noPermission($error);
+		}
+
 		/** @var Delete $plugin */
 		$plugin = $this->plugin('XF:Delete');
+
 		return $plugin->actionDelete(
 			$blog,
 			$this->buildLink('blogs/blog/delete', $blog),
