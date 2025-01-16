@@ -30,6 +30,7 @@
             </xf:if>
             <xf:if is="{$blog.isOwner()}">
                 <xf:button href="{{ link('blogs/blog', $blog) }}" class="button--link">
+                    hello
                     {{ phrase('taylorj_blogs_visible_posts_button') }}
                 </xf:button>
                 <xf:button href="{{ link('blogs/blog/draft-posts', $blog) }}" class="button--link">

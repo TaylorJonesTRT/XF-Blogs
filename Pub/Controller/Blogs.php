@@ -5,6 +5,7 @@ namespace TaylorJ\Blogs\Pub\Controller;
 use TaylorJ\Blogs\Entity\Blog;
 use TaylorJ\Blogs\Service\Blog\Create;
 use TaylorJ\Blogs\Service\Blog\Edit;
+use TaylorJ\Blogs\Utils;
 use XF\Mvc\ParameterBag;
 use XF\Mvc\Reply\Exception;
 use XF\Pub\Controller\AbstractController;
@@ -146,7 +147,8 @@ class Blogs extends AbstractController
 
 		if ($upload = $this->request->getFile('upload', false, false))
 		{
-			$this->getBlogRepo()->setBlogHeaderImagePath($blog->blog_id, $upload);
+			/** @var Blog $blogRepo */
+			Utils::getBlogRepo()->setBlogHeaderImagePath($blog->blog_id, $upload);
 			$blog->fastUpdate('blog_has_header', '1');
 		}
 
@@ -183,14 +185,6 @@ class Blogs extends AbstractController
 	protected function assertBlogExists($blog_id, $with = null, $phraseKey = null)
 	{
 		return $this->assertRecordExists('TaylorJ\Blogs:Blog', $blog_id, $with, $phraseKey);
-	}
-
-	protected function getBlogRepo()
-	{
-		/** @var \TaylorJ\Blogs\Repository\Blog $repo */
-		$repo = $this->repository('TaylorJ\Blogs:Blog');
-
-		return $repo;
 	}
 
 	/**

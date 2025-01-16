@@ -1,0 +1,1 @@
+If selected, a post will be made automatically on the creator's behalf explaining that the blog post is no longer available to read.

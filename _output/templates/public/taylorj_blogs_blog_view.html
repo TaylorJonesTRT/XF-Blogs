@@ -21,43 +21,62 @@
     </xf:if>
 
     <div class="u-pullRight taylorjBlogs-blog-actions">
-        <div>
-            <xf:if is="{$blog.canWatch()}">
-                <xf:button href="{{ link('blogs/blog/watch', $blog) }}" class="u-pullRight button--link"
-                    data-sk-watch="{{ phrase('watch') }}" data-sk-unwatch="{{ phrase('unwatch') }}">
-                    <xf:if is="{$blog.BlogWatch.{$xf.visitor.user_id}}">
-                        {{ phrase('unwatch') }}
-                        <xf:else />
-                        {{ phrase('watch') }}
-                    </xf:if>
-                </xf:button>
-            </xf:if>
-            <xf:if is="{$blog.isOwner()}">
-                <xf:if is="$viewType !== 'visible'">
-                    <xf:button href="{{ link('blogs/blog', $blog) }}" class="button--link">
-                        {{ phrase('taylorj_blogs_visible_posts_button') }}
-                    </xf:button>
-                    <xf:elseif is="$viewType == 'visible'" />
-                    <xf:button href="{{ link('blogs/blog/scheduled-posts', $blog) }}" class="button--link">
-                        {{ phrase('taylorj_blogs_scheduled_posts_button') }}
+        <div class="block-outer-opposite">
+            <div class="buttonGroup">
+                <xf:if is="{$blog.canWatch()}">
+                    <xf:button href="{{ link('blogs/blog/watch', $blog) }}" class="u-pullRight button--link"
+                        data-sk-watch="{{ phrase('watch') }}" data-sk-unwatch="{{ phrase('unwatch') }}">
+                        <xf:if is="{$blog.BlogWatch.{$xf.visitor.user_id}}">
+                            {{ phrase('unwatch') }}
+                            <xf:else />
+                            {{ phrase('watch') }}
+                        </xf:if>
                     </xf:button>
                 </xf:if>
-                <xf:if is="$viewType !== 'visible'">
-                    <xf:if is="$viewType == 'scheduled'">
+                <xf:if is="{$blog.isOwner()}">
+                    <xf:if is="$viewType == 'visible'">
+                        <xf:button href="{{ link('blogs/blog/scheduled-posts', $blog) }}" class="button--link">
+                            <xf:fa icon="fas fa-clock" class="" aria-hidden="true" />
+                        </xf:button>
                         <xf:button href="{{ link('blogs/blog/draft-posts', $blog) }}" class="button--link">
-                            {{ phrase('taylorj_blogs_draft_posts_button') }}
+                            <xf:fa icon="fas fa-eye-slash" class="" aria-hidden="true" />
+                        </xf:button>
+                        <xf:button href="{{ link('blogs/blog/deleted-posts', $blog) }}" class="button--link">
+                            <xf:fa icon="fas fa-trash" class="" aria-hidden="true" />
+                        </xf:button>
+                        <xf:elseif is="$viewType == 'scheduled'" />
+                        <xf:button href="{{ link('blogs/blog/', $blog) }}" class="button--link">
+                            <xf:fa icon="fas fa-eye" class="" aria-hidden="true" />
+                        </xf:button>
+                        <xf:button href="{{ link('blogs/blog/draft-posts', $blog) }}" class="button--link">
+                            <xf:fa icon="fas fa-eye-slash" class="" aria-hidden="true" />
+                        </xf:button>
+                        <xf:button href="{{ link('blogs/blog/deleted-posts', $blog) }}" class="button--link">
+                            <xf:fa icon="fas fa-trash" class="" aria-hidden="true" />
                         </xf:button>
                         <xf:elseif is="$viewType == 'draft'" />
+                        <xf:button href="{{ link('blogs/blog/', $blog) }}" class="button--link">
+                            <xf:fa icon="fas fa-eye" class="" aria-hidden="true" />
+                        </xf:button>
                         <xf:button href="{{ link('blogs/blog/scheduled-posts', $blog) }}" class="button--link">
-                            {{ phrase('taylorj_blogs_scheduled_posts_button') }}
+                            <xf:fa icon="fas fa-clock" class="" aria-hidden="true" />
+                        </xf:button>
+                        <xf:button href="{{ link('blogs/blog/deleted-posts', $blog) }}" class="button--link">
+                            <xf:fa icon="fas fa-trash" class="" aria-hidden="true" />
+                        </xf:button>
+                        <xf:elseif is="$viewType == 'deleted'" />
+                        <xf:button href="{{ link('blogs/blog/', $blog) }}" class="button--link">
+                            <xf:fa icon="fas fa-eye" class="" aria-hidden="true" />
+                        </xf:button>
+                        <xf:button href="{{ link('blogs/blog/draft-posts', $blog) }}" class="button--link">
+                            <xf:fa icon="fas fa-eye-slash" class="" aria-hidden="true" />
+                        </xf:button>
+                        <xf:button href="{{ link('blogs/blog/scheduled-posts', $blog) }}" class="button--link">
+                            <xf:fa icon="fas fa-clock" class="" aria-hidden="true" />
                         </xf:button>
                     </xf:if>
-                    <xf:elseif is="$viewType == 'visible'" />
-                    <xf:button href="{{ link('blogs/blog/draft-posts', $blog) }}" class="button--link">
-                        {{ phrase('taylorj_blogs_draft_posts_button') }}
-                    </xf:button>
                 </xf:if>
-            </xf:if>
+            </div>
         </div>
 
         <div>
@@ -92,11 +111,12 @@
 <div class="block taylorjUserBlogs-block">
     <div class="taylorjUserBlogs-blog-posts">
         <xf:foreach loop="{$blogPosts}" key="$blog_post_id" value="$blogPost">
-            <div class="block-container">
-                <div class="block-body">
+            <div class="block-container {{ $blogPost.blog_post_state == 'deleted' ? ' is-deleted' : '' }}">
+                <div class="block-body {{ $blogPost.blog_post_state == 'deleted' ? ' is-deleted' : '' }}">
                     <article
-                        class="message message--article message--articlePreview js-inlineModContainer js-threadListItem-{$blogPost.blog_post_id} {{ $blogPost.blog_post_state == 'moderated' ? 'is-moderated' : '' }}">
-                        <div class="articlePreview-main">
+                        class="message message--article message--articlePreview js-inlineModContainer js-threadListItem-{$blogPost.blog_post_id} {{ $blogPost.blog_post_state == 'moderated' ? 'is-moderated' : '' }} {{ $blogPost.blog_post_state == 'deleted' ? ' is-deleted' : '' }}">
+                        <div
+                            class="articlePreview-main {{ $blogPost.blog_post_state == 'deleted' ? ' is-deleted' : '' }}">
                             <div class="taylorjBlogs-main">
 
                                 <xf:if is="$blogPost.cover_image">
@@ -112,7 +132,8 @@
                                 $blogPost.cover_image ? '' : 'taylorjBlogs-blog-post-no-cover' }}">
                                     <div class="articlePreview-text ">
                                         <div class="articlePreview-headline">
-                                            <h2 class="articlePreview-title">
+                                            <h2
+                                                class="articlePreview-title {{ $blogPost.blog_post_state == 'deleted' ? ' is-deleted' : '' }}">
                                                 <xf:if is="$blogPost.blog_post_state == 'moderated'">
                                                     <xf:fa icon="fa-shield" class="structItem-status--moderated"
                                                         aria-hidden="true"

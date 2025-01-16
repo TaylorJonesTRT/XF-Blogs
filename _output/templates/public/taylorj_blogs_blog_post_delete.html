@@ -1,0 +1,22 @@
+<xf:title>{{ phrase('xfrm_delete_resource') }}</xf:title>
+
+<xf:breadcrumb source="$blogPost.getBreadcrumbs()" />
+
+<xf:form action="{{ link('blogs/post/delete', $blogPost) }}" class="block" ajax="true">
+	<div class="block-container">
+		<div class="block-body">
+			<xf:macro id="helper_action::delete_type" arg-canHardDelete="{$blogPost.canDelete('hard')}" />
+
+			<xf:if is="$blogPost.canSetPublicDeleteReason()">
+				<xf:textboxrow name="public_delete_reason"
+					label="{{ phrase('xfrm_public_deletion_reason') }}"
+					explain="{{ phrase('xfrm_public_deletion_reason_explain') }}" />
+			</xf:if>
+
+			<xf:if is="$blogPost.canSendModeratorActionAlert()">
+				<xf:macro id="helper_action::author_alert" />
+			</xf:if>
+		</div>
+		<xf:submitrow icon="delete" />
+	</div>
+</xf:form>

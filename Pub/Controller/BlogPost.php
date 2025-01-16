@@ -5,9 +5,9 @@ namespace TaylorJ\Blogs\Pub\Controller;
 use TaylorJ\Blogs\Entity\Blog;
 use TaylorJ\Blogs\Entity\BlogPost as BlogPostEntity;
 use TaylorJ\Blogs\Service\BlogPost\Create;
+use TaylorJ\Blogs\Service\BlogPost\Delete as BlogPostDelete;
 use TaylorJ\Blogs\Service\BlogPost\Edit;
 use TaylorJ\Blogs\Utils;
-use XF\ControllerPlugin\Delete;
 use XF\ControllerPlugin\Reaction;
 use XF\ControllerPlugin\ReportPlugin;
 use XF\ControllerPlugin\SharePlugin;
@@ -170,18 +170,52 @@ class BlogPost extends AbstractController
 
 	public function actionDelete(ParameterBag $params)
 	{
+		/** @var BlogPostEntity $blogPost */
 		$blogPost = $this->assertBlogPostExists($params->blog_post_id);
 		$blog = $blogPost->Blog;
 
-		/** @var Delete $plugin */
-		$plugin = $this->plugin('XF:Delete');
-		return $plugin->actionDelete(
-			$blogPost,
-			$this->buildLink('blogs/post/delete', $blogPost),
-			$this->buildLink('blogs/post/edit', $blogPost),
-			$this->buildLink('blogs/blog', $blog),
-			$blogPost->blog_post_title
-		);
+		if (!$blogPost->canDelete('soft', $error))
+		{
+			return $this->noPermission($error);
+		}
+
+		if ($this->isPost())
+		{
+			$type = $this->filter('hard_delete', 'bool') ? 'hard' : 'soft';
+			$reason = $this->filter('reason', 'str');
+
+			if (!$blogPost->canDelete($type, $error))
+			{
+				return $this->noPermission($error);
+			}
+
+			/** @var BlogPostDelete $deleter */
+			$deleter = $this->service('TaylorJ\Blogs:BlogPost\Delete', $blogPost);
+
+			if ($this->filter('author_alert', 'bool'))
+			{
+				$deleter->setSendAlert(true, $this->filter('author_alert_reason', 'str'));
+			}
+
+			if ($blogPost->canSetPublicDeleteReason())
+			{
+				$deleter->setPostDeleteReason($this->filter('public_delete_reason', 'str'));
+			}
+
+			$deleter->delete($type, $reason);
+
+			$this->plugin('XF:InlineMod')->clearIdFromCookie('taylorj_blogs_blog_post', $blogPost->blog_post_id);
+
+			return $this->redirect($this->buildLink('blogs/blog', $blogPost->Blog));
+		}
+		else
+		{
+			$viewParams = [
+				'blogPost' => $blogPost,
+				'blog' => $blogPost->Blog,
+			];
+			return $this->view('TaylorJ\Blogs:BlogPost\Delete', 'taylorj_blogs_blog_post_delete', $viewParams);
+		}
 	}
 
 	public function actionReact(ParameterBag $params)

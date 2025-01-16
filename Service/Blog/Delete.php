@@ -37,7 +37,7 @@ class Delete extends AbstractService
 		parent::__construct($app);
 		$this->blog = $blog;
 
-		/*if (!empty($app->options()->xfrmResourceDeleteThreadAction['add_post']))*/
+		/*if (!empty($app->options()->taylorjBlogsBlogPostDeleteThreadAction['add_post']))*/
 		/*{*/
 		/*	$this->addPost = true;*/
 		/*}*/

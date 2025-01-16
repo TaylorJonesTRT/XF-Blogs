@@ -44,6 +44,9 @@
     "taylorjBlogPost-canEditOwnPost.json": {
         "hash": "4e6b825fff02af91f31bb0d042c1b1d3"
     },
+    "taylorjBlogPost-canHardDeleteAny.json": {
+        "hash": "f0a4987839bdbd9db230df6fc28e0cd1"
+    },
     "taylorjBlogPost-canManageAnyTag.json": {
         "hash": "8ec8ae4cb67c23cb9dbafaabc77b8aa6"
     },

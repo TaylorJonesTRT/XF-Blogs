@@ -64,7 +64,7 @@
                             <a href="{{ link('blogs/post/edit', $blogPost) }}" class="menu-linkRow">{{
                                 phrase('taylorj_blogs_blog_post_edit') }}</a>
                         </xf:if>
-                        <xf:if is="$blogPost.canDelete()">
+                        <xf:if is="$blogPost.canDelete('soft')">
                             <a href="{{ link('blogs/post/delete', $blogPost) }}" data-xf-click="overlay"
                                 class="menu-linkRow">{{
                                 phrase('taylorj_blogs_blog_post_delete') }}</a>
