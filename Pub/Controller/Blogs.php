@@ -39,7 +39,7 @@ class Blogs extends AbstractController
 
 		$blogFinder = $this->finder('TaylorJ\Blogs:Blog')
 			->where('blog_state', 'visible')
-			->order('blog_creation_date', 'DESC');
+			->order('blog_last_post_date', 'DESC');
 
 		$page = $params->page;
 		$perPage = $this->options()->taylorjBlogsPerPage;

@@ -14,9 +14,6 @@ use XF\Repository\Attachment;
 use XF\Repository\AttachmentRepository;
 use XF\Service\Attachment\Preparer;
 
-/**
- * Controller for handling a blog instance
- */
 class Blog extends AbstractController
 {
 	public function preDispatchController($action, ParameterBag $params)

@@ -3,11 +3,13 @@
 namespace TaylorJ\Blogs\Service\Blog;
 
 use TaylorJ\Blogs\Entity\Blog;
+use TaylorJ\Blogs\Repository\BlogPost as BlogPostRepo;
 use XF\App;
+use XF\Entity\Post;
+use XF\Entity\Thread;
 use XF\Entity\User;
 use XF\Service\AbstractService;
 use XF\Service\Thread\Replier;
-use XFRM\Repository\ResourceItem;
 
 class Delete extends AbstractService
 {
@@ -37,10 +39,10 @@ class Delete extends AbstractService
 		parent::__construct($app);
 		$this->blog = $blog;
 
-		/*if (!empty($app->options()->taylorjBlogsBlogPostDeleteThreadAction['add_post']))*/
-		/*{*/
-		/*	$this->addPost = true;*/
-		/*}*/
+		if (!empty($app->options()->taylorjBlogsBlogPostDeleteThreadAction['add_post']))
+		{
+			$this->addPost = true;
+		}
 	}
 
 	public function getBlog()
@@ -58,139 +60,138 @@ class Delete extends AbstractService
 		return $this->user;
 	}
 
-	/*public function setSendAlert($alert, $reason = null)*/
-	/*{*/
-	/*	$this->alert = (bool) $alert;*/
-	/*	if ($reason !== null)*/
-	/*	{*/
-	/*		$this->alertReason = $reason;*/
-	/*	}*/
-	/*}*/
-	/**/
-	/*public function setAddPost($addPost)*/
-	/*{*/
-	/*	$this->addPost = (bool) $addPost;*/
-	/*}*/
-	/**/
-	/*public function setPostByUser(?User $user = null)*/
-	/*{*/
-	/*	$this->postByUser = $user;*/
-	/*}*/
-	/**/
-	/*public function setPostDeleteReason($reason)*/
-	/*{*/
-	/*	$this->postDeleteReason = $reason;*/
-	/*}*/
-
-	/*public function delete($type, $reason = '')*/
-	public function delete()
+	public function setSendAlert($alert, $reason = null)
 	{
-		/*$user = $this->user ?: \XF::visitor();*/
-		/*$wasVisible = $this->blog->isVisible();*/
+		$this->alert = (bool) $alert;
+		if ($reason !== null)
+		{
+			$this->alertReason = $reason;
+		}
+	}
 
-		/*if ($type == 'soft')*/
-		/*{*/
-		/*	$result = $this->blog->softDelete($reason, $user);*/
-		/*}*/
-		/*else*/
-		/*{*/
-		/*	$result = $this->blog->delete();*/
-		/*}*/
+	public function setAddPost($addPost)
+	{
+		$this->addPost = (bool) $addPost;
+	}
+
+	public function setPostByUser(?User $user = null)
+	{
+		$this->postByUser = $user;
+	}
+
+	public function setPostDeleteReason($reason)
+	{
+		$this->postDeleteReason = $reason;
+	}
+
+	public function delete($type, $reason = '')
+	{
+		$user = $this->user ?: \XF::visitor();
+		$wasVisible = $this->blog->isVisible();
+
+		if ($type == 'soft')
+		{
+			$result = $this->blog->softDelete($reason, $user);
+		}
+		else
+		{
+			$result = $this->blog->delete();
+		}
 
 		$result = $this->blog->delete();
 
-		/*$this->updateResourceThread();*/
+		$this->updateBlogPostCommentThread();
 
-		/*if ($result && $wasVisible && $this->alert && $this->blog->user_id != $user->user_id)*/
-		/*{*/
-		/** @var ResourceItem $resourceRepo */
-		/*	$resourceRepo = $this->repository('XFRM:ResourceItem');*/
-		/*	$resourceRepo->sendModeratorActionAlert($this->blog, 'delete', $this->alertReason);*/
-		/*}*/
+		if ($result && $wasVisible && $this->alert && $this->blog->user_id != $user->user_id)
+		{
+			/** @var BlogPostRepo $blogPostRepo */
+			$blogPostRepo = $this->repository('TaylorJ\Blogs:BlogPost');
+			$blogPostRepo->sendModeratorActionAlert($this->blog, 'delete', $this->alertReason);
+		}
 
 		return $result;
 	}
 
-	/*protected function updateResourceThread()*/
-	/*{*/
-	/*	if (!$this->addPost)*/
-	/*	{*/
-	/*		return;*/
-	/*	}*/
-	/**/
-	/*	$resource = $this->blog;*/
-	/*	$thread = $resource->Discussion;*/
-	/*	if (!$thread)*/
-	/*	{*/
-	/*		return;*/
-	/*	}*/
-	/**/
-	/*	if ($this->postByUser)*/
-	/*	{*/
-	/*		$asUser = $this->postByUser;*/
-	/*	}*/
-	/*	else*/
-	/*	{*/
-	/*		$asUser = $resource->User ?: $this->repository('XF:User')->getGuestUser($resource->username);*/
-	/*	}*/
-	/**/
-	/*	\XF::asVisitor($asUser, function () use ($thread)*/
-	/*	{*/
-	/*		$replier = $this->setupResourceThreadReply($thread);*/
-	/*		if ($replier && $replier->validate())*/
-	/*		{*/
-	/*			$existingLastPostDate = $replier->getThread()->last_post_date;*/
-	/**/
-	/*			$post = $replier->save();*/
-	/*			$this->afterResourceThreadReplied($post, $existingLastPostDate);*/
-	/**/
-	/*			\XF::runLater(function () use ($replier)*/
-	/*			{*/
-	/*				$replier->sendNotifications();*/
-	/*			});*/
-	/*		}*/
-	/*	});*/
-	/*}*/
-	/**/
-	/*protected function setupResourceThreadReply(Thread $thread)*/
-	/*{*/
-	/*	if (!$thread->Forum)*/
-	/*	{*/
-	/*		// thread has been orphaned somehow?*/
-	/*		return null;*/
-	/*	}*/
-	/**/
-	/** @var Replier $replier */
-	/*	$replier = $this->service('XF:Thread\Replier', $thread);*/
-	/*	$replier->setIsAutomated();*/
-	/*	$replier->setMessage($this->getThreadReplyMessage(), false);*/
-	/**/
-	/*	return $replier;*/
-	/*}*/
-	/**/
-	/*protected function getThreadReplyMessage()*/
-	/*{*/
-	/*	$resource = $this->blog;*/
-	/*	$username = $resource->User ? $resource->User->username : $resource->username;*/
-	/*	$phraseName = $this->postDeleteReason ? 'xfrm_resource_thread_delete_reason_x' : 'xfrm_resource_thread_delete';*/
-	/**/
-	/*	$phrase = \XF::phrase($phraseName, [*/
-	/*		'title' => $resource->title_,*/
-	/*		'tag_line' => $resource->tag_line_,*/
-	/*		'username' => $username,*/
-	/*		'reason' => $this->postDeleteReason,*/
-	/*	]);*/
-	/**/
-	/*	return $phrase->render('raw');*/
-	/*}*/
-	/**/
-	/*protected function afterResourceThreadReplied(Post $post, $existingLastPostDate)*/
-	/*{*/
-	/*	$thread = $post->Thread;*/
-	/**/
-	/*	if (\XF::visitor()->user_id && $post->Thread->getVisitorReadDate() >= $existingLastPostDate)*/
-	/*	{*/
-	/*		$this->repository('XF:Thread')->markThreadReadByVisitor($thread);*/
-	/*	}*/
-	/*}*/
+	protected function updateBlogPostCommentThread()
+	{
+		if (!$this->addPost)
+		{
+			return;
+		}
+
+		$resource = $this->blog;
+		$thread = $resource->Discussion;
+		if (!$thread)
+		{
+			return;
+		}
+
+		if ($this->postByUser)
+		{
+			$asUser = $this->postByUser;
+		}
+		else
+		{
+			$asUser = $resource->User ?: $this->repository('XF:User')->getGuestUser($resource->username);
+		}
+
+		\XF::asVisitor($asUser, function () use ($thread)
+		{
+			$replier = $this->setupBlogPostCommentThreadReply($thread);
+			if ($replier && $replier->validate())
+			{
+				$existingLastPostDate = $replier->getThread()->last_post_date;
+
+				$post = $replier->save();
+				$this->afterBlogPostCommentThreadReplied($post, $existingLastPostDate);
+
+				\XF::runLater(function () use ($replier)
+				{
+					$replier->sendNotifications();
+				});
+			}
+		});
+	}
+
+	protected function setupBlogPostCommentThreadReply(Thread $thread)
+	{
+		if (!$thread->Forum)
+		{
+			// thread has been orphaned somehow?
+			return null;
+		}
+
+		/** @var Replier $replier */
+		$replier = $this->service('XF:Thread\Replier', $thread);
+		$replier->setIsAutomated();
+		$replier->setMessage($this->getThreadReplyMessage(), false);
+
+		return $replier;
+	}
+
+	protected function getThreadReplyMessage()
+	{
+		$resource = $this->blog;
+		$username = $resource->User ? $resource->User->username : $resource->username;
+		$phraseName = $this->postDeleteReason ? 'taylorj_blogs_blog_post_thread_delete_reason_x' : 'taylorj_blogs_blog_post_thread_delete';
+
+		$phrase = \XF::phrase($phraseName, [
+			'title' => $resource->title_,
+			'tag_line' => $resource->tag_line_,
+			'username' => $username,
+			'reason' => $this->postDeleteReason,
+		]);
+
+		return $phrase->render('raw');
+	}
+
+	protected function afterBlogPostCommentThreadReplied(Post $post, $existingLastPostDate)
+	{
+		$thread = $post->Thread;
+
+		if (\XF::visitor()->user_id && $post->Thread->getVisitorReadDate() >= $existingLastPostDate)
+		{
+			$this->repository('XF:Thread')->markThreadReadByVisitor($thread);
+		}
+	}
 }
