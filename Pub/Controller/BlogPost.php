@@ -4,7 +4,6 @@ namespace TaylorJ\Blogs\Pub\Controller;
 
 use TaylorJ\Blogs\Entity\Blog;
 use TaylorJ\Blogs\Entity\BlogPost as BlogPostEntity;
-use TaylorJ\Blogs\Service\BlogPost\Create;
 use TaylorJ\Blogs\Service\BlogPost\Delete as BlogPostDelete;
 use TaylorJ\Blogs\Service\BlogPost\Edit;
 use TaylorJ\Blogs\Utils;
@@ -16,9 +15,7 @@ use XF\Pub\Controller\AbstractController;
 use XF\Repository\Attachment;
 use XF\Repository\AttachmentRepository;
 use XF\Repository\PostRepository;
-use XF\Service\Attachment\Preparer;
 use XF\Service\Tag\ChangerService;
-use XF\Service\Thread\Creator;
 
 /**
  * Controller for handling a blog instance
@@ -83,89 +80,64 @@ class BlogPost extends AbstractController
 
 	public function actionEdit(ParameterBag $params)
 	{
-		$blogPostFinder = $this->finder('TaylorJ\Blogs:BlogPost')->where('blog_post_id', $params->blog_post_id)->fetchOne();
-		return $this->blogEdit($blogPostFinder);
-	}
+		$blogPost = $this->assertViewablePost($params->blog_post_id);
 
-	protected function blogEdit(BlogPostEntity $blogPost)
-	{
-		/** @var Attachment $attachmentRepo */
-		$attachmentRepo = $this->repository('XF:Attachment');
-		$attachmentData = $attachmentRepo->getEditorData(
-			'taylorj_blogs_blog_post',
-			$blogPost,
-		);
-
-		$tz = new \DateTimeZone(\XF::visitor()->timezone);
-		$dt = new \DateTime();
-		$dt->setTimezone(new \DateTimeZone(\XF::visitor()->timezone));
-		$dt->setTimestamp($blogPost->scheduled_post_date_time);
-		/*$dt = new \DateTime($blogPost->scheduled_post_date_time);*/
-		$hh_value = $dt->format('H');
-		$mm_value = $dt->format('i');
-
-		$hours = Utils::hours();
-		$minutes = Utils::minutes();
-
-		$blogId = $blogPost->Blog->blog_id;
-
-		$viewParams = [
-			'blogPost' => $blogPost,
-			'attachmentData' => $attachmentData,
-			'blog_id' => $blogId,
-			'hours' => $hours,
-			'minutes' => $minutes,
-			'dt' => $dt,
-			'hh_value' => $hh_value,
-			'mm_value' => $mm_value,
-		];
-
-		return $this->view('TaylorJ\Blogs:BlogPost\Edit', 'taylorj_blogs_blog_post_edit', $viewParams);
-	}
-
-	public function actionSave(ParameterBag $params)
-	{
-		$blogPost = $this->finder('TaylorJ\Blogs:BlogPost')->where('blog_post_id', $params->blog_post_id)->fetchOne();
-
-		return $this->blogPostSaveProcess($blogPost, $params);
-	}
-
-	protected function blogPostSaveProcess(BlogPostEntity $blogPost, ParameterBag $params)
-	{
-		$input = $this->filter([
-			'blog_post_title' => 'str',
-			'blog_id' => 'int',
-		]);
-
-		// uncomment the below lines if this ends up breaking something
-		// i do not remember why i had a isPost check on a blogPost creation
-		// if ($this->isPost()) {
-		$creator = $this->blogPostEdit($blogPost);
-		if (!$creator->validate($errors))
+		if (!$blogPost->canEdit($error))
 		{
-			return $this->error($errors);
+			return $this->noPermission($error);
 		}
 
-		$this->assertNotFlooding('post');
+		$blog = $blogPost->Blog;
 
-		/** @var BlogPostEntity $blogPost */
-		$blogPost = $creator->save();
-
-		$hash = $this->filter('attachment_hash', 'str');
-		if ($hash && $blogPost->canUploadAndManageAttachments())
+		if ($this->isPost())
 		{
-			/** @var Preparer $inserter */
-			$inserter = $this->service('XF:Attachment\Preparer');
-			$associated = $inserter->associateAttachmentsWithContent($hash, 'taylorj_blogs_blog_post', $blogPost->blog_post_id);
-			if ($associated)
+			$editor = $this->blogPostEdit($blogPost);
+			$editor->checkForSpam();
+
+			if (!$editor->validate($errors))
 			{
-				$blogPost->fastUpdate('attach_count', $blogPost->attach_count + $associated);
+				return $this->error($errors);
 			}
-		}
-		$creator->finalSteps();
 
-		return $this->redirect($this->buildLink('blogs/post', $blogPost), \XF::phrase('taylorj_blogs_post_edit_successful'));
-		// }
+			$editor->save();
+
+			return $this->redirect($this->buildLink('blogs/post', $blogPost));
+		}
+		else
+		{
+			/** @var Attachment $attachmentRepo */
+			$attachmentRepo = $this->repository('XF:Attachment');
+			$attachmentData = $attachmentRepo->getEditorData(
+				'taylorj_blogs_blog_post',
+				$blogPost,
+			);
+
+			$tz = new \DateTimeZone(\XF::visitor()->timezone);
+			$dt = new \DateTime();
+			$dt->setTimezone(new \DateTimeZone(\XF::visitor()->timezone));
+			$dt->setTimestamp($blogPost->scheduled_post_date_time);
+			/*$dt = new \DateTime($blogPost->scheduled_post_date_time);*/
+			$hh_value = $dt->format('H');
+			$mm_value = $dt->format('i');
+
+			$hours = Utils::hours();
+			$minutes = Utils::minutes();
+
+			$blogId = $blogPost->Blog->blog_id;
+
+			$viewParams = [
+				'blogPost' => $blogPost,
+				'attachmentData' => $attachmentData,
+				'blog_id' => $blogId,
+				'hours' => $hours,
+				'minutes' => $minutes,
+				'dt' => $dt,
+				'hh_value' => $hh_value,
+				'mm_value' => $mm_value,
+			];
+
+			return $this->view('TaylorJ\Blogs:BlogPost\Edit', 'taylorj_blogs_blog_post_edit', $viewParams);
+		}
 	}
 
 	public function actionDelete(ParameterBag $params)
@@ -329,28 +301,11 @@ class BlogPost extends AbstractController
 		}
 	}
 
-	/**
-	 * @param Blog $blog
-	 *
-	 * @return \TaylorJ\Blogs\Service\Blog\Creator
-	 */
-	protected function setupBlogPostCreate(Blog $blog)
-	{
-		$title = $this->filter('title', 'str');
-		$message = $this->plugin('XF:Editor')->fromInput('message');
-
-		/** @var Creator $creator */
-		$creator = $this->service('XF:Thread\Creator', $blog);
-
-		$creator->setContent($title, $message);
-
-		return $creator;
-	}
-
 	public function actionAddPreview(ParameterBag $params)
 	{
 		$message = $this->plugin('XF:Editor')->fromInput('message');
 		$blogId = $this->filter('blog_id', 'int');
+
 
 		/** @var Blog $blog */
 		$blogPost = $this->assertBlogPostExists($params->blog_post_id);
@@ -401,18 +356,18 @@ class BlogPost extends AbstractController
 	/**
 	 * @param Blog $blog
 	 *
-	 * @return Create
+	 * @return Edit
 	 */
 	protected function blogPostEdit(BlogPostEntity $blogPost)
 	{
-		/** @var Edit $creator */
-		$creator = $this->service('TaylorJ\Blogs:BlogPost\Edit', $blogPost);
+		/** @var Edit $editor */
+		$editor = $this->service('TaylorJ\Blogs:BlogPost\Edit', $blogPost);
 
 		$title = $this->filter('blog_post_title', 'str');
-		$creator->setTitle($title);
-
 		$message = $this->plugin('XF:Editor')->fromInput('message');
-		$creator->setContent($message);
+
+		$editor->setTitle($title);
+		$editor->setBlogPostContent($message);
 
 		$scheduledPostDateTime = $this->filter([
 			'blog_post_schedule' => 'string',
@@ -421,8 +376,8 @@ class BlogPost extends AbstractController
 			'mm' => 'int',
 		]);
 
-		$creator->setScheduledPostDateTime($scheduledPostDateTime);
+		$editor->setScheduledPostDateTime($scheduledPostDateTime);
 
-		return $creator;
+		return $editor;
 	}
 }

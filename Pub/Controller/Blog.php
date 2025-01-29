@@ -171,8 +171,8 @@ class Blog extends AbstractController
 
 	public function actionEdit(ParameterBag $params)
 	{
-		$blogFinder = $this->finder('TaylorJ\Blogs:Blog')
-			->where('blog_id', $params->blog_id)->fetchOne();
+		$blogFinder = $this->finder('TaylorJ\Blogs:Blog')->where('blog_id', $params->blog_id)->fetchOne();
+
 		return $this->blogEdit($blogFinder);
 	}
 

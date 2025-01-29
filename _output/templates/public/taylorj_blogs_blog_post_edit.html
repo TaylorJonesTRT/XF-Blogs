@@ -1,7 +1,7 @@
 <xf:breadcrumb source="$blogPost.getBreadcrumbs(true)" />
 <xf:title>{{ phrase('taylorj_blogs_blog_post_edit_post') }}</xf:title>
 <div class="block">
-	<xf:form action="{{ link('blogs/post/save', $blogPost) }}" class="block" ajax="true"
+	<xf:form action="{{ link('blogs/post/edit', $blogPost) }}" class="block" ajax="true"
 		data-xf-init="attachment-manager">
 		<div class="block-container">
 			<div class="block-body">
