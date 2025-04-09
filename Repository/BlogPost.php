@@ -82,6 +82,15 @@ class BlogPost extends Repository
 		return $blogPostFinder;
 	}
 
+	public function findBlogPostAuthor($blogPostId)
+	{
+		$blogPostFinder = $this->finder('TaylorJ\Blogs:BlogPost')
+			->where('blog_post_id', $blogPostId)
+			->fetchOne();
+
+		return $blogPostFinder->user_id;
+	}
+
 	public function findOtherPostsByOwnerRandom($userId)
 	{
 		/** @var BlogPostFinder $finder */

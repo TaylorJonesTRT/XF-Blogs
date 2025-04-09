@@ -145,11 +145,34 @@ class Blogs extends AbstractController
 		/** @var Blog $blog */
 		$blog = $creator->save();
 
-		if ($upload = $this->request->getFile('upload', false, false))
+		$blogHeaderImage = $this->filter('taylorj_blogs_blog_header_image_confirm', 'str');
+		if ($blogHeaderImage)
 		{
-			/** @var Blog $blogRepo */
-			Utils::getBlogRepo()->setBlogHeaderImagePath($blog->blog_id, $upload);
-			$blog->fastUpdate('blog_has_header', '1');
+			if ($blogHeaderImage == 'upload_header')
+			{
+				if ($upload = $this->request->getFile('upload', false, false))
+				{
+					/** @var Blog $blogRepo */
+					Utils::getBlogRepo()->setBlogHeaderImagePath($blog->blog_id, $upload);
+					$blog->fastUpdate('blog_has_header', '1');
+				}
+			}
+			else if ($blogHeaderImage == 'delete_header')
+			{
+				/** @var Blog $blogRepo */
+				Utils::getBlogRepo()->deleteBlogHeaderImage($blog);
+				$blog->fastUpdate('blog_has_header', '0');
+			}
+		}
+		else
+		{
+			if ($upload = $this->request->getFile('upload', false, false))
+			{
+				/** @var Blog $blogRepo */
+				Utils::getBlogRepo()->setBlogHeaderImagePath($blog->blog_id, $upload);
+				$blog->fastUpdate('blog_has_header', '1');
+			}
+
 		}
 
 		if ($visitor->user_id)

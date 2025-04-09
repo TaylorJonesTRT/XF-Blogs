@@ -17,6 +17,7 @@ use XF\Entity\Thread;
 use XF\Entity\User;
 use XF\Mvc\Entity\Entity;
 use XF\Mvc\Entity\Structure;
+use XF\Repository\AttachmentRepository;
 
 /**
  * COLUMNS
@@ -116,11 +117,22 @@ class BlogPost extends Entity implements RenderableContentInterface, DatableInte
 	{
 		$visitor = \XF::visitor();
 
-		if (!$visitor->hasPermission('taylorjBlogs', 'viewBlogs'))
+		if ($this->blog_post_state == 'moderated')
 		{
-			return false;
+			if (
+				!$visitor->hasPermission('taylorjBlogPost', 'canViewModeratedBlogPosts')
+			)
+			{
+				return false;
+			}
 		}
-
+		else if ($this->blog_post_state == 'deleted')
+		{
+			if (!$visitor->hasPermission('taylorjBlogPost', 'canViewDeletedBlogPosts'))
+			{
+				return false;
+			}
+		}
 		return true;
 	}
 
@@ -169,6 +181,21 @@ class BlogPost extends Entity implements RenderableContentInterface, DatableInte
 		return (
 			$this->user_id == $visitor->user_id
 			&& $visitor->hasPermission('taylorjBlogPost', 'canDeleteOwnPost')
+		);
+	}
+
+	public function canUndelete(&$error = null)
+	{
+		$visitor = \XF::visitor();
+
+		if ($visitor->hasPermission('taylorjBlogPost', 'canUndeleteAny'))
+		{
+			return true;
+		}
+
+		return (
+			$this->user_id == $visitor->user_id
+			&& $visitor->hasPermission('taylorjBlogPost', 'canUndeleteOwnPost')
 		);
 	}
 
@@ -448,11 +475,12 @@ class BlogPost extends Entity implements RenderableContentInterface, DatableInte
 
 	protected function _postDelete()
 	{
-		if ($this->Blog)
-		{
-			(new Utils())->adjustUserBlogPostCount($this->Blog, -1);
-			(new Utils())->adjustBlogPostCount($this->Blog, -1);
-		}
+		(new Utils())->adjustUserBlogPostCount($this->Blog, -1);
+		(new Utils())->adjustBlogPostCount($this->Blog, -1);
+
+		/** @var AttachmentRepository $attachRepo */
+		$attachRepo = $this->repository(AttachmentRepository::class);
+		$attachRepo->fastDeleteContentAttachments('taylorj_blogs_blog_post', $this->blog_post_id);
 	}
 
 	protected function _postSave()

@@ -2,13 +2,13 @@
 
 namespace TaylorJ\Blogs\Pub\Controller;
 
+use TaylorJ\Blogs\Repository\Blog;
+use TaylorJ\Blogs\Repository\BlogPost;
+use TaylorJ\Blogs\Utils;
 use XF\Entity\MemberStat;
 use XF\Entity\User;
 use XF\Mvc\ParameterBag;
 use XF\Pub\Controller\AbstractController;
-use TaylorJ\Blogs\Repository\BlogPost;
-use TaylorJ\Blogs\Repository\Blog;
-use TaylorJ\Blogs\Utils;
 
 class Author extends AbstractController
 {
@@ -17,25 +17,30 @@ class Author extends AbstractController
 		/** @var \XFRM\XF\Entity\User $visitor */
 		$visitor = \XF::visitor();
 
-		if (!$visitor->canViewBlogs($error)) {
+		if (!$visitor->canViewBlogs($error))
+		{
 			throw $this->exception($this->noPermission($error));
 		}
 	}
 
 	public function actionIndex(ParameterBag $params)
 	{
-		if ($params->user_id) {
+		if ($params->user_id)
+		{
 			return $this->rerouteController('TaylorJ\Blogs:Author', 'Author', $params);
 		}
 
 		/** @var MemberStat $memberStat */
 		$memberStat = $this->em()->findOne('XF:MemberStat', ['member_stat_key' => 'taylorj_blogs_most_blog_posts']);
 
-		if ($memberStat && $memberStat->canView()) {
+		if ($memberStat && $memberStat->canView())
+		{
 			return $this->redirectPermanently(
 				$this->buildLink('members', null, ['key' => $memberStat->member_stat_key])
 			);
-		} else {
+		}
+		else
+		{
 			return $this->redirect($this->buildLink('blogs'));
 		}
 	}
@@ -62,6 +67,7 @@ class Author extends AbstractController
 		$this->assertCanonicalUrl($this->buildLink('blogs/authors', $user, ['page' => $page]));
 
 		$blogPosts = $finder->limitByPage($page, $perPage)->fetch();
+		$blogPosts = $blogPosts->filterViewable();
 
 		$viewParams = [
 			'user' => $user,

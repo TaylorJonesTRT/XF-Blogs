@@ -2,7 +2,7 @@
 	<xf:css src="structured_list.less" />
 	<xf:css src="xfrm.less" />
 
-	<div class="structItem structItem--resource js-inlineModContainer js-resourceListItem-{$blogPost.blog_post_id} {{ $blogPost.blog_post_state == 'moderated' ? 'is-moderated' : '' }}"
+	<div class="structItem structItem--resource js-inlineModContainer js-resourceListItem-{$blogPost.blog_post_id} {{ $blogPost.blog_post_state == 'moderated' ? 'is-moderated' : '' }}{{ $blogPost.blog_post_state == 'deleted' ? 'is-deleted' : '' }}"
 		data-author="{{ $blogPost.User.username }}">
 		<div class="structItem-cell structItem-cell--icon structItem-cell--iconExpanded">
 			<div class="structItem-iconContainer">
@@ -57,7 +57,7 @@
 	<xf:css src="structured_list.less" />
 	<xf:css src="xfrm.less" />
 
-	<div class="structItem structItem--resource js-inlineModContainer js-resourceListItem-{$blog.blog_id} {{ $blog.blog_state == 'moderated' ? 'is-moderated' : '' }}"
+	<div class="structItem structItem--resource js-inlineModContainer js-resourceListItem-{$blog.blog_id} {{ $blog.blog_state == 'moderated' ? 'is-moderated' : '' }} {{ $blog.blog_state == 'deleted' ? 'is-deleted' : '' }}"
 		data-author="{{ $blog.User.username }}">
 		<div class="structItem-cell structItem-cell--icon structItem-cell--iconExpanded">
 			<div class="structItem-iconContainer">

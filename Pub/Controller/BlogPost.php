@@ -127,6 +127,7 @@ class BlogPost extends AbstractController
 
 			$viewParams = [
 				'blogPost' => $blogPost,
+				'blog' => $blog,
 				'attachmentData' => $attachmentData,
 				'blog_id' => $blogId,
 				'hours' => $hours,
@@ -188,6 +189,22 @@ class BlogPost extends AbstractController
 			];
 			return $this->view('TaylorJ\Blogs:BlogPost\Delete', 'taylorj_blogs_blog_post_delete', $viewParams);
 		}
+	}
+
+	public function actionUndelete(ParameterBag $params)
+	{
+		/** @var BlogEntity $blogPost */
+		$blogPost = $this->assertBlogPostExists($params->blog_post_id);
+
+		/** @var UndeletePlugin $plugin */
+		$plugin = $this->plugin('XF:Undelete');
+		return $plugin->actionUndelete(
+			$blogPost,
+			$this->buildLink('blogs/post/undelete', $blogPost),
+			$this->buildLink('blogs/post', $blogPost),
+			$blogPost->blog_post_title,
+			'blog_post_state'
+		);
 	}
 
 	public function actionReact(ParameterBag $params)

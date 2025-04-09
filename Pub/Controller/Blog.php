@@ -2,11 +2,13 @@
 
 namespace TaylorJ\Blogs\Pub\Controller;
 
-use TaylorJ\Blogs\Entity\BlogPost;
+use TaylorJ\Blogs\Entity\Blog as BlogEntity;
+use TaylorJ\Blogs\Entity\BlogPost as BlogPostEntity;
 use TaylorJ\Blogs\Repository\BlogWatch;
+use TaylorJ\Blogs\Service\Blog\Delete as BlogDelete;
 use TaylorJ\Blogs\Service\BlogPost\Create;
 use TaylorJ\Blogs\Utils;
-use XF\ControllerPlugin\Delete;
+use XF\ControllerPlugin\UndeletePlugin;
 use XF\Mvc\Entity\ArrayCollection;
 use XF\Mvc\ParameterBag;
 use XF\Pub\Controller\AbstractController;
@@ -20,7 +22,7 @@ class Blog extends AbstractController
 	{
 		$visitor = \XF::visitor();
 
-		/** @var \TaylorJ\Blogs\Entity\Blog $blog */
+		/** @var BlogEntity $blog */
 		$blog = $this->assertBlogExists($params->blog_id);
 
 		if (!$blog->canView() && $blog->user_id == \XF::visitor()->user_id)
@@ -35,7 +37,7 @@ class Blog extends AbstractController
 
 	public function actionIndex(ParameterBag $params, $postType = 'visible')
 	{
-		/** @var \TaylorJ\Blogs\Entity\Blog $blog */
+		/** @var BlogEntity $blog */
 		$blog = $this->assertBlogExists($params->blog_id);
 
 		$conditions[] = [
@@ -46,17 +48,31 @@ class Blog extends AbstractController
 		$page = $params->page;
 		$perPage = $this->options()->taylorjBlogPostsPerPage;
 		$blogPostFinder->limitByPage($page, $perPage);
+		$allBlogPosts = $blogPostFinder->fetch();
 
 		/** @var AttachmentRepository $attachmentRepo */
 		$attachmentRepo = \XF::repository(AttachmentRepository::class);
 		$attachmentRepo->addAttachmentsToContent($blogPostFinder, 'taylorj_blogs_blog_post');
 
+		$canInlineMod = false;
+
+		foreach ($allBlogPosts AS $blogPost)
+		{
+			if ($blogPost->canUseInlineModeration())
+			{
+				$canInlineMod = true;
+				break;
+			}
+		}
+
 		$viewParams = [
 			'blog' => $blog,
-			'blogPosts' => $blogPostFinder->fetch(),
+			'blogPosts' => $allBlogPosts,
 			'page' => $page,
 			'perPage' => $perPage,
 			'total' => $blogPostFinder->total(),
+			'allowInlineMod' => !$this->request->get('_xfDisableInlineMod'),
+			'canInlineMod' => $canInlineMod,
 			'viewType' => 'visible',
 		];
 
@@ -69,7 +85,7 @@ class Blog extends AbstractController
 
 	public function actionScheduledPosts(ParameterBag $params)
 	{
-		/** @var \TaylorJ\Blogs\Entity\Blog $blog */
+		/** @var BlogEntity $blog */
 		$blog = $this->assertBlogExists($params->blog_id);
 
 		$conditions[] = [
@@ -85,12 +101,26 @@ class Blog extends AbstractController
 		$attachmentRepo = \XF::repository(AttachmentRepository::class);
 		$attachmentRepo->addAttachmentsToContent($blogPostFinder, 'post');
 
+		$canInlineMod = false;
+
+		$allBlogPosts = $blogPostFinder->fetch();
+		foreach ($allBlogPosts AS $blogPost)
+		{
+			if ($blogPost->canUseInlineModeration())
+			{
+				$canInlineMod = true;
+				break;
+			}
+		}
+
 		$viewParams = [
 			'blog' => $blog,
-			'blogPosts' => $blogPostFinder->fetch(),
+			'blogPosts' => $allBlogPosts,
 			'page' => $page,
 			'perPage' => $perPage,
 			'total' => $blogPostFinder->total(),
+			'allowInlineMod' => !$this->request->get('_xfDisableInlineMod'),
+			'canInlineMod' => $canInlineMod,
 			'viewType' => 'scheduled',
 		];
 
@@ -103,7 +133,7 @@ class Blog extends AbstractController
 
 	public function actionDraftPosts(ParameterBag $params)
 	{
-		/** @var \TaylorJ\Blogs\Entity\Blog $blog */
+		/** @var BlogEntity $blog */
 		$blog = $this->assertBlogExists($params->blog_id);
 
 		$conditions[] = [
@@ -119,12 +149,25 @@ class Blog extends AbstractController
 		$attachmentRepo = \XF::repository(AttachmentRepository::class);
 		$attachmentRepo->addAttachmentsToContent($blogPostFinder, 'taylorj_blogs_blog_post');
 
+		$canInlineMod = false;
+		$allBlogPosts = $blogPostFinder->fetch();
+		foreach ($allBlogPosts AS $blogPost)
+		{
+			if ($blogPost->canUseInlineModeration())
+			{
+				$canInlineMod = true;
+				break;
+			}
+		}
+
 		$viewParams = [
 			'blog' => $blog,
 			'blogPosts' => $blogPostFinder->fetch(),
 			'page' => $page,
 			'perPage' => $perPage,
 			'total' => $blogPostFinder->total(),
+			'allowInlineMod' => !$this->request->get('_xfDisableInlineMod'),
+			'canInlineMod' => $canInlineMod,
 			'viewType' => 'draft',
 		];
 
@@ -137,7 +180,7 @@ class Blog extends AbstractController
 
 	public function actionDeletedPosts(ParameterBag $params)
 	{
-		/** @var \TaylorJ\Blogs\Entity\Blog $blog */
+		/** @var BlogEntity $blog */
 		$blog = $this->assertBlogExists($params->blog_id);
 
 		$conditions[] = [
@@ -153,12 +196,25 @@ class Blog extends AbstractController
 		$attachmentRepo = \XF::repository(AttachmentRepository::class);
 		$attachmentRepo->addAttachmentsToContent($blogPostFinder, 'taylorj_blogs_blog_post');
 
+		$canInlineMod = false;
+		$allBlogPosts = $blogPostFinder->fetch();
+		foreach ($allBlogPosts AS $blogPost)
+		{
+			if ($blogPost->canUseInlineModeration())
+			{
+				$canInlineMod = true;
+				break;
+			}
+		}
+
 		$viewParams = [
 			'blog' => $blog,
 			'blogPosts' => $blogPostFinder->fetch(),
 			'page' => $page,
 			'perPage' => $perPage,
 			'total' => $blogPostFinder->total(),
+			'allowInlineMod' => !$this->request->get('_xfDisableInlineMod'),
+			'canInlineMod' => $canInlineMod,
 			'viewType' => 'deleted',
 		];
 
@@ -178,23 +234,79 @@ class Blog extends AbstractController
 
 	public function actionDelete(ParameterBag $params)
 	{
+		$visitor = \XF::visitor();
+
+		/** @var BlogEntity $blog */
 		$blog = $this->assertBlogExists($params->blog_id);
 
+		$type = $this->filter('hard_delete', 'bool') ? 'hard' : 'soft';
+		$reason = $this->filter('reason', 'str');
 
-		if (!$blog->canDelete($error))
+		if (!$blog->canDelete($type, $error))
 		{
 			return $this->noPermission($error);
 		}
 
-		/** @var Delete $plugin */
-		$plugin = $this->plugin('XF:Delete');
+		if ($this->isPost())
+		{
+			if ($visitor->user_id == $blog->user_id)
+			{
+				$type = 'soft';
+			}
+			else
+			{
+				$type = $this->filter('hard_delete', 'bool') ? 'hard' : 'soft';
+			}
 
-		return $plugin->actionDelete(
+			$reason = $this->filter('reason', 'str');
+
+			if (!$blog->canDelete($type, $error))
+			{
+				return $this->noPermission($error);
+			}
+
+			/** @var BlogDelete $deleter */
+			$deleter = $this->service('TaylorJ\Blogs:Blog\Delete', $blog);
+
+			if ($this->filter('author_alert', 'bool'))
+			{
+				$deleter->setSendAlert(true, $this->filter('author_alert_reason', 'str'));
+			}
+
+			if ($blog->canSetPublicDeleteReason())
+			{
+				$deleter->setBlogDeleteReason($this->filter('public_delete_reason', 'str'));
+			}
+
+			$deleter->delete($type, $reason);
+
+			$this->plugin('XF:InlineMod')->clearIdFromCookie('taylorj_blogs_blog', $blog->blog_id);
+
+			return $this->redirect($this->buildLink('blogs'));
+		}
+		else
+		{
+			$viewParams = [
+				'blog' => $blog,
+			];
+
+			return $this->view('TaylorJ\Blogs:Blog\Delete', 'taylorj_blogs_blog_delete', $viewParams);
+		}
+	}
+
+	public function actionUndelete(ParameterBag $params)
+	{
+		/** @var BlogEntity $blog */
+		$blog = $this->assertBlogExists($params->blog_id);
+
+		/** @var UndeletePlugin $plugin */
+		$plugin = $this->plugin('XF:Undelete');
+		return $plugin->actionUndelete(
 			$blog,
-			$this->buildLink('blogs/blog/delete', $blog),
-			$this->buildLink('blogs/blog/edit', $blog),
-			$this->buildLink('blogs'),
-			$blog->blog_title
+			$this->buildLink('blogs/blog/undelete', $blog),
+			$this->buildLink('blogs/blog', $blog),
+			$blog->blog_title,
+			'blog_state'
 		);
 	}
 
@@ -217,7 +329,7 @@ class Blog extends AbstractController
 		}
 	}
 
-	protected function blogEdit(\TaylorJ\Blogs\Entity\Blog $blog)
+	protected function blogEdit(BlogEntity $blog)
 	{
 		$viewParams = [
 			'blog' => $blog,
@@ -226,7 +338,7 @@ class Blog extends AbstractController
 		return $this->view('TaylorJ\Blogs:Blog\Edit', 'taylorj_blogs_blog_edit', $viewParams);
 	}
 
-	protected function blogPostAdd(BlogPost $blogPost, $blog_id)
+	protected function blogPostAdd(BlogPostEntity $blogPost, $blog_id)
 	{
 		/** @var Attachment $attachmentRepo */
 		$attachmentRepo = $this->repository('XF:Attachment');
@@ -345,7 +457,7 @@ class Blog extends AbstractController
 	{
 		$message = $this->plugin('XF:Editor')->fromInput('message');
 		$blogId = $this->filter('blog_id', 'int');
-		/** @var \TaylorJ\Blogs\Entity\Blog $blog */
+		/** @var BlogEntity $blog */
 		$blog = $this->assertBlogExists($blogId);
 		$blogPost = $blog->getNewBlogPost();
 
@@ -365,7 +477,7 @@ class Blog extends AbstractController
 
 	protected function assertBlogExists($id, $with = null, $phraseKey = null)
 	{
-		/** @var \TaylorJ\Blogs\Entity\Blog $blog */
+		/** @var BlogEntity $blog */
 		$blog = $this->assertRecordExists('TaylorJ\Blogs:Blog', $id, $with, $phraseKey);
 		return $blog;
 	}
@@ -382,17 +494,17 @@ class Blog extends AbstractController
 		$blogPostFinder = $this->finder('TaylorJ\Blogs:BlogPost')
 			->where('blog_id', $blogId)
 			->whereOr($conditions)
-			->order('blog_post_state', $order);
+			->order('blog_post_date', $order);
 
 		return $blogPostFinder;
 	}
 
 	/**
-	 * @param \TaylorJ\Blogs\Entity\Blog $blog
+	 * @param BlogEntity $blog
 	 *
 	 * @return Create
 	 */
-	protected function blogPostCreate(\TaylorJ\Blogs\Entity\Blog $blog)
+	protected function blogPostCreate(BlogEntity $blog)
 	{
 		/** @var Create $creator */
 		$creator = $this->service('TaylorJ\Blogs:BlogPost\Create', $blog);

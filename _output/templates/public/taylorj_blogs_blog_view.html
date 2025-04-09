@@ -2,6 +2,10 @@
 <xf:css src="structured_list.less" />
 <xf:css src="message.less" />
 
+<xf:if is="$canInlineMod">
+    <xf:js src="xf/inline_mod.js" min="1" />
+</xf:if>
+
 <xf:breadcrumb source="$blog.getBreadcrumbs(true)" />
 
 <xf:title>{$blog.blog_title}</xf:title>
@@ -93,10 +97,16 @@
                                     <a href="{{ link('blogs/blog/edit', $blog) }}" class="menu-linkRow">{{
                                         phrase('taylorj_blogs_blog_edit_button') }}</a>
                                 </xf:if>
-                                <xf:if is="$blog.canDelete()">
+                                <xf:if is="$blog.canDelete('soft') && $blog.blog_state == 'visible'">
                                     <a href="{{ link('blogs/blog/delete', $blog) }}" data-xf-click="overlay"
                                         class="menu-linkRow">{{
                                         phrase('taylorj_blogs_blog_delete') }}</a>
+                                </xf:if>
+                                <xf:if is="$blog.blog_state == 'deleted' && $blog.canUndelete()">
+                                    <a href="{{ link('blogs/blog/undelete', $blog) }}" class="menu-linkRow"
+                                        overlay="true">
+                                        {{ phrase('undelete') }}
+                                    </a>
                                 </xf:if>
                                 <!--[XF:thread_tools_menu:bottom]-->
                             </xf:contentcheck>
@@ -108,78 +118,12 @@
     </div>
 </div>
 
-<div class="block taylorjUserBlogs-block">
-    <div class="taylorjUserBlogs-blog-posts">
+<div class="block taylorjUserBlogs-block" data-xf-init="{{ $canInlineMod ? 'inline-mod' : '' }}"
+    data-type="taylorj_blogs_blog_post" data-href="{{ link('inline-mod') }}">
+    <div class=" taylorjUserBlogs-blog-posts">
         <xf:foreach loop="{$blogPosts}" key="$blog_post_id" value="$blogPost">
-            <div class="block-container {{ $blogPost.blog_post_state == 'deleted' ? ' is-deleted' : '' }}">
-                <div class="block-body {{ $blogPost.blog_post_state == 'deleted' ? ' is-deleted' : '' }}">
-                    <article
-                        class="message message--article message--articlePreview js-inlineModContainer js-threadListItem-{$blogPost.blog_post_id} {{ $blogPost.blog_post_state == 'moderated' ? 'is-moderated' : '' }} {{ $blogPost.blog_post_state == 'deleted' ? ' is-deleted' : '' }}">
-                        <div
-                            class="articlePreview-main {{ $blogPost.blog_post_state == 'deleted' ? ' is-deleted' : '' }}">
-                            <div class="taylorjBlogs-main">
-
-                                <xf:if is="$blogPost.cover_image">
-                                    <div class="taylorjBlogs-blog-post-cover-image">
-                                        <a href="{{ link('blogs/post', $blogPost) }}" class="articlePreview-image"
-                                            tabindex="-1">
-                                            <img src="{$blogPost.cover_image}" alt="{$blogPost.blog_post_title}"
-                                                loading="lazy" />
-                                        </a>
-                                    </div>
-                                </xf:if>
-                                <div class="taylorjBlogs-blog-post-snippet {{
-                                $blogPost.cover_image ? '' : 'taylorjBlogs-blog-post-no-cover' }}">
-                                    <div class="articlePreview-text ">
-                                        <div class="articlePreview-headline">
-                                            <h2
-                                                class="articlePreview-title {{ $blogPost.blog_post_state == 'deleted' ? ' is-deleted' : '' }}">
-                                                <xf:if is="$blogPost.blog_post_state == 'moderated'">
-                                                    <xf:fa icon="fa-shield" class="structItem-status--moderated"
-                                                        aria-hidden="true"
-                                                        title="{{ phrase('awaiting_approval')|for_attr }}" />
-                                                    <span class="u-srOnly">{{ phrase('awaiting_approval') }}</span>
-                                                </xf:if>
-                                                <a
-                                                    href="{{ link('blogs/post', $blogPost) }}">{$blogPost.blog_post_title}</a>
-                                            </h2>
-                                        </div>
-                                        <div class="{{ $blogPost.cover_image ? 'taylorjBlogs-preview-text' : '' }}">
-                                            <div class="message--articlePreview articlePreview-content">
-                                                <div class="message-content">
-                                                    <div class="message-userContent">
-                                                        <article class="message-body">
-                                                            <!-- {{ bb_code_snippet($blogPost.blog_post_content,
-                                                    'taylorj_blogs_blog_post', $blogPost, 750) }} -->
-                                                            {{ snippet($blogPost.blog_post_content, 750, {
-                                                            'stripQuote': true,
-                                                            'bbWrapper': false
-                                                            }) }}
-                                                        </article>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="articlePreview-links">
-                                                <a href="{{ link('blogs/post', $blogPost) }}"
-                                                    class="button button--link">{{
-                                                    phrase('view_full_post') }} &raquo;</a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="block-footer">
-                                <xf:date time="$blogPost.blog_post_date" />
-                                <xf:if is="$blogPost.blog_post_last_edit_date">
-                                    &nbsp;&#8226;&nbsp;&nbsp;{{ phrase('last_edited:') }}
-                                    <xf:date time="$blogPost.blog_post_last_edit_date" />
-                                </xf:if>
-                                <span class="u-pullRight">{{ phrase('views') }}: {$blogPost.view_count}</span>
-                            </div>
-                        </div>
-                    </article>
-                </div>
-            </div>
+            <xf:macro id="taylorj_blogs_blog_view_macros::blogPost" arg-blogPost="{$blogPost}"
+                arg-canInlineMod="{$canInlineMod}" arg-allowInlineMod="!" />
         </xf:foreach>
         <xf:pagenav page="{$page}" perpage="{$perPage}" total="{$total}" link="blogs/blog/" data="{$blogPost}"
             wrapperclass="block-outer block-outer--after" />
@@ -205,8 +149,8 @@
                 </dd>
             </dl>
             <dl class="pairs pairs--justified">
-                <dt>Entries</dt>
-                <dd>{$blogPost.Blog.blog_post_count|number}</dd>
+                <dt>{{ phrase('taylorj_blogs_blog_post_entries') }}</dt>
+                <dd>{$blog.blog_post_count|number}</dd>
             </dl>
         </div>
     </div>

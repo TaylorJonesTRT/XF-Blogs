@@ -1,4 +1,9 @@
 {
+    "admin/option_template_taylorjBlogsBlogDeleteThreadAction.html": {
+        "version_id": 1030070,
+        "version_string": "1.3.0",
+        "hash": "787682d22ae6e099b72387cb3935d0d0"
+    },
     "admin/option_template_taylorjBlogsBlogPostDeleteThreadAction.html": {
         "version_id": 1030070,
         "version_string": "1.3.0",
@@ -24,6 +29,11 @@
         "version_string": "1.0.0 Beta 6",
         "hash": "588f6fc8d454dae3c02510beef1dc841"
     },
+    "admin/widget_def_options_taylorj_other_blog_posts.html": {
+        "version_id": 1030070,
+        "version_string": "1.3.0",
+        "hash": "cde9522ecbc8aca09ea8298e95052e4c"
+    },
     "public/alert_taylorj_blogs_blog_insert.html": {
         "version_id": 1000034,
         "version_string": "1.0.0 Beta 4",
@@ -43,6 +53,11 @@
         "version_id": 1010070,
         "version_string": "1.1.0",
         "hash": "ee077437436315a3f09c5baba4442272"
+    },
+    "public/inline_mod_blog_posts_delete.html": {
+        "version_id": 1030070,
+        "version_string": "1.3.0",
+        "hash": "88a307d84433c58b0374ef8e167459b1"
     },
     "public/reaction_item_Taylorj_blogs_blog_post.html": {
         "version_id": 1010070,
@@ -84,10 +99,15 @@
         "version_string": "1.1.0",
         "hash": "6b9599315e7b55bd2fd54678f5bcd8f3"
     },
+    "public/taylorj_blogs_blog_delete.html": {
+        "version_id": 1030070,
+        "version_string": "1.3.0",
+        "hash": "d7f59b8904bfcbed30b477e530dc5b1a"
+    },
     "public/taylorj_blogs_blog_edit.html": {
-        "version_id": 1020370,
-        "version_string": "1.2.3",
-        "hash": "1249d3148afa990685cd46228e242664"
+        "version_id": 1030070,
+        "version_string": "1.3.0",
+        "hash": "bab4a18a9267d7ea828ad6aa625cf573"
     },
     "public/taylorj_blogs_blog_post_delete.html": {
         "version_id": 1030070,
@@ -127,7 +147,7 @@
     "public/taylorj_blogs_blog_post_view.html": {
         "version_id": 1030070,
         "version_string": "1.3.0",
-        "hash": "edb71a3523a2d4c0b63854683e5886dd"
+        "hash": "85f763b0f534cebe040c9bf2efb0ffee"
     },
     "public/taylorj_blogs_blog_post_view.less": {
         "version_id": 1000034,
@@ -137,22 +157,17 @@
     "public/taylorj_blogs_blog_view.html": {
         "version_id": 1030070,
         "version_string": "1.3.0",
-        "hash": "62c827fdc9a4e8e25c249554809e157d"
+        "hash": "dfc640a87f6bde8732c915c84b1c3de9"
     },
     "public/taylorj_blogs_blog_view.less": {
         "version_id": 1030070,
         "version_string": "1.3.0",
-        "hash": "32a60ba1cf334db50facde45e1448ff2"
+        "hash": "17cd0b241e5d0479137534bc07836c22"
     },
     "public/taylorj_blogs_blog_view_macros.html": {
-        "version_id": 1000037,
-        "version_string": "1.0.0 Beta 7",
-        "hash": "d41d8cd98f00b204e9800998ecf8427e"
-    },
-    "public/taylorj_blogs_blog_view_scheduled_posts.html": {
-        "version_id": 1000037,
-        "version_string": "1.0.0 Beta 7",
-        "hash": "b8a1345de99c045301ecbc8135beb815"
+        "version_id": 1030070,
+        "version_string": "1.3.0",
+        "hash": "63b2906573ecb149afae30571d1cd727"
     },
     "public/taylorj_blogs_blog_watch.html": {
         "version_id": 1000034,
@@ -170,9 +185,9 @@
         "hash": "a04adee18efefbf446e7384fcf7a665f"
     },
     "public/taylorj_blogs_list_macros.html": {
-        "version_id": 1010170,
-        "version_string": "1.1.1",
-        "hash": "4e193e503f7562b111e09a6fa824339e"
+        "version_id": 1030070,
+        "version_string": "1.3.0",
+        "hash": "c175e4b63ac2d725ed3a886187087742"
     },
     "public/taylorj_blogs_thread_view_type_blog_post.html": {
         "version_id": 1000035,
@@ -208,5 +223,10 @@
         "version_id": 1000036,
         "version_string": "1.0.0 Beta 6",
         "hash": "641203f11548c788229179ee5b1f62b6"
+    },
+    "public/widget_taylorj_blogs_other_blog_posts.html": {
+        "version_id": 1030070,
+        "version_string": "1.3.0",
+        "hash": "ce9d0a4e55e54cf493fbfd5019228635"
     }
 }

@@ -8,13 +8,31 @@ A user blogging system to allow your users to express themselves
 [th]Name[/th][th]Description[/th]
 [/TR]
 [TR]
+[td]Minimum tag amount[/td][td]How many tags must a blog post have to be able to be posted[/td]
+[/TR]
+[TR]
 [td]Blog Posts per page[/td][td]How many blog posts to show per page on the blog view[/td]
+[/TR]
+[TR]
+[td]Moderate blog creation[/td][td]Force all new blog creations into the approval queue[/td]
 [/TR]
 [TR]
 [td]Blog creation limit[/td][td]Limit your users to how many blogs they can own/create[/td]
 [/TR]
 [TR]
+[td]Moderate blog post creation[/td][td]Force all new visible blog posts to the approval queue[/td]
+[/TR]
+[TR]
+[td]Blog post comments[/td][td]When turned on blogs will be created with comment threads in forum specified below, when off blogs will not have comments[/td]
+[/TR]
+[TR]
+[td]Blog post deletion thread action[/td][td]When a blog post is deleted, take this action with any automatically created thread.[/td]
+[/TR]
+[TR]
 [td]Forum for comment thread creation[/td][td]Pick a forum that will be used to automatically create threads in for blog posts to be used as comments.[/td]
+[/TR]
+[TR]
+[td]Show other posts by blog post author[/td][td]If turned on this will show a random list of other blog posts by that author in any blog.[/td]
 [/TR]
 [TR]
 [td]Blogs per page[/td][td]How many blogs to display per page on the blogs index page[/td]
@@ -32,6 +50,13 @@ A user blogging system to allow your users to express themselves
 [*]Can make a blog post
 [*]Can edit own blog post
 [*]Can delete own blog post
+[*]Can tag own blog post
+[*]Can submit blog posts without approval
+[*]Blog limit
+[*]Can undelete own blog post
+[*]Can view deleted blog posts
+[*]Can view moderated blog posts
+[*]Can undelete owned blog(s)
 [/LIST]
 [HEADING=3][TaylorJ] Blogs Moderator Permissions[/HEADING]
 [LIST]
@@ -39,20 +64,43 @@ A user blogging system to allow your users to express themselves
 [*]Can delete any blog
 [*]Can edit any blog post
 [*]Can delete any blog post
+[*]Can tag any blog post
+[*]Can manage any blog posts tags
+[*]Use inline moderation on resources
+[*]Can view moderated content
+[*]Can hard delete any blog post
+[*]Can undelete any blog post
+[*]Can hard delete any blog
+[*]Can undelete any blog
 [/LIST]
+[HEADING=1]Widget Positions[/HEADING]
+[TABLE width="100%"]
+[TR]
+[th]Position[/th][th]Description[/th]
+[/TR]
+[TR]
+[td][TaylorJ] Blog Post View:Below ([ICODE]taylorj_blogs_blog_post_below_post[/ICODE])[/td][td]Position in the bottom of the taylorj_blogs_blog_post_view template. Widget templates rendered in this position can use the current blog post entity in the [ICODE]{$context.blogPost}[/ICODE] param.[/td]
+[/TR]
+[/TABLE]
 [HEADING=1]Widget Definitions[/HEADING]
 [TABLE width="100%"]
 [TR]
 [th]Definition[/th][th]Description[/th]
 [/TR]
 [TR]
-[td]Latest Blog Posts ([ICODE]taylorj_latest_blog_posts[/ICODE])[/td][td]Displays latest blog posts[/td]
+[td][TaylorJ] Latest Blog Posts ([ICODE]taylorj_latest_blog_posts[/ICODE])[/td][td]Displays latest blog posts[/td]
+[/TR]
+[TR]
+[td][TaylorJ] Other blog posts by author ([ICODE]taylorj_other_blog_posts[/ICODE])[/td][td]Show other random blog posts by the same author/user.[/td]
 [/TR]
 [/TABLE]
 [HEADING=1]Cron Entries[/HEADING]
 [TABLE width="100%"]
 [TR]
 [th]Name[/th][th]Run on...[/th][th]Run at hours[/th][th]Run at minutes[/th]
+[/TR]
+[TR]
+[td]Update the blog post count to reflect visible posts[/td][td]Any day of the month[/td][td]12AM[/td][td]0[/td]
 [/TR]
 [TR]
 [td]Update Blog Post View Counter[/td][td]Any day of the month[/td][td]Any[/td][td]30[/td]

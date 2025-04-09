@@ -2,6 +2,7 @@
 
 namespace TaylorJ\Blogs\Repository;
 
+use TaylorJ\Blogs\Entity\Blog as BlogEntity;
 use XF\Mvc\Entity\Repository;
 use XF\PrintableException;
 use XF\Util\File;
@@ -39,6 +40,11 @@ class Blog extends Repository
 		}
 	}
 
+	public function deleteBlogHeaderImage(BlogEntity $blog)
+	{
+		File::deleteFromAbstractedPath($blog->getAbstractedHeaderImagePath());
+	}
+
 	public function findBlogsByUser($userId)
 	{
 		$blogFinder = $this->finder('TaylorJ\Blogs:Blog')
@@ -46,5 +52,16 @@ class Blog extends Repository
 			->setDefaultOrder('blog_last_post_date', 'desc');
 
 		return $blogFinder;
+	}
+
+	public function batchUpdateBlogPostCounts()
+	{
+		$blogs = $this->finder('TaylorJ\Blogs:Blog')->fetch();
+
+		/** @var BlogEntity $blog */
+		foreach ($blogs AS $blog)
+		{
+			$blog->fastUpdate('blog_post_count', $blog->getBlogPostCount());
+		}
 	}
 }

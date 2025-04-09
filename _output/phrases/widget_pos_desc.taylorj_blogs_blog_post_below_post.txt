@@ -1,0 +1,1 @@
+Position in the bottom of the taylorj_blogs_blog_post_view template. Widget templates rendered in this position can use the current blog post entity in the <code>{$context.blogPost}</code> param.
