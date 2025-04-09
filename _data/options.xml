@@ -24,6 +24,15 @@
     <default_value>0</default_value>
     <relation group_id="taylorjBlogs" display_order="4"/>
   </option>
+  <option option_id="taylorjBlogsBlogPostDeleteThreadAction" edit_format="template" data_type="array" advanced="0">
+    <default_value>{"action":"close","update_title":"1","title_template":"{title} [Deleted]","add_post":"1"}</default_value>
+    <edit_format_params>option_template_taylorjBlogsBlogPostDeleteThreadAction</edit_format_params>
+    <sub_options>action
+update_title
+title_template
+add_post</sub_options>
+    <relation group_id="taylorjBlogs" display_order="13"/>
+  </option>
   <option option_id="taylorjBlogsBlogPostForum" edit_format="callback" data_type="unsigned_integer" advanced="0">
     <default_value>1</default_value>
     <edit_format_params>TaylorJ\Blogs\Option\ForumChoiceAction::renderOption</edit_format_params>

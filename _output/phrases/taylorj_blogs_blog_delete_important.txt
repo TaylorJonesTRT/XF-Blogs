@@ -1,0 +1,1 @@
+Deleting your blog will hard delete all blog posts. This can not be undone.

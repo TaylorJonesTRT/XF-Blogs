@@ -44,6 +44,9 @@
     "taylorjBlogPost-canEditOwnPost.json": {
         "hash": "4e6b825fff02af91f31bb0d042c1b1d3"
     },
+    "taylorjBlogPost-canHardDeleteAny.json": {
+        "hash": "f0a4987839bdbd9db230df6fc28e0cd1"
+    },
     "taylorjBlogPost-canManageAnyTag.json": {
         "hash": "8ec8ae4cb67c23cb9dbafaabc77b8aa6"
     },
@@ -56,8 +59,20 @@
     "taylorjBlogPost-canTagOwnBlogPost.json": {
         "hash": "7a0885ece259a9bb197def962088bbab"
     },
+    "taylorjBlogPost-canUndeleteAny.json": {
+        "hash": "ad095cb52274e548b32c903ce1395ba4"
+    },
+    "taylorjBlogPost-canUndeleteOwnPost.json": {
+        "hash": "e5856701061592b84ab865a142f42e99"
+    },
+    "taylorjBlogPost-canViewDeletedBlogPosts.json": {
+        "hash": "df88077c6e6039947ca27e42ef005330"
+    },
     "taylorjBlogPost-canViewModerated.json": {
         "hash": "94c158a345d3155e6e80950db2e98029"
+    },
+    "taylorjBlogPost-canViewModeratedBlogPosts.json": {
+        "hash": "16823c46899a59494c09ed77150a6adf"
     },
     "taylorjBlogPost-inlineMod.json": {
         "hash": "1a51116de08c7129a2d73f7479b45451"
@@ -82,6 +97,15 @@
     },
     "taylorjBlogs-canEditOwn.json": {
         "hash": "083a4ebe9d70a9a658590c94b40bd6c7"
+    },
+    "taylorjBlogs-canHardDeleteAny.json": {
+        "hash": "81d8d357da994cff00bc5d46bec197b3"
+    },
+    "taylorjBlogs-canUndeleteAny.json": {
+        "hash": "fc13f2d6f66dfd9cf0b186b2d7386649"
+    },
+    "taylorjBlogs-canUndeleteOwnBlog.json": {
+        "hash": "ab5b7a33e1608704686226b81530a2c2"
     },
     "taylorjBlogs-viewAny.json": {
         "hash": "5c737eea71e1bfd25d96c9ffff1017cd"

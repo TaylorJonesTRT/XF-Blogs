@@ -9,6 +9,7 @@ use XF\Entity\Attachment;
 use XF\Entity\CoverImageTrait;
 use XF\Entity\DatableInterface;
 use XF\Entity\DatableTrait;
+use XF\Entity\DeletionLog;
 use XF\Entity\EmbedRendererTrait;
 use XF\Entity\EmbedResolverTrait;
 use XF\Entity\ReactionTrait;
@@ -16,6 +17,7 @@ use XF\Entity\Thread;
 use XF\Entity\User;
 use XF\Mvc\Entity\Entity;
 use XF\Mvc\Entity\Structure;
+use XF\Repository\AttachmentRepository;
 
 /**
  * COLUMNS
@@ -115,11 +117,22 @@ class BlogPost extends Entity implements RenderableContentInterface, DatableInte
 	{
 		$visitor = \XF::visitor();
 
-		if (!$visitor->hasPermission('taylorjBlogs', 'viewBlogs'))
+		if ($this->blog_post_state == 'moderated')
 		{
-			return false;
+			if (
+				!$visitor->hasPermission('taylorjBlogPost', 'canViewModeratedBlogPosts')
+			)
+			{
+				return false;
+			}
 		}
-
+		else if ($this->blog_post_state == 'deleted')
+		{
+			if (!$visitor->hasPermission('taylorjBlogPost', 'canViewDeletedBlogPosts'))
+			{
+				return false;
+			}
+		}
 		return true;
 	}
 
@@ -151,28 +164,39 @@ class BlogPost extends Entity implements RenderableContentInterface, DatableInte
 		return true;
 	}
 
-	public function canDelete(&$error = null)
+	public function canDelete($type = 'soft', &$error = null)
 	{
 		$visitor = \XF::visitor();
 
-		if ($visitor->user_id == $this->user_id)
+		if ($type != 'soft')
 		{
-			if (!$visitor->hasPermission('taylorjBlogPost', 'canDeleteOwnPost'))
-			{
-				$error = \XF::phrase('taylorj_blogs_blog_post_error_delete');
-				return false;
-			}
-		}
-		else
-		{
-			if (!$visitor->hasPermission('taylorjBlogPost', 'canDeleteAny'))
-			{
-				$error = \XF::phrase('taylorj_blogs_blog_post_error_delete');
-				return false;
-			}
+			return $visitor->hasPermission('taylorjBlogPost', 'canHardDeleteAny');
 		}
 
-		return true;
+		if ($visitor->hasPermission('taylorjBlogPost', 'canDeleteAny'))
+		{
+			return true;
+		}
+
+		return (
+			$this->user_id == $visitor->user_id
+			&& $visitor->hasPermission('taylorjBlogPost', 'canDeleteOwnPost')
+		);
+	}
+
+	public function canUndelete(&$error = null)
+	{
+		$visitor = \XF::visitor();
+
+		if ($visitor->hasPermission('taylorjBlogPost', 'canUndeleteAny'))
+		{
+			return true;
+		}
+
+		return (
+			$this->user_id == $visitor->user_id
+			&& $visitor->hasPermission('taylorjBlogPost', 'canUndeleteOwnPost')
+		);
 	}
 
 	public function isAttachmentEmbedded($attachmentId)
@@ -275,6 +299,29 @@ class BlogPost extends Entity implements RenderableContentInterface, DatableInte
 	{
 		$visitor = \XF::visitor();
 		return ($visitor->user_id && $visitor->hasPermission('taylorjBlogPost', 'inlineMod'));
+	}
+
+	public function canSetPublicDeleteReason()
+	{
+		$visitor = \XF::visitor();
+
+		return (
+			$this->app()->options()->taylorjBlogsBlogPostDeleteThreadAction['add_post']
+			&& $this->Discussion
+			&& $visitor->user_id
+			&& $visitor->user_id != $this->user_id
+			// technically can allow this for own blog post owners, but may be somewhat confusing
+		);
+	}
+
+	public function canSendModeratorActionAlert()
+	{
+		$visitor = \XF::visitor();
+
+		return (
+			$visitor->user_id
+			&& $this->blog_post_state == 'visible'
+		);
 	}
 
 	public function getBbCodeRenderOptions($context, $type)
@@ -398,13 +445,6 @@ class BlogPost extends Entity implements RenderableContentInterface, DatableInte
 		}
 	}
 
-	public function hasPermission($permission)
-	{
-		/** @var \XFRM\XF\Entity\User $visitor */
-		$visitor = \XF::visitor();
-		return $visitor->hasResourceCategoryPermission($this->resource_category_id, $permission);
-	}
-
 	protected function submitHamData()
 	{
 		/** @var ContentChecker $submitter */
@@ -412,13 +452,35 @@ class BlogPost extends Entity implements RenderableContentInterface, DatableInte
 		$submitter->submitHam('taylorj_blogs_blog_post', $this->blog_post_id);
 	}
 
+	public function softDelete($reason = '', ?User $byUser = null)
+	{
+		$byUser = $byUser ?: \XF::visitor();
+
+		if ($this->blog_post_state == 'deleted')
+		{
+			return false;
+		}
+
+		$this->blog_post_state = 'deleted';
+
+		/** @var DeletionLog $deletionLog */
+		$deletionLog = $this->getRelationOrDefault('DeletionLog');
+		$deletionLog->setFromUser($byUser);
+		$deletionLog->delete_reason = $reason;
+
+		$this->save();
+
+		return true;
+	}
+
 	protected function _postDelete()
 	{
-		if ($this->Blog)
-		{
-			(new Utils())->adjustUserBlogPostCount($this->Blog, -1);
-			(new Utils())->adjustBlogPostCount($this->Blog, -1);
-		}
+		(new Utils())->adjustUserBlogPostCount($this->Blog, -1);
+		(new Utils())->adjustBlogPostCount($this->Blog, -1);
+
+		/** @var AttachmentRepository $attachRepo */
+		$attachRepo = $this->repository(AttachmentRepository::class);
+		$attachRepo->fastDeleteContentAttachments('taylorj_blogs_blog_post', $this->blog_post_id);
 	}
 
 	protected function _postSave()
@@ -535,6 +597,15 @@ class BlogPost extends Entity implements RenderableContentInterface, DatableInte
 			],
 			'ApprovalQueue' => [
 				'entity' => 'XF:ApprovalQueue',
+				'type' => self::TO_ONE,
+				'conditions' => [
+					['content_type', '=', 'taylorj_blogs_blog_post'],
+					['content_id', '=', '$blog_post_id'],
+				],
+				'primary' => true,
+			],
+			'DeletionLog' => [
+				'entity' => 'XF:DeletionLog',
 				'type' => self::TO_ONE,
 				'conditions' => [
 					['content_type', '=', 'taylorj_blogs_blog_post'],

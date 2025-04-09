@@ -2,77 +2,77 @@
 
 namespace TaylorJ\Blogs\Pub\Controller;
 
-use TaylorJ\Blogs\Entity\BlogPost;
+use TaylorJ\Blogs\Entity\Blog as BlogEntity;
+use TaylorJ\Blogs\Entity\BlogPost as BlogPostEntity;
 use TaylorJ\Blogs\Repository\BlogWatch;
+use TaylorJ\Blogs\Service\Blog\Delete as BlogDelete;
 use TaylorJ\Blogs\Service\BlogPost\Create;
 use TaylorJ\Blogs\Utils;
-use XF\ControllerPlugin\Delete;
+use XF\ControllerPlugin\UndeletePlugin;
+use XF\Mvc\Entity\ArrayCollection;
 use XF\Mvc\ParameterBag;
 use XF\Pub\Controller\AbstractController;
 use XF\Repository\Attachment;
 use XF\Repository\AttachmentRepository;
 use XF\Service\Attachment\Preparer;
 
-/**
- * Controller for handling a blog instance
- */
 class Blog extends AbstractController
 {
-	public function actionIndex(ParameterBag $params)
+	public function preDispatchController($action, ParameterBag $params)
 	{
 		$visitor = \XF::visitor();
 
-		/** @var \TaylorJ\Blogs\Entity\Blog $blog */
+		/** @var BlogEntity $blog */
 		$blog = $this->assertBlogExists($params->blog_id);
 
 		if (!$blog->canView() && $blog->user_id == \XF::visitor()->user_id)
 		{
-			return $this->noPermission(\XF::phrase('permission.taylorjBlogs_viewOwn'));
+			throw $this->exception($this->noPermission(\XF::phrase('permission.taylorjBlogs_viewOwn')));
 		}
 		else if (!$blog->canView())
 		{
-			return $this->noPermission(\XF::phrase('permission.taylorjBlogs_viewAny'));
+			throw $this->exception($this->noPermission(\XF::phrase('permission.taylorjBlogs_viewAny')));
 		}
+	}
 
-		$conditions = [];
+	public function actionIndex(ParameterBag $params, $postType = 'visible')
+	{
+		/** @var BlogEntity $blog */
+		$blog = $this->assertBlogExists($params->blog_id);
 
-		if ($blog->user_id == $visitor->user_id)
-		{
-			$conditions[] = [
-				'blog_post_state' => ['moderated', 'visible'],
-			];
-		}
-		else
-		{
-			$conditions[] = [
-				'blog_post_state' => [
-					'visible',
-				],
-			];
-		}
-
-		$blogPostFinder = $this->finder('TaylorJ\Blogs:BlogPost')
-			->where('blog_id', $params->blog_id)
-			->whereOr($conditions);
-
-
-		$blogPostFinder
-			->order('blog_post_date', 'DESC');
+		$conditions[] = [
+			'blog_post_state' => ['moderated', 'visible'],
+		];
+		$blogPostFinder = $this->getBlogPosts($params->blog_id, $conditions, 'DESC');
 
 		$page = $params->page;
 		$perPage = $this->options()->taylorjBlogPostsPerPage;
 		$blogPostFinder->limitByPage($page, $perPage);
+		$allBlogPosts = $blogPostFinder->fetch();
 
 		/** @var AttachmentRepository $attachmentRepo */
 		$attachmentRepo = \XF::repository(AttachmentRepository::class);
 		$attachmentRepo->addAttachmentsToContent($blogPostFinder, 'taylorj_blogs_blog_post');
 
+		$canInlineMod = false;
+
+		foreach ($allBlogPosts AS $blogPost)
+		{
+			if ($blogPost->canUseInlineModeration())
+			{
+				$canInlineMod = true;
+				break;
+			}
+		}
+
 		$viewParams = [
 			'blog' => $blog,
-			'blogPosts' => $blogPostFinder->fetch(),
+			'blogPosts' => $allBlogPosts,
 			'page' => $page,
 			'perPage' => $perPage,
 			'total' => $blogPostFinder->total(),
+			'allowInlineMod' => !$this->request->get('_xfDisableInlineMod'),
+			'canInlineMod' => $canInlineMod,
 			'viewType' => 'visible',
 		];
 
@@ -85,28 +85,13 @@ class Blog extends AbstractController
 
 	public function actionScheduledPosts(ParameterBag $params)
 	{
-		/** @var \TaylorJ\Blogs\Entity\Blog $blog */
+		/** @var BlogEntity $blog */
 		$blog = $this->assertBlogExists($params->blog_id);
 
-		if (!$blog->canView() && $blog->user_id == \XF::visitor()->user_id)
-		{
-			return $this->noPermission(\XF::phrase('permission.taylorjBlogs_viewOwn'));
-		}
-		else if (!$blog->canView())
-		{
-			return $this->noPermission(\XF::phrase('permission.taylorjBlogs_viewAny'));
-		}
-		else if (\XF::visitor()->user_id !== $blog->user_id)
-		{
-			return $this->noPermission(\XF::phrase('taylorj_blogs_blog_scheduled_posts_view_error'));
-		}
-
-		$blogPostFinder = $this->finder('TaylorJ\Blogs:BlogPost')
-			->where('blog_id', $params->blog_id)
-			->where('blog_post_state', 'scheduled');
-
-		$blogPostFinder
-			->order('blog_post_date', 'DESC');
+		$conditions[] = [
+			'blog_post_state' => ['scheduled'],
+		];
+		$blogPostFinder = $this->getBlogPosts($params->blog_id, $conditions, 'DESC');
 
 		$page = $params->page;
 		$perPage = $this->options()->taylorjBlogPostsPerPage;
@@ -116,12 +101,26 @@ class Blog extends AbstractController
 		$attachmentRepo = \XF::repository(AttachmentRepository::class);
 		$attachmentRepo->addAttachmentsToContent($blogPostFinder, 'post');
 
+		$canInlineMod = false;
+
+		$allBlogPosts = $blogPostFinder->fetch();
+		foreach ($allBlogPosts AS $blogPost)
+		{
+			if ($blogPost->canUseInlineModeration())
+			{
+				$canInlineMod = true;
+				break;
+			}
+		}
+
 		$viewParams = [
 			'blog' => $blog,
-			'blogPosts' => $blogPostFinder->fetch(),
+			'blogPosts' => $allBlogPosts,
 			'page' => $page,
 			'perPage' => $perPage,
 			'total' => $blogPostFinder->total(),
+			'allowInlineMod' => !$this->request->get('_xfDisableInlineMod'),
+			'canInlineMod' => $canInlineMod,
 			'viewType' => 'scheduled',
 		];
 
@@ -134,26 +133,13 @@ class Blog extends AbstractController
 
 	public function actionDraftPosts(ParameterBag $params)
 	{
-		/** @var \TaylorJ\Blogs\Entity\Blog $blog */
+		/** @var BlogEntity $blog */
 		$blog = $this->assertBlogExists($params->blog_id);
 
-		if (!$blog->canView() && $blog->user_id == \XF::visitor()->user_id)
-		{
-			return $this->noPermission(\XF::phrase('permission.taylorjBlogs_viewOwn'));
-		}
-		else if (!$blog->canView())
-		{
-			return $this->noPermission(\XF::phrase('permission.taylorjBlogs_viewAny'));
-		}
-		else if (\XF::visitor()->user_id !== $blog->user_id)
-		{
-			return $this->noPermission(\XF::phrase('taylorj_blogs_blog_draft_posts_view_error'));
-		}
-
-		$blogPostFinder = $this->finder('TaylorJ\Blogs:BlogPost')
-			->where('blog_id', $params->blog_id)
-			->where('blog_post_state', 'draft')
-			->order('blog_post_date', 'DESC');
+		$conditions[] = [
+			'blog_post_state' => ['draft'],
+		];
+		$blogPostFinder = $this->getBlogPosts($params->blog_id, $conditions, 'DESC');
 
 		$page = $params->page;
 		$perPage = $this->options()->taylorjBlogPostsPerPage;
@@ -163,13 +149,73 @@ class Blog extends AbstractController
 		$attachmentRepo = \XF::repository(AttachmentRepository::class);
 		$attachmentRepo->addAttachmentsToContent($blogPostFinder, 'taylorj_blogs_blog_post');
 
+		$canInlineMod = false;
+		$allBlogPosts = $blogPostFinder->fetch();
+		foreach ($allBlogPosts AS $blogPost)
+		{
+			if ($blogPost->canUseInlineModeration())
+			{
+				$canInlineMod = true;
+				break;
+			}
+		}
+
 		$viewParams = [
 			'blog' => $blog,
 			'blogPosts' => $blogPostFinder->fetch(),
 			'page' => $page,
 			'perPage' => $perPage,
 			'total' => $blogPostFinder->total(),
+			'allowInlineMod' => !$this->request->get('_xfDisableInlineMod'),
+			'canInlineMod' => $canInlineMod,
 			'viewType' => 'draft',
+		];
+
+		return $this->view(
+			'TaylorJ\Blogs:Blog\Index',
+			'taylorj_blogs_blog_view',
+			$viewParams
+		);
+	}
+
+	public function actionDeletedPosts(ParameterBag $params)
+	{
+		/** @var BlogEntity $blog */
+		$blog = $this->assertBlogExists($params->blog_id);
+
+		$conditions[] = [
+			'blog_post_state' => ['deleted'],
+		];
+		$blogPostFinder = $this->getBlogPosts($params->blog_id, $conditions, 'DESC');
+
+		$page = $params->page;
+		$perPage = $this->options()->taylorjBlogPostsPerPage;
+		$blogPostFinder->limitByPage($page, $perPage);
+
+		/** @var AttachmentRepository $attachmentRepo */
+		$attachmentRepo = \XF::repository(AttachmentRepository::class);
+		$attachmentRepo->addAttachmentsToContent($blogPostFinder, 'taylorj_blogs_blog_post');
+
+		$canInlineMod = false;
+		$allBlogPosts = $blogPostFinder->fetch();
+		foreach ($allBlogPosts AS $blogPost)
+		{
+			if ($blogPost->canUseInlineModeration())
+			{
+				$canInlineMod = true;
+				break;
+			}
+		}
+
+		$viewParams = [
+			'blog' => $blog,
+			'blogPosts' => $blogPostFinder->fetch(),
+			'page' => $page,
+			'perPage' => $perPage,
+			'total' => $blogPostFinder->total(),
+			'allowInlineMod' => !$this->request->get('_xfDisableInlineMod'),
+			'canInlineMod' => $canInlineMod,
+			'viewType' => 'deleted',
 		];
 
 		return $this->view(
@@ -181,30 +227,86 @@ class Blog extends AbstractController
 
 	public function actionEdit(ParameterBag $params)
 	{
-		$blogFinder = $this->finder('TaylorJ\Blogs:Blog')
-			->where('blog_id', $params->blog_id)->fetchOne();
+		$blogFinder = $this->finder('TaylorJ\Blogs:Blog')->where('blog_id', $params->blog_id)->fetchOne();
+
 		return $this->blogEdit($blogFinder);
 	}
 
 	public function actionDelete(ParameterBag $params)
 	{
+		$visitor = \XF::visitor();
+
+		/** @var BlogEntity $blog */
 		$blog = $this->assertBlogExists($params->blog_id);
 
+		$type = $this->filter('hard_delete', 'bool') ? 'hard' : 'soft';
+		$reason = $this->filter('reason', 'str');
 
-		if (!$blog->canDelete($error))
+		if (!$blog->canDelete($type, $error))
 		{
 			return $this->noPermission($error);
 		}
 
-		/** @var Delete $plugin */
-		$plugin = $this->plugin('XF:Delete');
+		if ($this->isPost())
+		{
+			if ($visitor->user_id == $blog->user_id)
+			{
+				$type = 'soft';
+			}
+			else
+			{
+				$type = $this->filter('hard_delete', 'bool') ? 'hard' : 'soft';
+			}
 
-		return $plugin->actionDelete(
+			$reason = $this->filter('reason', 'str');
+
+			if (!$blog->canDelete($type, $error))
+			{
+				return $this->noPermission($error);
+			}
+
+			/** @var BlogDelete $deleter */
+			$deleter = $this->service('TaylorJ\Blogs:Blog\Delete', $blog);
+
+			if ($this->filter('author_alert', 'bool'))
+			{
+				$deleter->setSendAlert(true, $this->filter('author_alert_reason', 'str'));
+			}
+
+			if ($blog->canSetPublicDeleteReason())
+			{
+				$deleter->setBlogDeleteReason($this->filter('public_delete_reason', 'str'));
+			}
+
+			$deleter->delete($type, $reason);
+
+			$this->plugin('XF:InlineMod')->clearIdFromCookie('taylorj_blogs_blog', $blog->blog_id);
+
+			return $this->redirect($this->buildLink('blogs'));
+		}
+		else
+		{
+			$viewParams = [
+				'blog' => $blog,
+			];
+
+			return $this->view('TaylorJ\Blogs:Blog\Delete', 'taylorj_blogs_blog_delete', $viewParams);
+		}
+	}
+
+	public function actionUndelete(ParameterBag $params)
+	{
+		/** @var BlogEntity $blog */
+		$blog = $this->assertBlogExists($params->blog_id);
+
+		/** @var UndeletePlugin $plugin */
+		$plugin = $this->plugin('XF:Undelete');
+		return $plugin->actionUndelete(
 			$blog,
-			$this->buildLink('blogs/blog/delete', $blog),
-			$this->buildLink('blogs/blog/edit', $blog),
-			$this->buildLink('blogs'),
-			$blog->blog_title
+			$this->buildLink('blogs/blog/undelete', $blog),
+			$this->buildLink('blogs/blog', $blog),
+			$blog->blog_title,
+			'blog_state'
 		);
 	}
 
@@ -227,7 +329,7 @@ class Blog extends AbstractController
 		}
 	}
 
-	protected function blogEdit(\TaylorJ\Blogs\Entity\Blog $blog)
+	protected function blogEdit(BlogEntity $blog)
 	{
 		$viewParams = [
 			'blog' => $blog,
@@ -236,7 +338,7 @@ class Blog extends AbstractController
 		return $this->view('TaylorJ\Blogs:Blog\Edit', 'taylorj_blogs_blog_edit', $viewParams);
 	}
 
-	protected function blogPostAdd(BlogPost $blogPost, $blog_id)
+	protected function blogPostAdd(BlogPostEntity $blogPost, $blog_id)
 	{
 		/** @var Attachment $attachmentRepo */
 		$attachmentRepo = $this->repository('XF:Attachment');
@@ -355,7 +457,7 @@ class Blog extends AbstractController
 	{
 		$message = $this->plugin('XF:Editor')->fromInput('message');
 		$blogId = $this->filter('blog_id', 'int');
-		/** @var \TaylorJ\Blogs\Entity\Blog $blog */
+		/** @var BlogEntity $blog */
 		$blog = $this->assertBlogExists($blogId);
 		$blogPost = $blog->getNewBlogPost();
 
@@ -375,17 +477,34 @@ class Blog extends AbstractController
 
 	protected function assertBlogExists($id, $with = null, $phraseKey = null)
 	{
-		/** @var \TaylorJ\Blogs\Entity\Blog $blog */
+		/** @var BlogEntity $blog */
 		$blog = $this->assertRecordExists('TaylorJ\Blogs:Blog', $id, $with, $phraseKey);
 		return $blog;
 	}
 
 	/**
-	 * @param \TaylorJ\Blogs\Entity\Blog $blog
+	 * @param $blodId
+	 * @param $conditions[]
+	 * @param $order
+	 *
+	 * @return array|ArrayCollection
+	 */
+	protected function getBlogPosts($blogId, $conditions, $order)
+	{
+		$blogPostFinder = $this->finder('TaylorJ\Blogs:BlogPost')
+			->where('blog_id', $blogId)
+			->whereOr($conditions)
+			->order('blog_post_date', $order);
+
+		return $blogPostFinder;
+	}
+
+	/**
+	 * @param BlogEntity $blog
 	 *
 	 * @return Create
 	 */
-	protected function blogPostCreate(\TaylorJ\Blogs\Entity\Blog $blog)
+	protected function blogPostCreate(BlogEntity $blog)
 	{
 		/** @var Create $creator */
 		$creator = $this->service('TaylorJ\Blogs:BlogPost\Create', $blog);

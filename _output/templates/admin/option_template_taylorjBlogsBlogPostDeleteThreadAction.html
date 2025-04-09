@@ -1,0 +1,26 @@
+<xf:formrow
+	label="{$option.title}"
+	hint="{$hintHtml}"
+	html="{$listedHtml}">
+
+	<xf:radio name="{$inputName}[action]" value="{$option.option_value.action}">
+		<xf:option value="">{{ phrase('taylorj_blogs_no_change') }}</xf:option>
+		<xf:option value="delete">{{ phrase('delete_thread') }}</xf:option>
+		<xf:option value="close">{{ phrase('close_thread') }}</xf:option>
+	</xf:radio>
+	<div class="formRow-explain">{$explainHtml}</div>
+
+	<div class="u-inputSpacer">
+		<xf:checkbox>
+			<xf:option name="{$inputName}[update_title]" selected="{$option.option_value.update_title}"
+				label="{{ phrase('taylorj_blogs_update_thread_title_on_blog_post_deletion:') }}">
+
+				<xf:textbox name="{$inputName}[title_template]" value="{$option.option_value.title_template}" />
+			</xf:option>
+
+			<xf:option name="{$inputName}[add_post]" selected="{$option.option_value.add_post}"
+				label="{{ phrase('taylorj_blogs_automatically_post_in_blog_post_thread_on_blog_post_deletion') }}"
+				hint="{{ phrase('taylorj_blogs_if_selected_post_made_automatically_explaining_blog_post_unavailable') }}" />
+		</xf:checkbox>
+	</div>
+</xf:formrow>

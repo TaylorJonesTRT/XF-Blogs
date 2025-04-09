@@ -10,7 +10,6 @@ use XF\Entity\User;
 use XF\Mvc\Entity\Entity;
 use XF\Mvc\Entity\Structure;
 use XF\Mvc\Router;
-use XF\Util\File;
 
 /**
  * COLUMNS
@@ -88,28 +87,39 @@ class Blog extends Entity implements DatableInterface
 		return true;
 	}
 
-	public function canDelete(&$error = null)
+	public function canDelete($type = 'soft', &$error = null)
 	{
 		$visitor = \XF::visitor();
 
-		if ($visitor->user_id == $this->user_id)
+		if ($type != 'soft')
 		{
-			if (!$visitor->hasPermission('taylorjBlogs', 'canDeleteOwn'))
-			{
-				$error = \XF::phrase('taylorj_blogs_blog_error_delete');
-				return false;
-			}
-		}
-		else
-		{
-			if (!$visitor->hasPermission('taylorjBlogs', 'canDeleteAny'))
-			{
-				$error = \XF::phrase('taylorj_blogs_blog_error_delete');
-				return false;
-			}
+			return $visitor->hasPermission('taylorjBlogs', 'canHardDeleteAny');
 		}
 
-		return true;
+		if ($visitor->hasPermission('taylorjBlogs', 'canDeleteAny'))
+		{
+			return true;
+		}
+
+		return (
+			$this->user_id == $visitor->user_id
+			&& $visitor->hasPermission('taylorjBlogs', 'canDeleteOwn')
+		);
+	}
+
+	public function canUndelete(&$error = null)
+	{
+		$visitor = \XF::visitor();
+
+		if ($visitor->hasPermission('taylorjBlogs', 'canUndeleteAny'))
+		{
+			return true;
+		}
+
+		return (
+			$this->user_id == $visitor->user_id
+			&& $visitor->hasPermission('taylorjBlogs', 'canUndeleteOwnBlog')
+		);
 	}
 
 	public function canPost(&$error = null)
@@ -172,7 +182,28 @@ class Blog extends Entity implements DatableInterface
 
 		return (
 			$visitor->hasPermission('taylorjBlogPost', 'canTagAnyBlogPost')
-			|| $visitor->hasPermission('forum', 'canManageAnyTag')
+			|| $visitor->hasPermission('taylorjBlogPost', 'canManageAnyTag')
+		);
+	}
+
+	public function canSetPublicDeleteReason()
+	{
+		$visitor = \XF::visitor();
+
+		return (
+			$visitor->user_id
+			&& $visitor->user_id != $this->user_id
+			// technically can allow this for own blog owners, but may be somewhat confusing
+		);
+	}
+
+	public function canSendModeratorActionAlert()
+	{
+		$visitor = \XF::visitor();
+
+		return (
+			$visitor->user_id
+			&& $this->blog_state == 'visible'
 		);
 	}
 
@@ -190,6 +221,24 @@ class Blog extends Entity implements DatableInterface
 
 
 		return $blogHeaderImage;
+	}
+
+	public function getBlogPostCount(): int
+	{
+		return $this->finder('TaylorJ\Blogs:BlogPost')
+			->where('blog_id', $this->blog_id)
+			->where('blog_post_state', 'visible')
+			->total();
+	}
+
+	public function getAbstractedHeaderImagePath($sizeCode = null)
+	{
+		$blogId = $this->blog_id;
+
+		return sprintf(
+			'data://taylorj_blogs/blog_header_images/%d.jpg',
+			$blogId,
+		);
 	}
 
 	public function getIconUrl($sizeCode = null, $canonical = false)
@@ -278,6 +327,18 @@ class Blog extends Entity implements DatableInterface
 		return 'blog_creation_date';
 	}
 
+	protected function blogMadeVisible()
+	{
+		if ($this->BlogPosts)
+		{
+			foreach ($this->BlogPosts AS $blogPost)
+			{
+				$blogPost->blog_post_state = 'visible';
+				$blogPost->save();
+			}
+		}
+	}
+
 	public function isVisible()
 	{
 		return ($this->blog_state == 'visible');
@@ -306,11 +367,6 @@ class Blog extends Entity implements DatableInterface
 		$approvalChange = $this->isStateChanged('blog_state', 'moderated');
 		$deletionChange = $this->isStateChanged('blog_post_state', 'deleted');
 
-		if (!$this->isUpdate())
-		{
-			(new Utils())->adjustUserBlogCount($this, 1);
-		}
-
 		if ($approvalChange == 'enter')
 		{
 			$approvalQueue = $this->getRelationOrDefault('ApprovalQueue', false);
@@ -318,11 +374,18 @@ class Blog extends Entity implements DatableInterface
 			$approvalQueue->save();
 		}
 
+		if (!$this->isUpdate())
+		{
+			(new Utils())->adjustUserBlogCount($this, 1);
+		}
+
 		if ($this->isUpdate())
 		{
 			if ($visibilityChange == 'enter')
 			{
-				(new Utils())->adjustUserBlogCount($this, 1);
+
+				$this->blogMadeVisible();
+
 				if ($approvalChange)
 				{
 					$this->submitHamData();
@@ -342,23 +405,38 @@ class Blog extends Entity implements DatableInterface
 		}
 	}
 
+	public function softDelete($reason = '', ?User $byUser = null)
+	{
+		$byUser = $byUser ?: \XF::visitor();
+
+		if ($this->blog_state == 'deleted')
+		{
+			return false;
+		}
+
+		$this->blog_state = 'deleted';
+
+		/** @var DeletionLog $deletionLog */
+		$deletionLog = $this->getRelationOrDefault('DeletionLog');
+		$deletionLog->setFromUser($byUser);
+		$deletionLog->delete_reason = $reason;
+
+		$this->save();
+
+		return true;
+	}
+
 	protected function _preDelete()
+	{
+		Utils::getBlogRepo()->deleteBlogHeaderImage($this);
+	}
+
+	protected function _postDelete()
 	{
 		foreach ($this->BlogPosts AS $blogPost)
 		{
 			$blogPost->delete();
 		}
-
-	}
-
-	protected function _postDelete()
-	{
-		(new Utils())->adjustUserBlogCount($this, -1);
-		(new Utils())->adjustUserBlogPostCount($this, -$this->blog_post_count);
-
-		$dataDir = \XF::app()->config('externalDataPath');
-		$dataDir .= "://taylorj_blogs/blog_header_images/" . $this->blog_id . ".jpg";
-		File::deleteFromAbstractedPath($dataDir);
 	}
 
 	public static function getStructure(Structure $structure): Structure
@@ -375,12 +453,12 @@ class Blog extends Entity implements DatableInterface
 			'blog_creation_date' => ['type' => self::UINT, 'default' => \XF::$time],
 			'blog_last_post_date' => ['type' => self::UINT, 'default' => 0],
 			'blog_has_header' => ['type' => self::BOOL, 'default' => false],
-			'blog_post_count' => ['type' => self::UINT, 'default' => 0],
 			'blog_state' => [
 				'type' => self::STR,
 				'default' => 'visible',
 				'allowedValues' => ['visible', 'moderated', 'deleted'],
 			],
+			'blog_post_count' => ['type' => self::UINT, 'default' => 0],
 		];
 		$structure->relations = [
 			'User' => [
@@ -410,9 +488,21 @@ class Blog extends Entity implements DatableInterface
 				],
 				'primary' => true,
 			],
+			'DeletionLog' => [
+				'entity' => 'XF:DeletionLog',
+				'type' => self::TO_ONE,
+				'conditions' => [
+					['content_type', '=', 'taylorj_blogs_blog'],
+					['content_id', '=', '$blog_id'],
+				],
+				'primary' => true,
+			],
 		];
 		$structure->defaultWith = ['User'];
-		$structure->getters['blog_header_image'] = true;
+		$structure->getters = [
+			'blog_header_image' => true,
+			'blog_post_count' => true,
+		];
 		$structure->behaviors = [
 			'XF:Taggable' => ['stateField' => 'blog_post_state'],
 			'XF:Indexable' => [

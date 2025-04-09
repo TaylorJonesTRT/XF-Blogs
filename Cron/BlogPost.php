@@ -2,18 +2,20 @@
 
 namespace TaylorJ\Blogs\Cron;
 
+use XF\Repository\Attachment;
+
 class BlogPost
 {
-    public static function runViewUPdate()
-    {
-        $app = \XF::app();
+	public static function runViewUpdate()
+	{
+		$app = \XF::app();
 
-        /** @var \TaylorJ\Blogs\Repository\BlogPost $blogPostRepo */
-        $blogPostRepo = $app->repository('TaylorJ\Blogs:BlogPost');
-        $blogPostRepo->batchUpdateThreadViews();
-        
-        /** @var \XF\Repository\Attachment $attachmentRepo */
-        $attachmentRepo = $app->repository('XF:Attachment');
-        $attachmentRepo->batchUpdateAttachmentViews();
-    }
+		/** @var \TaylorJ\Blogs\Repository\BlogPost $blogPostRepo */
+		$blogPostRepo = $app->repository('TaylorJ\Blogs:BlogPost');
+		$blogPostRepo->batchUpdateThreadViews();
+
+		/** @var Attachment $attachmentRepo */
+		$attachmentRepo = $app->repository('XF:Attachment');
+		$attachmentRepo->batchUpdateAttachmentViews();
+	}
 }

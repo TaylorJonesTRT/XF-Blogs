@@ -6,6 +6,8 @@ use TaylorJ\Blogs\Entity\BlogPost;
 use XF\App;
 use XF\Entity\Forum;
 use XF\Entity\Thread;
+use XF\Entity\User;
+use XF\Repository\UserRepository;
 use XF\Service\AbstractService;
 use XF\Service\ValidateAndSavableTrait;
 
@@ -40,12 +42,14 @@ class Edit extends AbstractService
 		$this->blogPost->blog_post_title = $title;
 	}
 
-	public function setContent($content)
+	public function setBlogPostContent($content)
 	{
 		$this->blogPost->blog_post_content = $content;
 	}
 
-	protected function finalSetup() {}
+	protected function finalSetup()
+	{
+	}
 
 	protected function _validate()
 	{
@@ -68,9 +72,11 @@ class Edit extends AbstractService
 
 	public function finalSteps()
 	{
-		if ($this->blogPost->blog_post_state == 'visible' && $this->blogPost->discussion_thread_id == 0 && \XF::options()->taylorjBlogsBlogPostComments) {
+		if ($this->blogPost->blog_post_state == 'visible' && $this->blogPost->discussion_thread_id == 0 && \XF::options()->taylorjBlogsBlogPostComments)
+		{
 			$creator = $this->setupBlogPostThreadCreation($this->blogPost);
-			if ($creator && $creator->validate()) {
+			if ($creator && $creator->validate())
+			{
 				$thread = $creator->save();
 				$this->blogPost->fastUpdate('discussion_thread_id', $thread->thread_id);
 				$this->threadCreator = $creator;
@@ -136,7 +142,8 @@ class Edit extends AbstractService
 		$blogPost->fastUpdate('blog_post_date', \XF::$time);
 
 		$creator = $this->setupBlogPostThreadCreation($blogPost);
-		if ($creator && $creator->validate()) {
+		if ($creator && $creator->validate())
+		{
 			$thread = $creator->save();
 			$blogPost->fastUpdate('discussion_thread_id', $thread->thread_id);
 			$this->threadCreator = $creator;
@@ -157,17 +164,57 @@ class Edit extends AbstractService
 
 		$dateTime = new \DateTime("$postDate $postHour:$postMinute", $tz);
 
-		if ($scheduledPostTime['blog_post_schedule'] == 'scheduled') {
+		if ($scheduledPostTime['blog_post_schedule'] == 'scheduled')
+		{
 			$this->blogPost->scheduled_post_date_time = $dateTime->format('U');
 			$this->blogPost->blog_post_state = 'scheduled';
 			/*}*/
-		} else if ($scheduledPostTime['blog_post_schedule'] == 'draft') {
+		}
+		else if ($scheduledPostTime['blog_post_schedule'] == 'draft')
+		{
 			$this->blogPost->scheduled_post_date_time = 0;
 			$this->blogPost->blog_post_date = 0;
 			$this->blogPost->blog_post_state = 'draft';
-		} else {
+		}
+		else
+		{
 			$this->blogPost->scheduled_post_date_time = 0;
 			$this->blogPost->blog_post_state = $this->blogPost->getNewContentState();
 		}
 	}
+
+	public function checkForSpam()
+	{
+		$blogPost = $this->blogPost;
+		$blog = $this->blogPost->Blog;
+
+		/** @var User $user */
+		$user = $blogPost->User ?: $this->repository(UserRepository::class)->getGuestUser($blogPost->Blog->blog_user_id);
+
+		$message = $blogPost->blog_post_content;
+		$contentType = 'taylorj_blogs_blog_post';
+		$contentId = $blogPost->blog_post_id;
+
+		$checker = $this->app->spam()->contentChecker();
+		$checker->check($user, $message, [
+			'permalink' => $this->app->router('public')->buildLink('canonical:threads', $blog),
+			'content_type' => $contentType,
+			'content_id' => $contentId,
+		]);
+
+		$decision = $checker->getFinalDecision();
+		switch ($decision)
+		{
+			case 'moderated':
+
+				$blogPost->blog_post_state = 'moderated';
+				break;
+
+			case 'denied':
+				$checker->logSpamTrigger('taylorj_blogs_blog_post', null);
+				$blogPost->error(\XF::phrase('your_content_cannot_be_submitted_try_later'));
+				break;
+		}
+	}
+
 }

@@ -1,0 +1,16 @@
+<xf:if is="$blogPosts is not empty">
+	<div class="block" {{ widget_data($widget) }}>
+		<div class="block-container">
+			<h3 class="block-header">{{ $title ?: phrase('taylorj_blogs_similar_blog_posts') }}</h3>
+
+			<div class="block-body">
+				<div class="structItemContainer">
+					<xf:foreach loop="$blogPosts" value="$blogPost">
+						<xf:macro id="taylorj_blogs_list_macros::blogPost"
+							arg-blogPost="{$blogPost}" />
+					</xf:foreach>
+				</div>
+			</div>
+		</div>
+	</div>
+</xf:if>

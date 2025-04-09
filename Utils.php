@@ -172,5 +172,4 @@ class Utils
 			File::deleteFromAbstractedPath($blog->blog_header_image);
 		}
 	}
-
 }

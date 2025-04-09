@@ -5,6 +5,7 @@ namespace TaylorJ\Blogs\Pub\Controller;
 use TaylorJ\Blogs\Entity\Blog;
 use TaylorJ\Blogs\Service\Blog\Create;
 use TaylorJ\Blogs\Service\Blog\Edit;
+use TaylorJ\Blogs\Utils;
 use XF\Mvc\ParameterBag;
 use XF\Mvc\Reply\Exception;
 use XF\Pub\Controller\AbstractController;
@@ -38,7 +39,7 @@ class Blogs extends AbstractController
 
 		$blogFinder = $this->finder('TaylorJ\Blogs:Blog')
 			->where('blog_state', 'visible')
-			->order('blog_creation_date', 'DESC');
+			->order('blog_last_post_date', 'DESC');
 
 		$page = $params->page;
 		$perPage = $this->options()->taylorjBlogsPerPage;
@@ -144,10 +145,34 @@ class Blogs extends AbstractController
 		/** @var Blog $blog */
 		$blog = $creator->save();
 
-		if ($upload = $this->request->getFile('upload', false, false))
+		$blogHeaderImage = $this->filter('taylorj_blogs_blog_header_image_confirm', 'str');
+		if ($blogHeaderImage)
 		{
-			$this->getBlogRepo()->setBlogHeaderImagePath($blog->blog_id, $upload);
-			$blog->fastUpdate('blog_has_header', '1');
+			if ($blogHeaderImage == 'upload_header')
+			{
+				if ($upload = $this->request->getFile('upload', false, false))
+				{
+					/** @var Blog $blogRepo */
+					Utils::getBlogRepo()->setBlogHeaderImagePath($blog->blog_id, $upload);
+					$blog->fastUpdate('blog_has_header', '1');
+				}
+			}
+			else if ($blogHeaderImage == 'delete_header')
+			{
+				/** @var Blog $blogRepo */
+				Utils::getBlogRepo()->deleteBlogHeaderImage($blog);
+				$blog->fastUpdate('blog_has_header', '0');
+			}
+		}
+		else
+		{
+			if ($upload = $this->request->getFile('upload', false, false))
+			{
+				/** @var Blog $blogRepo */
+				Utils::getBlogRepo()->setBlogHeaderImagePath($blog->blog_id, $upload);
+				$blog->fastUpdate('blog_has_header', '1');
+			}
+
 		}
 
 		if ($visitor->user_id)
@@ -183,14 +208,6 @@ class Blogs extends AbstractController
 	protected function assertBlogExists($blog_id, $with = null, $phraseKey = null)
 	{
 		return $this->assertRecordExists('TaylorJ\Blogs:Blog', $blog_id, $with, $phraseKey);
-	}
-
-	protected function getBlogRepo()
-	{
-		/** @var \TaylorJ\Blogs\Repository\Blog $repo */
-		$repo = $this->repository('TaylorJ\Blogs:Blog');
-
-		return $repo;
 	}
 
 	/**

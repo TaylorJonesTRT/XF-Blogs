@@ -64,10 +64,15 @@
                             <a href="{{ link('blogs/post/edit', $blogPost) }}" class="menu-linkRow">{{
                                 phrase('taylorj_blogs_blog_post_edit') }}</a>
                         </xf:if>
-                        <xf:if is="$blogPost.canDelete()">
+                        <xf:if is="$blogPost.canDelete('soft') && $blogPost.blog_post_state == 'visible'">
                             <a href="{{ link('blogs/post/delete', $blogPost) }}" data-xf-click="overlay"
                                 class="menu-linkRow">{{
                                 phrase('taylorj_blogs_blog_post_delete') }}</a>
+                        </xf:if>
+                        <xf:if is="$blogPost.blog_post_state == 'deleted' && $blogPost.canUndelete()">
+                            <a href="{{ link('blogs/post/undelete', $blogPost) }}" class="menu-linkRow" overlay="true">
+                                {{ phrase('undelete') }}
+                            </a>
                         </xf:if>
                         <!--[XF:thread_tools_menu:bottom]-->
                     </xf:contentcheck>
@@ -294,19 +299,4 @@
     </div>
 </xf:if>
 
-<xf:if is="$xf.options.taylorjBlogsBlogPostOther">
-    <div class="block">
-        <div class="block-container">
-            <h3 class="block-header">{{ phrase('taylorj_blogs_blog_post_random_blogs') }}</h3>
-            <div class="block-body">
-                <div class="structItemContainer">
-                    <xf:foreach loop="$ownerOtherPosts" value="$blogPost">
-                        <xf:set var="$extra" value="" />
-                        <xf:macro id="taylorj_blogs_list_macros::blogPost" arg-blogPost="{$blogPost}"
-                            arg-allowEdit="{{ false }}" />
-                    </xf:foreach>
-                </div>
-            </div>
-        </div>
-    </div>
-</xf:if>
+<xf:widgetpos id="taylorj_blogs_blog_post_below_post" context-blogPost="{$blogPost}" />

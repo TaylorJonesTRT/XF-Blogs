@@ -26,9 +26,14 @@ class Setup extends AbstractSetup
 			$table->addColumn('blog_creation_date', 'int')->setDefault(0);
 			$table->addColumn('blog_last_post_date', 'int')->setDefault(0);
 			$table->addColumn('blog_has_header', 'tinyint')->setDefault(0);
-			$table->addColumn('blog_post_count', 'int')->setDefault(0);
 			$table->addColumn('blog_state', 'enum')->values(['visible', 'moderated', 'deleted'])->setDefault('visible');
+			$table->addColumn('blog_post_count', 'int')->setDefault(0);
 			$table->addKey('blog_last_post_date');
+		});
+
+		$this->alterTable('xf_user', function (Alter $table)
+		{
+			$table->addColumn('taylorj_blogs_blog_count', 'int')->setDefault(0);
 		});
 	}
 
@@ -53,6 +58,11 @@ class Setup extends AbstractSetup
 			$table->addColumn('blog_post_state', 'enum')->values(['visible', 'scheduled', 'draft', 'moderated', 'deleted'])->setDefault('visible');
 			$table->addColumn('discussion_thread_id', 'int')->setDefault(0);
 			$table->addColumn('tags', 'mediumblob');
+		});
+
+		$this->alterTable('xf_user', function (Alter $table)
+		{
+			$table->addColumn('taylorj_blogs_blog_post_count', 'int')->setDefault(0);
 		});
 	}
 
@@ -135,16 +145,6 @@ class Setup extends AbstractSetup
 	public function upgrade1000036Step2()
 	{
 		$this->giveBlogPostComments();
-	}
-
-	public function upgrade1000037Step1()
-	{
-		$this->schemaManager()->alterTable('xf_user', function (Alter $table)
-		{
-			$table->addKey('taylorj_blogs_blog_count', 'blog_count');
-			$table->addColumn('taylorj_blogs_blog_post_count', 'int')->setDefault(0);
-			$table->addKey('taylorj_blogs_blog_post_count', 'blog_post_count');
-		});
 	}
 
 	public function upgrade1000038Step1()

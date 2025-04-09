@@ -90,3 +90,33 @@
   flex-direction: column !important;
   justify-content: space-between !important;
 }
+
+.articlePreview-title {
+  &.is-deleted {
+    text-decoration: line-through;
+  }
+}
+
+.draftBlogPostsButton
+{
+	display: inline-block;
+	position: relative;
+
+	i:before
+	{
+		display: inline-block;
+		.m-faBase();
+		.m-faContent(@fa-var-solid-square-pen, 1em); //, .88em
+		vertical-align: baseline;
+		font-size: 1.2em;
+		margin: -.2em 0;
+		line-height: 1;
+	}
+}
+
+.taylorjBlogs-block-footer-right {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  gap: 10px;
+}

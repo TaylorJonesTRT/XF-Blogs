@@ -1,0 +1,31 @@
+<xf:title>{{ phrase('taylorj_blogs_delete_blog_posts') }}</xf:title>
+
+<xf:form action="{{ link('inline-mod') }}" class="block" ajax="true">
+	<div class="block-container">
+		<div class="block-body">
+			<xf:inforow rowtype="confirm">{{ phrase('taylorj_blogs_you_sure_you_want_to_delete_x_blog_posts', {'total':
+				$total}) }}</xf:inforow>
+
+			<xf:macro id="helper_action::delete_type" arg-canHardDelete="{$canHardDelete}" />
+
+			<xf:if is="$canSetPublicReason">
+				<xf:textboxrow name="public_delete_reason"
+					label="{{ phrase('taylorj_blogs_blog_posts_public_deletion_reason') }}"
+					explain="{{ phrase('taylorj_blogs_blog_posts_public_deletion_reason_explain') }}" />
+			</xf:if>
+
+			<xf:macro id="helper_action::author_alert" />
+		</div>
+		<xf:submitrow icon="delete" />
+	</div>
+
+	<xf:foreach loop="$blogPosts" value="$blogPost">
+		<xf:hiddenval name="ids[]">{$blogPost.blog_post_id}</xf:hiddenval>
+	</xf:foreach>
+
+	<xf:hiddenval name="type">taylorj_blogs_blog_post</xf:hiddenval>
+	<xf:hiddenval name="action">delete</xf:hiddenval>
+	<xf:hiddenval name="confirmed">1</xf:hiddenval>
+
+	<xf:redirect url="{$redirect}" />
+</xf:form>

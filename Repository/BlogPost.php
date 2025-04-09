@@ -4,6 +4,7 @@ namespace TaylorJ\Blogs\Repository;
 
 use TaylorJ\Blogs\Finder\BlogPost as BlogPostFinder;
 use XF\Entity\Thread;
+use XF\Entity\User;
 use XF\Mvc\Entity\Repository;
 
 class BlogPost extends Repository
@@ -81,6 +82,15 @@ class BlogPost extends Repository
 		return $blogPostFinder;
 	}
 
+	public function findBlogPostAuthor($blogPostId)
+	{
+		$blogPostFinder = $this->finder('TaylorJ\Blogs:BlogPost')
+			->where('blog_post_id', $blogPostId)
+			->fetchOne();
+
+		return $blogPostFinder->user_id;
+	}
+
 	public function findOtherPostsByOwnerRandom($userId)
 	{
 		/** @var BlogPostFinder $finder */
@@ -102,4 +112,45 @@ class BlogPost extends Repository
 				AND blog_post_state = 'visible'
 		", $userId);
 	}
+
+	public function sendModeratorActionAlert(
+		\TaylorJ\Blogs\Entity\BlogPost $blogPost,
+		$action,
+		$reason = '',
+		array $extra = [],
+		?User $forceUser = null
+	)
+	{
+		if (!$forceUser)
+		{
+			if (!$blogPost->user_id || !$blogPost->User)
+			{
+				return false;
+			}
+
+			$forceUser = $blogPost->User;
+		}
+
+		$extra = array_merge([
+			'title' => $blogPost->blog_post_title,
+			'link' => $this->app()->router('public')->buildLink('nopath:blogs', $blogPost),
+			'reason' => $reason,
+		], $extra);
+
+		/** @var UserAlert $alertRepo */
+		$alertRepo = $this->repository('XF:UserAlert');
+		$alertRepo->alert(
+			$forceUser,
+			0,
+			'',
+			'user',
+			$forceUser->user_id,
+			"blog_post_{$action}",
+			$extra,
+			['dependsOnAddOnId' => 'TaylorJ/Blogs']
+		);
+
+		return true;
+	}
+
 }

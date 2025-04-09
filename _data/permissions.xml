@@ -4,11 +4,16 @@
   <permission permission_group_id="taylorjBlogPost" permission_id="canDeleteOwnPost" permission_type="flag" interface_group_id="taylorjBlogsPermissions" display_order="8"/>
   <permission permission_group_id="taylorjBlogPost" permission_id="canEditAny" permission_type="flag" interface_group_id="taylorjBlogsModeratorPermissions" display_order="3"/>
   <permission permission_group_id="taylorjBlogPost" permission_id="canEditOwnPost" permission_type="flag" interface_group_id="taylorjBlogsPermissions" display_order="7"/>
+  <permission permission_group_id="taylorjBlogPost" permission_id="canHardDeleteAny" permission_type="flag" interface_group_id="taylorjBlogsModeratorPermissions" display_order="9"/>
   <permission permission_group_id="taylorjBlogPost" permission_id="canManageAnyTag" permission_type="flag" interface_group_id="taylorjBlogsModeratorPermissions" display_order="6"/>
   <permission permission_group_id="taylorjBlogPost" permission_id="canPost" permission_type="flag" interface_group_id="taylorjBlogsPermissions" display_order="6"/>
   <permission permission_group_id="taylorjBlogPost" permission_id="canTagAnyBlogPost" permission_type="flag" interface_group_id="taylorjBlogsModeratorPermissions" display_order="5"/>
   <permission permission_group_id="taylorjBlogPost" permission_id="canTagOwnBlogPost" permission_type="flag" interface_group_id="taylorjBlogsPermissions" display_order="9"/>
+  <permission permission_group_id="taylorjBlogPost" permission_id="canUndeleteAny" permission_type="flag" interface_group_id="taylorjBlogsModeratorPermissions" display_order="10"/>
+  <permission permission_group_id="taylorjBlogPost" permission_id="canUndeleteOwnPost" permission_type="flag" interface_group_id="taylorjBlogsPermissions" display_order="12"/>
+  <permission permission_group_id="taylorjBlogPost" permission_id="canViewDeletedBlogPosts" permission_type="flag" interface_group_id="taylorjBlogsPermissions" display_order="13"/>
   <permission permission_group_id="taylorjBlogPost" permission_id="canViewModerated" permission_type="flag" interface_group_id="taylorjBlogsModeratorPermissions" display_order="8"/>
+  <permission permission_group_id="taylorjBlogPost" permission_id="canViewModeratedBlogPosts" permission_type="flag" interface_group_id="taylorjBlogsPermissions" display_order="14"/>
   <permission permission_group_id="taylorjBlogPost" permission_id="inlineMod" permission_type="flag" interface_group_id="taylorjBlogsModeratorPermissions" display_order="7"/>
   <permission permission_group_id="taylorjBlogPost" permission_id="submitWithoutApproval" permission_type="flag" interface_group_id="taylorjBlogsPermissions" display_order="10"/>
   <permission permission_group_id="taylorjBlogs" permission_id="blogCreationLimit" permission_type="integer" interface_group_id="taylorjBlogsPermissions" display_order="11"/>
@@ -17,6 +22,9 @@
   <permission permission_group_id="taylorjBlogs" permission_id="canDeleteOwn" permission_type="flag" interface_group_id="taylorjBlogsPermissions" display_order="4"/>
   <permission permission_group_id="taylorjBlogs" permission_id="canEditAny" permission_type="flag" interface_group_id="taylorjBlogsModeratorPermissions" display_order="1"/>
   <permission permission_group_id="taylorjBlogs" permission_id="canEditOwn" permission_type="flag" interface_group_id="taylorjBlogsPermissions" display_order="3"/>
+  <permission permission_group_id="taylorjBlogs" permission_id="canHardDeleteAny" permission_type="flag" interface_group_id="taylorjBlogsModeratorPermissions" display_order="11"/>
+  <permission permission_group_id="taylorjBlogs" permission_id="canUndeleteAny" permission_type="flag" interface_group_id="taylorjBlogsModeratorPermissions" display_order="12"/>
+  <permission permission_group_id="taylorjBlogs" permission_id="canUndeleteOwnBlog" permission_type="flag" interface_group_id="taylorjBlogsPermissions" display_order="15"/>
   <permission permission_group_id="taylorjBlogs" permission_id="viewAny" permission_type="flag" depend_permission_id="viewOwn" interface_group_id="taylorjBlogsPermissions" display_order="2"/>
   <permission permission_group_id="taylorjBlogs" permission_id="viewBlogs" permission_type="flag" interface_group_id="taylorjBlogsPermissions" display_order="1"/>
   <permission permission_group_id="taylorjBlogs" permission_id="viewOwn" permission_type="flag" interface_group_id="taylorjBlogsPermissions" display_order="1"/>
