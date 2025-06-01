@@ -4,8 +4,8 @@ namespace TaylorJ\Blogs\Finder;
 
 use XF\Mvc\Entity\AbstractCollection;
 use XF\Mvc\Entity\Finder;
-use XFRM\Entity\Category;
 
+// TODO: Update the below, should have been handled long ago
 /**
  * @method AbstractCollection<\XFRM\Entity\ResourceItem> fetch(?int $limit = null, ?int $offset = null)
  * @method AbstractCollection<\XFRM\Entity\ResourceItem> fetchDeferred(?int $limit = null, ?int $offset = null)
