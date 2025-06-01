@@ -1,1 +1,0 @@
-How many blogs to display per page on the blogs index page

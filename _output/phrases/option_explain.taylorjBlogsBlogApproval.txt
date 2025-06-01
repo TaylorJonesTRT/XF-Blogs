@@ -1,1 +1,0 @@
-Force all new blog creations into the approval queue

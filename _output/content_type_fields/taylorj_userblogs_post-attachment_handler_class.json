@@ -1,5 +1,0 @@
-{
-    "content_type": "taylorj_userblogs_post",
-    "field_name": "attachment_handler_class",
-    "field_value": "TaylorJ\\UserBlogs\\Attachment\\BlogPost"
-}

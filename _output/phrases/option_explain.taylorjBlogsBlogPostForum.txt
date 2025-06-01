@@ -1,1 +1,0 @@
-Pick a forum that will be used to automatically create threads in for blog posts to be used as comments.

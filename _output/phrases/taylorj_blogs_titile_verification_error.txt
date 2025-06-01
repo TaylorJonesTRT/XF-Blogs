@@ -1,1 +1,0 @@
-Blog titles need to be at least 10 characters long

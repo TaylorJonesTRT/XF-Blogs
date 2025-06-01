@@ -1,1 +1,0 @@
-Update thread title on blog post deletion

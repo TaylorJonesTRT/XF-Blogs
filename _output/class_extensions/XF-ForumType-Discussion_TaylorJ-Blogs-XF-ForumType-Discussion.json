@@ -1,6 +1,0 @@
-{
-    "from_class": "XF\\ForumType\\Discussion",
-    "to_class": "TaylorJ\\Blogs\\XF\\ForumType\\Discussion",
-    "execute_order": 1,
-    "active": true
-}

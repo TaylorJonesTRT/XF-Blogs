@@ -1,6 +1,0 @@
-{{ phrase('taylorj_x_reacted_to_your_blogpost', {
-	'name': username_link($user, false, {'defaultname': $alert.username}),
-	'reaction': alert_reaction($extra.reaction_id)|preescaped,
-	'posterParams': 'href="' . link('blogs/post', $content) . '" class="fauxBlockLink-blockLink"',
-	'title': $content.blog_post_title
-}) }}

@@ -1,1 +1,0 @@
-Automatically post in the blog post thread on blog post deletion

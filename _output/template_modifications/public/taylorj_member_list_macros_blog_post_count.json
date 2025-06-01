@@ -1,9 +1,0 @@
-{
-    "template": "member_list_macros",
-    "description": "Add the blog post count to member stats.",
-    "execution_order": 20,
-    "enabled": true,
-    "action": "str_replace",
-    "find": "<!--[XF:stats:after_messages]-->",
-    "replace": "$0\n<xf:if is=\"$xf.visitor.canViewBlogs() AND $user.taylorj_blogs_blog_post_count\">\n\t<li><dl class=\"pairs pairs--inline\">\n\t\t<dt>{{ phrase('taylorj_blogs_blog_posts') }}</dt>\n\t\t<dd>{$user.taylorj_blogs_blog_post_count|number}</dd>\n\t</dl></li>\n</xf:if>"
-}

@@ -1,9 +1,0 @@
-{
-    "template": "member_view",
-    "description": "Add the \"blog posts\" tab.",
-    "execution_order": 10,
-    "enabled": true,
-    "action": "str_replace",
-    "find": "<!--[XF:tabs:after_recent_content]-->",
-    "replace": "$0\n\n<xf:if is=\"$xf.visitor.canViewBlogs() AND $user.taylorj_blogs_blog_post_count\">\n\t<a href=\"{{ link('blogs/authors', $user) }}\"\n\t   class=\"tabs-tab\"\n\t   id=\"blogs\"\n\t   role=\"tab\">{{ phrase('taylorj_blogs_blog_posts') }}</a>\n</xf:if>"
-}

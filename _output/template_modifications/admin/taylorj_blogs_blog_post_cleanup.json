@@ -1,9 +1,0 @@
-{
-    "template": "tools_rebuild",
-    "description": "Cleanup blog posts that blogs no longer exist",
-    "execution_order": 10,
-    "enabled": true,
-    "action": "str_replace",
-    "find": "<!--[XF:after_users]-->\n",
-    "replace": "<xf:macro name=\"rebuild_job\"\n\targ-header=\"{{ phrase('taylorj_blogs_blog_post_cleanup') }}\"\n\targ-job=\"TaylorJ\\Blogs:CleanOldBlogPosts\" />\n\n$0"
-}

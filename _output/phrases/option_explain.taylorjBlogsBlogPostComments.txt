@@ -1,1 +1,0 @@
-When turned on blogs will be created with comment threads in forum specified below, when off blogs will not have comments

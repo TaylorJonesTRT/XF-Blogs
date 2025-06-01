@@ -1,1 +1,0 @@
-Force all new visible blog posts to the approval queue

@@ -1,9 +1,0 @@
-{
-    "template": "tools_rebuild",
-    "description": "Rebuild users blog post count total",
-    "execution_order": 10,
-    "enabled": true,
-    "action": "str_replace",
-    "find": "<!--[XF:after_users]-->\n",
-    "replace": "<xf:macro name=\"rebuild_job\"\n\targ-header=\"{{ phrase('taylorj_blogs_blog_post_count_update') }}\"\n\targ-job=\"TaylorJ\\Blogs:UserBlogPostCountTotal\" />\n\n$0"
-}

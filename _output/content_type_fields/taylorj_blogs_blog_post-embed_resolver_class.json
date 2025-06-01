@@ -1,5 +1,0 @@
-{
-    "content_type": "taylorj_blogs_blog_post",
-    "field_name": "embed_resolver_class",
-    "field_value": "TaylorJ\\Blogs\\EmbedResolver\\BlogPost"
-}

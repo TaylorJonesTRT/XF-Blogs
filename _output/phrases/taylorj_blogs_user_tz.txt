@@ -1,1 +1,0 @@
-This date/time value will be according to the <strong>{tz}</strong> timezone.
