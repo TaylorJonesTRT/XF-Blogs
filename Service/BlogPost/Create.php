@@ -78,19 +78,25 @@ class Create extends AbstractService
 
 	public function setTags($tags)
 	{
-		if ($this->tagChanger->canEdit()) {
+		if ($this->tagChanger->canEdit())
+		{
 			$this->tagChanger->setEditableTags($tags);
 		}
 	}
 
 	public function setBlogPostState($state)
 	{
-		if ($state == 'visible') {
+		if ($state == 'visible')
+		{
 			$this->blogPost->scheduled_post_date_time = 0;
 			$this->blogPost->blog_post_state = $this->blogPost->getNewContentState();
-		} else if ($state == 'scheduled') {
+		}
+		else if ($state == 'scheduled')
+		{
 			$this->blogPost->blog_post_state = $state;
-		} else {
+		}
+		else
+		{
 			$this->blogPost->blog_post_state = $state;
 			$this->blogPost->scheduled_post_date_time = 0;
 			$this->blogPost->blog_post_date = 0;
@@ -99,7 +105,7 @@ class Create extends AbstractService
 
 	public function setScheduledPostDateTime($scheduledPostTime)
 	{
-		$tz = new \DateTimeZone(\XF::visitor()->timezone);
+		$tz = new \DateTimeZone(\XF::$time);
 
 		$postDate = $scheduledPostTime['dd'];
 		$postHour = $scheduledPostTime['hh'];
@@ -112,7 +118,8 @@ class Create extends AbstractService
 
 	public function finalSteps()
 	{
-		if ($this->blogPost->blog_post_state === 'scheduled') {
+		if ($this->blogPost->blog_post_state === 'scheduled')
+		{
 			$this->insertJob();
 		}
 	}
@@ -122,9 +129,11 @@ class Create extends AbstractService
 		$this->blogPost->preSave();
 		$errors = $this->blogPost->getErrors();
 
-		if ($this->tagChanger->canEdit()) {
+		if ($this->tagChanger->canEdit())
+		{
 			$tagErrors = $this->tagChanger->getErrors();
-			if ($tagErrors) {
+			if ($tagErrors)
+			{
 				$errors = array_merge($errors, $tagErrors);
 			}
 		}
@@ -138,9 +147,11 @@ class Create extends AbstractService
 
 		$blogPost->save(true, false);
 
-		if ($blogPost->blog_post_state == 'visible' && \XF::options()->taylorjBlogsBlogPostComments) {
+		if ($blogPost->blog_post_state == 'visible' && \XF::options()->taylorjBlogsBlogPostComments)
+		{
 			$creator = $this->setupBlogPostThreadCreation();
-			if ($creator && $creator->validate()) {
+			if ($creator && $creator->validate())
+			{
 				$thread = $creator->save();
 				$blogPost->fastUpdate('discussion_thread_id', $thread->thread_id);
 				$this->threadCreator = $creator;
@@ -149,7 +160,8 @@ class Create extends AbstractService
 			}
 		}
 
-		if ($this->tagChanger->canEdit()) {
+		if ($this->tagChanger->canEdit())
+		{
 			$this->tagChanger
 				->setContentId($blogPost->blog_post_id, true)
 				->save($this->performValidations);
@@ -167,7 +179,8 @@ class Create extends AbstractService
 
 	public function sendNotifications()
 	{
-		if ($this->blog->isVisible()) {
+		if ($this->blog->isVisible())
+		{
 			/** @var Notify $notifier */
 			$notifier = $this->service('TaylorJ\Blogs:Blog\Notify', $this->blog, $this->blogPost, 'newBlogPost');
 			$notifier->notifyAndEnqueue();
