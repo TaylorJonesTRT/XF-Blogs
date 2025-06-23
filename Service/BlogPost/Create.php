@@ -105,7 +105,7 @@ class Create extends AbstractService
 
 	public function setScheduledPostDateTime($scheduledPostTime)
 	{
-		$tz = new \DateTimeZone(\XF::$time);
+		$tz = new \DateTimeZone(\XF::options()->guestTimeZone);
 
 		$postDate = $scheduledPostTime['dd'];
 		$postHour = $scheduledPostTime['hh'];
@@ -146,6 +146,8 @@ class Create extends AbstractService
 		$blogPost = $this->blogPost;
 
 		$blogPost->save(true, false);
+
+		$commentThread = \XF::options()->taylorjBlogsBlogPostComments;
 
 		if ($blogPost->blog_post_state == 'visible' && \XF::options()->taylorjBlogsBlogPostComments)
 		{
