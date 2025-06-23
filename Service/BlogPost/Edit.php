@@ -141,14 +141,17 @@ class Edit extends AbstractService
 		$blogPost->fastUpdate('blog_post_state', 'visible');
 		$blogPost->fastUpdate('blog_post_date', \XF::$time);
 
-		$creator = $this->setupBlogPostThreadCreation($blogPost);
-		if ($creator && $creator->validate())
+		if (\XF::options()->taylorjBlogsBlogPostComments)
 		{
-			$thread = $creator->save();
-			$blogPost->fastUpdate('discussion_thread_id', $thread->thread_id);
-			$this->threadCreator = $creator;
+			$creator = $this->setupBlogPostThreadCreation($blogPost);
+			if ($creator && $creator->validate())
+			{
+				$thread = $creator->save();
+				$blogPost->fastUpdate('discussion_thread_id', $thread->thread_id);
+				$this->threadCreator = $creator;
 
-			$this->afterResourceThreadCreated($thread);
+				$this->afterResourceThreadCreated($thread);
+			}
 		}
 
 		return $blogPost;

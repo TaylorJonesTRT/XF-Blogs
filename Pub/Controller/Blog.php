@@ -469,7 +469,7 @@ class Blog extends AbstractController
 
 		return $this->plugin('XF:BbCodePreview')->actionPreview(
 			$message,
-			'blog_post',
+			'taylorj_blogs_blog_post',
 			\XF::visitor(),
 			$attachments
 		);

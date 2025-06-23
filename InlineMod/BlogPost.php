@@ -64,18 +64,6 @@ class BlogPost extends AbstractHandler
 			}
 		);
 
-		/*static::addPossibleFeatureActions(*/
-		/*	$this,*/
-		/*	$actions,*/
-		/*	\XF::phrase('xfrm_feature_resources'),*/
-		/*	\XF::phrase('xfrm_unfeature_resources'),*/
-		/*	'canFeatureUnfeature'*/
-		/*);*/
-
-		/*$actions['reassign'] = $this->getActionHandler('TaylorJ\Blogs:ResourceItem\Reassign');*/
-		/*$actions['move'] = $this->getActionHandler('XFRM:ResourceItem\Move');*/
-		/*$actions['apply_prefix'] = $this->getActionHandler('XFRM:ResourceItem\ApplyPrefix');*/
-
 		return $actions;
 	}
 
