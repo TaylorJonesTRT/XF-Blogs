@@ -84,9 +84,13 @@
 
 <xf:set var="$bpSnippet" value="{{ snippet($blogPost.blog_post_content, 0, {'stripBbCode': true}) }}" />
 
-<xf:macro id="metadata_macros::metadata" arg-description="{$fpSnippet}"
+<xf:macro id="metadata_macros::metadata" arg-description="{$bpSnippet}"
     arg-shareUrl="{{ link('canonical:blogs/post', $blogPost) }}"
     arg-canonicalUrl="{{ link('canonical:blogs/post', $blogPost) }}" />
+
+<xf:macro id="metadata_macros::oembed"
+	arg-oembedUrl="{$blogPost.getOembedEndpointUrl()}"
+	arg-title="{$blogPost.getContentTitle()}" />
 
 <xf:macro id="lightbox_macros::setup" arg-canViewAttachments="{$blogPost.canViewAttachments()}" />
 <div class="block {{ $blogPost.blog_post_state == 'moderated' ? 'is-moderated' : '' }}" data-xf-init="lightbox"
