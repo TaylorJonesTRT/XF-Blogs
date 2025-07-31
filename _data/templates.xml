@@ -540,7 +540,7 @@
 	</div>
 </xf:macro>
 ]]></template>
-  <template type="public" title="taylorj_blogs_blog_post_new_edit" version_id="1030070" version_string="1.3.0"><![CDATA[<xf:if is="$blog">
+  <template type="public" title="taylorj_blogs_blog_post_new_edit" version_id="1030170" version_string="1.3.1"><![CDATA[<xf:if is="$blog">
 	<xf:breadcrumb source="$blog.getBreadcrumbs(true)" />
 	<xf:else />
 	<xf:breadcrumb source="$blogPost.getBreadcrumbs(true)" />
@@ -559,7 +559,7 @@
 				<xf:editorrow name="message" value="{$blogPost.blog_post_content}" label="message"
 					attachments="{{ $attachmentData ? $attachmentData.attachments : [] }}"
 					rowtype="fullWidth noLabel mergePrev"
-					data-preview-url="{{ link('blogs/blog/add-preview', $blogPost) }}" />
+					data-preview-url="{{ link('blogs/blog/add-preview', $blog) }}" />
 
 				<xf:formrow rowtype="fullWidth noLabel mergePrev">
 					<xf:macro template="helper_attach_upload" name="upload_block"

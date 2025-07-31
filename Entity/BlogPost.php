@@ -421,6 +421,11 @@ class BlogPost extends Entity implements RenderableContentInterface, DatableInte
 		return $this->app()->router('public')->buildLink($route, $this, $extraParams, $hash);
 	}
 
+	public function getContentTitle()
+	{
+		return $this->blog_post_title;
+	}
+
 	public function setUnfurls($unfurls)
 	{
 		$this->_getterCache['Unfurls'] = $unfurls;

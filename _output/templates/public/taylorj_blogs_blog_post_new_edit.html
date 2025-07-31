@@ -17,7 +17,7 @@
 				<xf:editorrow name="message" value="{$blogPost.blog_post_content}" label="message"
 					attachments="{{ $attachmentData ? $attachmentData.attachments : [] }}"
 					rowtype="fullWidth noLabel mergePrev"
-					data-preview-url="{{ link('blogs/blog/add-preview', $blogPost) }}" />
+					data-preview-url="{{ link('blogs/blog/add-preview', $blog) }}" />
 
 				<xf:formrow rowtype="fullWidth noLabel mergePrev">
 					<xf:macro template="helper_attach_upload" name="upload_block"
