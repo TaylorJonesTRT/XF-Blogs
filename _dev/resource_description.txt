@@ -41,8 +41,8 @@ A user blogging system to allow your users to express themselves
 [HEADING=1]Permissions[/HEADING]
 [HEADING=3][TaylorJ] Blogs permissions[/HEADING]
 [LIST]
-[*]Can view own blog
 [*]Can view blogs
+[*]Can view own blog
 [*]Can view any blog
 [*]Can edit own blog
 [*]Can delete own blog
@@ -93,6 +93,9 @@ A user blogging system to allow your users to express themselves
 [TR]
 [td][TaylorJ] Other blog posts by author ([ICODE]taylorj_other_blog_posts[/ICODE])[/td][td]Show other random blog posts by the same author/user.[/td]
 [/TR]
+[TR]
+[td][Taylor J] Similar Blog Posts ([ICODE]taylorj_similar_posts[/ICODE])[/td][td]Show a widget of other similar blog posts to the one being read (requires XFES)[/td]
+[/TR]
 [/TABLE]
 [HEADING=1]Cron Entries[/HEADING]
 [TABLE width="100%"]
@@ -101,6 +104,9 @@ A user blogging system to allow your users to express themselves
 [/TR]
 [TR]
 [td]Update the blog post count to reflect visible posts[/td][td]Any day of the month[/td][td]12AM[/td][td]0[/td]
+[/TR]
+[TR]
+[td][TaylorJ] Blogs Update Similar Blog Posts[/td][td]Any day of the week[/td][td]Any[/td][td]30[/td]
 [/TR]
 [TR]
 [td]Update Blog Post View Counter[/td][td]Any day of the month[/td][td]Any[/td][td]30[/td]

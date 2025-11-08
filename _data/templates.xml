@@ -144,6 +144,21 @@
 		hint="{{ phrase('xfrm_full_size_view_displaying_as_standard_resource_list') }}" />
 </xf:radiorow>
 ]]></template>
+  <template type="admin" title="widget_def_options_taylorj_similar_posts" version_id="1040070" version_string="1.4.0"><![CDATA[<hr class="formRowSep" />
+
+<xf:numberboxrow name="options[limit]" value="{$options}" min="1" label="{{ phrase('maximum_entries') }}" />
+
+<xf:radiorow name="options[style]" value="{{ $options.style ?: 'simple' }}"
+	label="{{ phrase('display_style') }}">
+
+	<xf:option value="simple"
+		label="{{ phrase('simple') }}"
+		hint="{{ phrase('widget_display_simple_explain') }}" />
+	<xf:option value="full"
+		label="{{ phrase('standard') }}"
+		hint="{{ phrase('xfrm_full_size_view_displaying_as_standard_resource_list') }}" />
+</xf:radiorow>
+]]></template>
   <template type="public" title="alert_taylorj_blogs_blog_insert" version_id="1000034" version_string="1.0.0 Beta 4"><![CDATA[{{ phrase('taylorj_x_created_new_post_in_y', {
 	'name': username_link($user, false, {'defaultname': $alert.username}),
 	'blog': 'href="' . link('blogs/blog', $content) . '" class="fauxBlockLink-blockLink"',
@@ -647,7 +662,14 @@
 	arg-tags="{$blogPost.tags}"
 	arg-tagList="tagList--resource-{$blogPost.blog_post_id}"
 	arg-editLink="{{ $blogPost.canEditTags() ? link('blogs/post/tags', $blogPost) : '' }}" />]]></template>
-  <template type="public" title="taylorj_blogs_blog_post_view" version_id="1030070" version_string="1.3.0"><![CDATA[<xf:css src="taylorj_blogs_blog_post_view.less" />
+  <template type="public" title="taylorj_blogs_blog_post_view" version_id="1050070" version_string="1.5.0"><![CDATA[<xf:set var="$bpSnippet" value="{{ snippet($blogPost.blog_post_content, 0, {'stripBbCode': true}) }}" />
+
+<xf:macro id="metadata_macros::metadata"
+    arg-title="{$blogpost.blog_post_title}"
+    arg-description="{$bpSnippet}"
+    arg-imageUrl="{$blogPost.cover_image}" />
+
+<xf:css src="taylorj_blogs_blog_post_view.less" />
 <xf:css src="message.less" />
 
 <xf:breadcrumb source="$blogPost.getBreadcrumbs(true)" />
@@ -733,9 +755,13 @@
 
 <xf:set var="$bpSnippet" value="{{ snippet($blogPost.blog_post_content, 0, {'stripBbCode': true}) }}" />
 
-<xf:macro id="metadata_macros::metadata" arg-description="{$fpSnippet}"
+<xf:macro id="metadata_macros::metadata" arg-description="{$bpSnippet}"
     arg-shareUrl="{{ link('canonical:blogs/post', $blogPost) }}"
     arg-canonicalUrl="{{ link('canonical:blogs/post', $blogPost) }}" />
+
+<xf:macro id="metadata_macros::oembed"
+    arg-oembedUrl="{$blogPost.getOembedEndpointUrl()}"
+    arg-title="{$blogPost.getContentTitle()}" />
 
 <xf:macro id="lightbox_macros::setup" arg-canViewAttachments="{$blogPost.canViewAttachments()}" />
 <div class="block {{ $blogPost.blog_post_state == 'moderated' ? 'is-moderated' : '' }}" data-xf-init="lightbox"
@@ -902,7 +928,7 @@
     <div class="block">
         <div class="block-container">
             <h3 class="block-header"><a href="{{ link('threads', $blogPost.Discussion) }}"> {{
-                    phrase('taylorj_blogs_blog_post_latest_comments') }}</a></h3>
+                phrase('taylorj_blogs_blog_post_latest_comments') }}</a></h3>
             <div class="block-body">
                 <xf:foreach loop="$comments" value="$comment">
                     <xf:js src="xf/comment.js" min="1" />
@@ -929,8 +955,8 @@
                                                     defaultname="{{ phrase('deleted_member') }}" />
                                             </li>
                                             <li><a href="{{ link('posts', $comment) }}" class="u-concealed">
-                                                    <xf:date time="$comment.post_date" />
-                                                </a></li>
+                                                <xf:date time="$comment.post_date" />
+                                            </a></li>
                                         </ul>
                                     </div>
 
@@ -948,7 +974,9 @@
     </div>
 </xf:if>
 
-<xf:widgetpos id="taylorj_blogs_blog_post_below_post" context-blogPost="{$blogPost}" />]]></template>
+<xf:widgetpos id="taylorj_blogs_blog_post_below_post" context-blogPost="{$blogPost}" />
+
+]]></template>
   <template type="public" title="taylorj_blogs_blog_post_view.less" version_id="1000034" version_string="1.0.0 Beta 4"><![CDATA[.taylorJUserBlogs-post-content {
     padding: @xf-paddingLarge;
 }]]></template>
@@ -1667,6 +1695,22 @@ h1 {
 		</div>
 	</div>
 </xf:macro>
+]]></template>
+  <template type="public" title="taylorj_blogs_widget_similar_blog_posts" version_id="1040070" version_string="1.4.0"><![CDATA[<xf:if is="$blogPosts is not empty">
+	<div class="block" {{ widget_data($widget) }}>
+		<div class="block-container">
+			<h3 class="block-header">{{ $title ?: phrase('taylorj_blogs_similar_blog_posts') }}</h3>
+
+			<div class="block-body">
+				<div class="structItemContainer">
+					<xf:foreach loop="$blogPosts" value="$blogPost">
+						<xf:macro id="taylorj_blogs_list_macros::blogPost" arg-blogPost="{$blogPost}" />
+					</xf:foreach>
+				</div>
+			</div>
+		</div>
+	</div>
+</xf:if>
 ]]></template>
   <template type="public" title="widget_taylorj_blogs_new_blog_posts" version_id="1000036" version_string="1.0.0 Beta 6"><![CDATA[<xf:if is="$blogPosts is not empty OR ($blogPosts is empty AND $filter != 'latest')">
 	<div class="block" {{ widget_data($widget) }}>

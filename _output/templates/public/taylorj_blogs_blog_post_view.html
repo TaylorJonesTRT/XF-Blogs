@@ -1,3 +1,10 @@
+<xf:set var="$bpSnippet" value="{{ snippet($blogPost.blog_post_content, 0, {'stripBbCode': true}) }}" />
+
+<xf:macro id="metadata_macros::metadata"
+    arg-title="{$blogpost.blog_post_title}"
+    arg-description="{$bpSnippet}"
+    arg-imageUrl="{$blogPost.cover_image}" />
+
 <xf:css src="taylorj_blogs_blog_post_view.less" />
 <xf:css src="message.less" />
 
@@ -89,8 +96,8 @@
     arg-canonicalUrl="{{ link('canonical:blogs/post', $blogPost) }}" />
 
 <xf:macro id="metadata_macros::oembed"
-	arg-oembedUrl="{$blogPost.getOembedEndpointUrl()}"
-	arg-title="{$blogPost.getContentTitle()}" />
+    arg-oembedUrl="{$blogPost.getOembedEndpointUrl()}"
+    arg-title="{$blogPost.getContentTitle()}" />
 
 <xf:macro id="lightbox_macros::setup" arg-canViewAttachments="{$blogPost.canViewAttachments()}" />
 <div class="block {{ $blogPost.blog_post_state == 'moderated' ? 'is-moderated' : '' }}" data-xf-init="lightbox"
@@ -257,7 +264,7 @@
     <div class="block">
         <div class="block-container">
             <h3 class="block-header"><a href="{{ link('threads', $blogPost.Discussion) }}"> {{
-                    phrase('taylorj_blogs_blog_post_latest_comments') }}</a></h3>
+                phrase('taylorj_blogs_blog_post_latest_comments') }}</a></h3>
             <div class="block-body">
                 <xf:foreach loop="$comments" value="$comment">
                     <xf:js src="xf/comment.js" min="1" />
@@ -284,8 +291,8 @@
                                                     defaultname="{{ phrase('deleted_member') }}" />
                                             </li>
                                             <li><a href="{{ link('posts', $comment) }}" class="u-concealed">
-                                                    <xf:date time="$comment.post_date" />
-                                                </a></li>
+                                                <xf:date time="$comment.post_date" />
+                                            </a></li>
                                         </ul>
                                     </div>
 
@@ -304,3 +311,4 @@
 </xf:if>
 
 <xf:widgetpos id="taylorj_blogs_blog_post_below_post" context-blogPost="{$blogPost}" />
+
