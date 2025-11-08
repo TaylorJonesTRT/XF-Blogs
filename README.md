@@ -29,8 +29,8 @@ Permissions
 
 #### \[TaylorJ\] Blogs permissions
 
-- Can view own blog
 - Can view blogs
+- Can view own blog
 - Can view any blog
 - Can edit own blog
 - Can delete own blog
@@ -75,6 +75,7 @@ Widget Definitions
 |---|---|
 | \[TaylorJ\] Latest Blog Posts (`taylorj_latest_blog_posts`) | Displays latest blog posts |
 | \[TaylorJ\] Other blog posts by author (`taylorj_other_blog_posts`) | Show other random blog posts by the same author/user. |
+| \[Taylor J\] Similar Blog Posts (`taylorj_similar_posts`) | Show a widget of other similar blog posts to the one being read (requires XFES) |
 
 Cron Entries
 ------------
@@ -82,4 +83,5 @@ Cron Entries
 | Name | Run on... | Run at hours | Run at minutes |
 |---|---|---|---|
 | Update the blog post count to reflect visible posts | Any day of the month | 12AM | 0 |
+| \[TaylorJ\] Blogs Update Similar Blog Posts | Any day of the week | Any | 30 |
 | Update Blog Post View Counter | Any day of the month | Any | 30 |

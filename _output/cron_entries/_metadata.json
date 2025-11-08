@@ -2,6 +2,9 @@
     "taylorjBlogsPostCount.json": {
         "hash": "c73bb545f2c27c6818989928ab21f318"
     },
+    "taylorjBlogsSimilarPosts.json": {
+        "hash": "f56de6be8383341eeb8bc8c4a6f026a1"
+    },
     "userblogs.json": {
         "hash": "b1d3bb8cffab5df0f64f261cb9fd445e"
     }

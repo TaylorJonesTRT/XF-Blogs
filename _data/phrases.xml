@@ -3,6 +3,7 @@
   <phrase title="admin_navigation.blogs" version_id="1000035" version_string="1.0.0 Beta 5"><![CDATA[Blogs]]></phrase>
   <phrase title="admin_navigation.taylorjBlogsSettings" version_id="1000035" version_string="1.0.0 Beta 5"><![CDATA[Settings]]></phrase>
   <phrase title="cron_entry.taylorjBlogsPostCount" version_id="1030070" version_string="1.3.0"><![CDATA[Update the blog post count to reflect visible posts]]></phrase>
+  <phrase title="cron_entry.taylorjBlogsSimilarPosts" version_id="1040070" version_string="1.4.0"><![CDATA[[TaylorJ] Blogs Update Similar Blog Posts]]></phrase>
   <phrase title="cron_entry.userblogs" version_id="1000031" version_string="1.0.0 Beta 1"><![CDATA[Update Blog Post View Counter]]></phrase>
   <phrase title="member_stat.taylorj_blogs_most_blog_posts" version_id="1000036" version_string="1.0.0 Beta 6"><![CDATA[Most blog posts]]></phrase>
   <phrase title="nav.taylorjBlogs" version_id="1000031" version_string="1.0.0 Beta 1"><![CDATA[Blogs]]></phrase>
@@ -78,7 +79,7 @@
   <phrase title="taylorj_blogs_blog_edit_delete_header" version_id="1030070" version_string="1.3.0"><![CDATA[Delete blog header]]></phrase>
   <phrase title="taylorj_blogs_blog_edit_description" version_id="1000035" version_string="1.0.0 Beta 5"><![CDATA[Blog Description]]></phrase>
   <phrase title="taylorj_blogs_blog_edit_header_image" version_id="1000035" version_string="1.0.0 Beta 5"><![CDATA[Header Image]]></phrase>
-  <phrase title="taylorj_blogs_blog_edit_threshold" version_id="1000035" version_string="1.0.0 Beta 5"><![CDATA[Please keep it below the threshold]]></phrase>
+  <phrase title="taylorj_blogs_blog_edit_threshold" version_id="1050070" version_string="1.5.0"><![CDATA[Image will be resized to 500px by 500px]]></phrase>
   <phrase title="taylorj_blogs_blog_edit_title" version_id="1000035" version_string="1.0.0 Beta 5"><![CDATA[Title]]></phrase>
   <phrase title="taylorj_blogs_blog_error_delete" version_id="1000031" version_string="1.0.0 Beta 1"><![CDATA[You do not have permissions to delete this blog]]></phrase>
   <phrase title="taylorj_blogs_blog_error_edit" version_id="1000031" version_string="1.0.0 Beta 1"><![CDATA[You do not have permissions to edit this blog]]></phrase>
@@ -139,6 +140,7 @@
   <phrase title="taylorj_blogs_owned_blogs" version_id="1010070" version_string="1.1.0"><![CDATA[Your blogs]]></phrase>
   <phrase title="taylorj_blogs_scheduled_posts_button" version_id="1000037" version_string="1.0.0 Beta 7"><![CDATA[Scheduled blog posts]]></phrase>
   <phrase title="taylorj_blogs_search_blog_posts" version_id="1010170" version_string="1.1.1"><![CDATA[Search blog posts]]></phrase>
+  <phrase title="taylorj_blogs_similar_blog_posts" version_id="1040070" version_string="1.4.0"><![CDATA[Similar blog posts]]></phrase>
   <phrase title="taylorj_blogs_time" version_id="1000034" version_string="1.0.0 Beta 4"><![CDATA[Time]]></phrase>
   <phrase title="taylorj_blogs_titile_verification_error" version_id="1000031" version_string="1.0.0 Beta 1"><![CDATA[Blog titles need to be at least 10 characters long]]></phrase>
   <phrase title="taylorj_blogs_unapprove_blog_posts" version_id="1030070" version_string="1.3.0"><![CDATA[Unapprove blog posts]]></phrase>
@@ -153,8 +155,10 @@
   <phrase title="widget.taylorj_blogs_other_author_blog_posts" version_id="1030070" version_string="1.3.0"><![CDATA[Other blog posts by this author]]></phrase>
   <phrase title="widget_def.taylorj_latest_blog_posts" version_id="1030070" version_string="1.3.0"><![CDATA[[TaylorJ] Latest Blog Posts]]></phrase>
   <phrase title="widget_def.taylorj_other_blog_posts" version_id="1030070" version_string="1.3.0"><![CDATA[[TaylorJ] Other blog posts by author]]></phrase>
+  <phrase title="widget_def.taylorj_similar_posts" version_id="1040070" version_string="1.4.0"><![CDATA[[Taylor J] Similar Blog Posts]]></phrase>
   <phrase title="widget_def_desc.taylorj_latest_blog_posts" version_id="1000035" version_string="1.0.0 Beta 5"><![CDATA[Displays latest blog posts]]></phrase>
   <phrase title="widget_def_desc.taylorj_other_blog_posts" version_id="1030070" version_string="1.3.0"><![CDATA[Show other random blog posts by the same author/user.]]></phrase>
+  <phrase title="widget_def_desc.taylorj_similar_posts" version_id="1040070" version_string="1.4.0"><![CDATA[Show a widget of other similar blog posts to the one being read (requires XFES)]]></phrase>
   <phrase title="widget_pos.taylorj_blogs_blog_post_below_post" version_id="1030070" version_string="1.3.0"><![CDATA[[TaylorJ] Blog Post View:Below]]></phrase>
   <phrase title="widget_pos_desc.taylorj_blogs_blog_post_below_post" version_id="1030070" version_string="1.3.0"><![CDATA[Position in the bottom of the taylorj_blogs_blog_post_view template. Widget templates rendered in this position can use the current blog post entity in the <code>{$context.blogPost}</code> param.]]></phrase>
 </phrases>

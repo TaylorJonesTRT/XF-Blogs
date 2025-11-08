@@ -10,9 +10,6 @@ use XF\Mvc\ParameterBag;
 use XF\Mvc\Reply\Exception;
 use XF\Pub\Controller\AbstractController;
 
-/**
- * Controller for handling the blogs addon instance
- */
 class Blogs extends AbstractController
 {
 	public function actionIndex(ParameterBag $params)
@@ -152,8 +149,10 @@ class Blogs extends AbstractController
 			{
 				if ($upload = $this->request->getFile('upload', false, false))
 				{
+					$image = $this->app()->imageManager()->imageFromFile($upload->getTempFile());
+					$image->resizeAndCrop(500, 500);
 					/** @var Blog $blogRepo */
-					Utils::getBlogRepo()->setBlogHeaderImagePath($blog->blog_id, $upload);
+					Utils::getBlogRepo()->setBlogHeaderImagePath($blog->blog_id, $image);
 					$blog->fastUpdate('blog_has_header', '1');
 				}
 			}
@@ -168,6 +167,8 @@ class Blogs extends AbstractController
 		{
 			if ($upload = $this->request->getFile('upload', false, false))
 			{
+				$image = $this->app()->imageManager()->imageFromFile($upload->getTempFile());
+				$image->resizeAndCrop(500, 500);
 				/** @var Blog $blogRepo */
 				Utils::getBlogRepo()->setBlogHeaderImagePath($blog->blog_id, $upload);
 				$blog->fastUpdate('blog_has_header', '1');

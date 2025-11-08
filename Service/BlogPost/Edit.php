@@ -63,7 +63,15 @@ class Edit extends AbstractService
 	{
 		$blogPost = $this->blogPost;
 
-		$blogPost->fastUpdate('blog_post_date', \XF::$time);
+		if ($blogPost->blog_post_state != 'visible')
+		{
+			$blogPost->fastUpdate('blog_post_date', \XF::$time);
+		}
+
+		if ($blogPost->blog_post_state == 'visible' && $blogPost->blog_post_date <= \XF::$time)
+		{
+			$blogPost->fastUpdate('blog_post_last_edit_date', \XF::$time);
+		}
 
 		$blogPost->save(true, false);
 

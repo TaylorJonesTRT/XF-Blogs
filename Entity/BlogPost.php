@@ -83,7 +83,6 @@ class BlogPost extends Entity implements RenderableContentInterface, DatableInte
 	{
 		if (strlen($value) < 10)
 		{
-			//          the error below needs to be changed to use a phrase rather than hard coded text
 			$this->error(\XF::phrase('taylorj_blogs_blog_post_title_verification_error'), 'title');
 			return false;
 		}
@@ -180,7 +179,7 @@ class BlogPost extends Entity implements RenderableContentInterface, DatableInte
 
 		return (
 			$this->user_id == $visitor->user_id
-			&& $visitor->hasPermission('taylorjBlogPost', 'canDeleteOwnPost')
+				&& $visitor->hasPermission('taylorjBlogPost', 'canDeleteOwnPost')
 		);
 	}
 
@@ -195,7 +194,7 @@ class BlogPost extends Entity implements RenderableContentInterface, DatableInte
 
 		return (
 			$this->user_id == $visitor->user_id
-			&& $visitor->hasPermission('taylorjBlogPost', 'canUndeleteOwnPost')
+				&& $visitor->hasPermission('taylorjBlogPost', 'canUndeleteOwnPost')
 		);
 	}
 
@@ -267,7 +266,7 @@ class BlogPost extends Entity implements RenderableContentInterface, DatableInte
 	{
 		return (
 			\XF::visitor()->user_id
-			&& \XF::visitor()->hasPermission('forum', 'approveUnapprove')
+				&& \XF::visitor()->hasPermission('forum', 'approveUnapprove')
 		);
 	}
 
@@ -307,9 +306,9 @@ class BlogPost extends Entity implements RenderableContentInterface, DatableInte
 
 		return (
 			$this->app()->options()->taylorjBlogsBlogPostDeleteThreadAction['add_post']
-			&& $this->Discussion
-			&& $visitor->user_id
-			&& $visitor->user_id != $this->user_id
+				&& $this->Discussion
+				&& $visitor->user_id
+				&& $visitor->user_id != $this->user_id
 			// technically can allow this for own blog post owners, but may be somewhat confusing
 		);
 	}
@@ -320,7 +319,7 @@ class BlogPost extends Entity implements RenderableContentInterface, DatableInte
 
 		return (
 			$visitor->user_id
-			&& $this->blog_post_state == 'visible'
+				&& $this->blog_post_state == 'visible'
 		);
 	}
 
@@ -377,8 +376,8 @@ class BlogPost extends Entity implements RenderableContentInterface, DatableInte
 	public function getCoverImage()
 	{
 		$attachments = $this->attach_count
-			? $this->Attachments
-			: $this->_em->getEmptyCollection();
+		? $this->Attachments
+		: $this->_em->getEmptyCollection();
 
 		return $this->getCoverImageInternal(
 			$attachments,
@@ -419,6 +418,11 @@ class BlogPost extends Entity implements RenderableContentInterface, DatableInte
 	{
 		$route = ($canonical ? 'canonical:' : '') . 'blogs/post';
 		return $this->app()->router('public')->buildLink($route, $this, $extraParams, $hash);
+	}
+
+	public function getContentTitle()
+	{
+		return $this->blog_post_title;
 	}
 
 	public function setUnfurls($unfurls)
@@ -612,6 +616,13 @@ class BlogPost extends Entity implements RenderableContentInterface, DatableInte
 					['content_id', '=', '$blog_post_id'],
 				],
 				'primary' => true,
+			],
+			'SimilarBlogPosts' => [
+				'entity' => 'TaylorJ\Blogs:BlogPostSimilar',
+				'type' => self::TO_ONE,
+				'conditions' => 'blog_post_id',
+				'primary' => true,
+				'cascadeDelete' => true,
 			],
 		];
 		$structure->defaultWith = ['User', 'Blog'];

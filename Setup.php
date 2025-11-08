@@ -103,6 +103,18 @@ class Setup extends AbstractSetup
 		$this->insertThreadType('blogPost', 'TaylorJ\Blogs:BlogPost', 'TaylorJ/Blogs');
 	}
 
+	public function installStep7()
+	{
+		$this->createTable('xf_taylorj_blogs_blog_post_similar', function (Create $table)
+		{
+			$table->addColumn('blog_post_id', 'int');
+			$table->addColumn('last_update_date', 'int')->setDefault(0);
+			$table->addColumn('pending_rebuild', 'tinyint')->setDefault(0);
+			$table->addColumn('similar_blog_post_ids', 'blob');
+			$table->addPrimaryKey('blog_post_id');
+		});
+	}
+
 	public function upgrade1000034Step1()
 	{
 		$this->alterTable('xf_taylorj_blogs_blog_post', function (Alter $table)
@@ -169,6 +181,18 @@ class Setup extends AbstractSetup
 		$this->alterTable('xf_taylorj_blogs_blog', function (Alter $table)
 		{
 			$table->addColumn('blog_state', 'enum')->values(['visible', 'moderated', 'deleted'])->setDefault('visible');
+		});
+	}
+
+	public function upgrade1040070Step1()
+	{
+		$this->createTable('xf_taylorj_blogs_blog_post_similar', function (Create $table)
+		{
+			$table->addColumn('blog_post_id', 'int');
+			$table->addColumn('last_update_date', 'int')->setDefault(0);
+			$table->addColumn('pending_rebuild', 'tinyint')->setDefault(0);
+			$table->addColumn('similar_blog_post_ids', 'blob');
+			$table->addPrimaryKey('blog_post_id');
 		});
 	}
 
