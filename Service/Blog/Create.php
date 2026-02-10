@@ -15,7 +15,7 @@ class Create extends AbstractService
 	/**
 	 * @var \TaylorJ\Blogs\Entity\Blog
 	 */
-	protected $blog;
+	public $blog;
 
 	/**
 	 * @var TaylorJ\Blogs\Entity\Blog 

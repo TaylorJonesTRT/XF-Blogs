@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(XDEBUG_MODE=off php:*)",
+      "Bash(XDEBUG_MODE=off ./vendor/bin/phpunit:*)",
+      "WebFetch(domain:github.com)",
+      "Bash(curl:*)",
+      "WebSearch",
+      "WebFetch(domain:packagist.org)",
+      "WebFetch(domain:raw.githubusercontent.com)"
+    ]
+  }
+}

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <widget_definitions>
+  <widget_definition definition_id="taylorj_blo_similar_posts" definition_class="TaylorJ\Blogs\Widget\SimilarBlogPosts"/>
   <widget_definition definition_id="taylorj_latest_blog_posts" definition_class="TaylorJ\Blogs\Widget\LatestBlogPosts"/>
   <widget_definition definition_id="taylorj_other_blog_posts" definition_class="TaylorJ\Blogs\Widget\OtherAuthorBlogPosts"/>
   <widget_definition definition_id="taylorj_similar_posts" definition_class="TaylorJ\Blogs\Widget\SimilarBlogPosts"/>

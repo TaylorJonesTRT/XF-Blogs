@@ -13,9 +13,9 @@ use XFES\Search\Query\MoreLikeThisQuery;
 
 class BlogPost extends Repository
 {
-	public function logThreadView(BlogPostEntity $blogPost)
-	{
-		$this->db()->query("
+    public function logThreadView(BlogPostEntity $blogPost)
+    {
+        $this->db()->query("
 			INSERT INTO xf_taylorj_blogs_blog_post_view
 			(blog_post_id, total)
 			VALUES
@@ -23,256 +23,256 @@ class BlogPost extends Repository
 			ON DUPLICATE KEY UPDATE
 			total = total + 1
 			", $blogPost->blog_post_id);
-	}
+    }
 
-	public function batchUpdateThreadViews()
-	{
-		$db = $this->db();
-		$db->query("
+    public function batchUpdateThreadViews()
+    {
+        $db = $this->db();
+        $db->query("
 			UPDATE xf_taylorj_blogs_blog_post AS t
 			INNER JOIN xf_taylorj_blogs_blog_post_view AS tv ON (t.blog_post_id = tv.blog_post_id)
 			SET t.view_count = t.view_count + tv.total
 			");
-		$db->emptyTable('xf_taylorj_blogs_blog_post_view');
-	}
+        $db->emptyTable('xf_taylorj_blogs_blog_post_view');
+    }
 
-	public function findBlogPostForThread(Thread $thread)
-	{
-		/** @var BlogPostFinder $finder */
-		$finder = $this->finder('TaylorJ\Blogs:BlogPost');
+    public function findBlogPostForThread(Thread $thread)
+    {
+        /** @var BlogPostFinder $finder */
+        $finder = $this->finder('TaylorJ\Blogs:BlogPost');
 
-		$finder->where('discussion_thread_id', $thread->thread_id);
+        $finder->where('discussion_thread_id', $thread->thread_id);
 
-		return $finder;
-	}
+        return $finder;
+    }
 
-	public function updateJob($blogPost)
-	{
-		$jobId = 'taylorjblogs_scheduledpost_' . $blogPost->blog_post_id;
-		$db = $this->db();
+    public function updateJob($blogPost)
+    {
+        $jobId = 'taylorjblogs_scheduledpost_' . $blogPost->blog_post_id;
+        $db = $this->db();
 
-		$db->query("
+        $db->query("
 			UPDATE xf_job
 			SET trigger_date = ?
 			WHERE unique_key = ?
 			", [$blogPost->scheduled_post_date_time, $jobId]);
-	}
+    }
 
-	public function removeJob($blogPost)
-	{
-		$jobId = 'taylorjblogs_scheduledpost_' . $blogPost->blog_post_id;
-		/*$db = $this->db();*/
-		/**/
-		/*$db->query("DELETE FROM xf_job WHERE unique_key = ?", [$jobId]);*/
-		$this->app()->jobManager()->cancelUniqueJob($jobId);
-	}
+    public function removeJob($blogPost)
+    {
+        $jobId = 'taylorjblogs_scheduledpost_' . $blogPost->blog_post_id;
+        /*$db = $this->db();*/
+        /**/
+        /*$db->query("DELETE FROM xf_job WHERE unique_key = ?", [$jobId]);*/
+        $this->app()->jobManager()->cancelUniqueJob($jobId);
+    }
 
-	/**
-	 * @return ThreadFinder
-	 */
-	public function findLatestBlogPosts()
-	{
-		return $this->finder(BlogPostFinder::class)
-			->where('blog_post_state', 'visible')
-			->order('blog_post_date', 'DESC');
-	}
+    /**
+     * @return ThreadFinder
+     */
+    public function findLatestBlogPosts()
+    {
+        return $this->finder(BlogPostFinder::class)
+            ->where('blog_post_state', 'visible')
+            ->order('blog_post_date', 'DESC');
+    }
 
-	public function findBlogPostsByUser($userId)
-	{
-		$blogPostFinder = $this->finder('TaylorJ\Blogs:BlogPost')
-			->where('user_id', $userId)
-			->setDefaultOrder('blog_post_date', 'desc');
+    public function findBlogPostsByUser($userId)
+    {
+        $blogPostFinder = $this->finder('TaylorJ\Blogs:BlogPost')
+            ->where('user_id', $userId)
+            ->setDefaultOrder('blog_post_date', 'desc');
 
-		return $blogPostFinder;
-	}
+        return $blogPostFinder;
+    }
 
-	public function findBlogPostAuthor($blogPostId)
-	{
-		$blogPostFinder = $this->finder('TaylorJ\Blogs:BlogPost')
-			->where('blog_post_id', $blogPostId)
-			->fetchOne();
+    public function findBlogPostAuthor($blogPostId)
+    {
+        $blogPostFinder = $this->finder('TaylorJ\Blogs:BlogPost')
+            ->where('blog_post_id', $blogPostId)
+            ->fetchOne();
 
-		return $blogPostFinder->user_id;
-	}
+        return $blogPostFinder->user_id;
+    }
 
-	public function findOtherPostsByOwnerRandom($userId)
-	{
-		/** @var BlogPostFinder $finder */
-		$finder = $this->finder('TaylorJ\Blogs:BlogPost');
+    public function findOtherPostsByOwnerRandom($userId)
+    {
+        /** @var BlogPostFinder $finder */
+        $finder = $this->finder('TaylorJ\Blogs:BlogPost');
 
-		$randomBlogPosts = $finder
-			->where('user_id', $userId)
-			->order($finder->expression('RAND()'));
+        $randomBlogPosts = $finder
+            ->where('user_id', $userId)
+            ->order($finder->expression('RAND()'));
 
-		return $randomBlogPosts;
-	}
+        return $randomBlogPosts;
+    }
 
-	public function getUserBlogPostCount($userId)
-	{
-		return $this->db()->fetchOne("
+    public function getUserBlogPostCount($userId)
+    {
+        return $this->db()->fetchOne("
 			SELECT COUNT(*)
 			FROM xf_taylorj_blogs_blog_post
 			WHERE user_id = ?
 			AND blog_post_state = 'visible'
 			", $userId);
-	}
+    }
 
-	public function sendModeratorActionAlert(
-		BlogPostEntity $blogPost,
-		$action,
-		$reason = '',
-		array $extra = [],
-		?User $forceUser = null
-	)
-	{
-		if (!$forceUser)
-		{
-			if (!$blogPost->user_id || !$blogPost->User)
-			{
-				return false;
-			}
+    public function sendModeratorActionAlert(
+        BlogPostEntity $blogPost,
+        $action,
+        $reason = '',
+        array $extra = [],
+        ?User $forceUser = null
+    )
+    {
+        if (!$forceUser)
+        {
+            if (!$blogPost->user_id || !$blogPost->User)
+            {
+                return false;
+            }
 
-			$forceUser = $blogPost->User;
-		}
+            $forceUser = $blogPost->User;
+        }
 
-		$extra = array_merge([
-			'title' => $blogPost->blog_post_title,
-			'link' => $this->app()->router('public')->buildLink('nopath:blogs', $blogPost),
-			'reason' => $reason,
-		], $extra);
+        $extra = array_merge([
+            'title' => $blogPost->blog_post_title,
+            'link' => $this->app()->router('public')->buildLink('nopath:blogs', $blogPost),
+            'reason' => $reason,
+        ], $extra);
 
-		/** @var UserAlert $alertRepo */
-		$alertRepo = $this->repository('XF:UserAlert');
-		$alertRepo->alert(
-			$forceUser,
-			0,
-			'',
-			'user',
-			$forceUser->user_id,
-			"blog_post_{$action}",
-			$extra,
-			['dependsOnAddOnId' => 'TaylorJ/Blogs']
-		);
+        /** @var UserAlert $alertRepo */
+        $alertRepo = $this->repository('XF:UserAlert');
+        $alertRepo->alert(
+            $forceUser,
+            0,
+            '',
+            'user',
+            $forceUser->user_id,
+            "blog_post_{$action}",
+            $extra,
+            ['dependsOnAddOnId' => 'TaylorJ/Blogs']
+        );
 
-		return true;
-	}
+        return true;
+    }
 
-	/**
-	 * @param BlogPostEntity $blogPost
-	 *
-	 * @return BlogPostSimilar
-	 */
-	public function rebuildSimilarBlogPostsCache(BlogPostEntity $blogPost): BlogPostSimilar
-	{
-		$blogPostIds = $this->getSimilarBlogPostIds(
-			$blogPost,
-			BlogPostSimilar::MAX_RESULTS,
-			false
-		);
+    /**
+     * @param BlogPostEntity $blogPost
+     *
+     * @return BlogPostSimilar
+     */
+    public function rebuildSimilarBlogPostsCache(BlogPostEntity $blogPost): BlogPostSimilar
+    {
+        $blogPostIds = $this->getSimilarBlogPostIds(
+            $blogPost,
+            BlogPostSimilar::MAX_RESULTS,
+            false
+        );
 
-		/** @var BlogPostSimilar $cache */
-		$cache = $blogPost->getRelationOrDefault('SimilarBlogPosts');
-		$cache->pending_rebuild = false;
-		$cache->last_update_date = \XF::$time;
-		$cache->similar_blog_post_ids = $blogPostIds;
-		$cache->save(false);
+        /** @var BlogPostSimilar $cache */
+        $cache = $blogPost->getRelationOrDefault('SimilarBlogPosts');
+        $cache->pending_rebuild = false;
+        $cache->last_update_date = \XF::$time;
+        $cache->similar_blog_post_ids = $blogPostIds;
+        $cache->save(false);
 
-		return $cache;
-	}
+        return $cache;
+    }
 
-	/**
-	 * @param BlogPostEntity $blogPost
-	 * @param int|null          $maxResults
-	 * @param bool              $applyVisitorPermissions
-	 *
-	 * @return int[]
-	 */
-	public function getSimilarBlogPostIds(
-		BlogPostEntity $blogPost,
-		$maxResults = null,
-		bool $applyVisitorPermissions = true
-	): array
-	{
-		/** @var Search $searcher */
-		$searcher = $this->app()->search();
+    /**
+     * @param BlogPostEntity $blogPost
+     * @param int|null          $maxResults
+     * @param bool              $applyVisitorPermissions
+     *
+     * @return int[]
+     */
+    public function getSimilarBlogPostIds(
+        BlogPostEntity $blogPost,
+        $maxResults = null,
+        bool $applyVisitorPermissions = true
+    ): array
+    {
+        /** @var Search $searcher */
+        $searcher = $this->app()->search();
 
-		$results = $searcher->moreLikeThis(
-			$this->getSimilarBlogPostsMltQuery($blogPost),
-			$maxResults,
-			$applyVisitorPermissions
-		);
+        $results = $searcher->moreLikeThis(
+            $this->getSimilarBlogPostsMltQuery($blogPost),
+            $maxResults,
+            $applyVisitorPermissions
+        );
 
-		$threadIds = [];
-		foreach ($results AS $result)
-		{
-			$threadIds[] = $result[1];
-		}
+        $threadIds = [];
+        foreach ($results AS $result)
+        {
+            $threadIds[] = $result[1];
+        }
 
-		return $threadIds;
-	}
+        return $threadIds;
+    }
 
-	/**
-	 * @param BlogPostEntity $blogPost
-	 *
-	 * @return bool
-	 */
-	public function flagIfSimilarBlogPostsCacheNeedsRebuild(
-		BlogPostEntity $blogPost
-	): bool
-	{
-		/** @var ThreadSimilar $cache */
-		$cache = $blogPost->getRelationOrDefault('SimilarBlogPosts');
-		if (!$cache->exists())
-		{
-			$cache->pending_rebuild = true;
-			$cache->save();
-			return true;
-		}
+    /**
+     * @param BlogPostEntity $blogPost
+     *
+     * @return bool
+     */
+    public function flagIfSimilarBlogPostsCacheNeedsRebuild(
+        BlogPostEntity $blogPost
+    ): bool
+    {
+        /** @var ThreadSimilar $cache */
+        $cache = $blogPost->getRelationOrDefault('SimilarBlogPosts');
+        if (!$cache->exists())
+        {
+            $cache->pending_rebuild = true;
+            $cache->save();
+            return true;
+        }
 
-		if ($cache->pending_rebuild)
-		{
-			return true;
-		}
+        if ($cache->pending_rebuild)
+        {
+            return true;
+        }
 
-		if ($cache->isRebuildRequired())
-		{
-			$cache->fastUpdate('pending_rebuild', 1);
+        if ($cache->isRebuildRequired())
+        {
+            $cache->fastUpdate('pending_rebuild', 1);
 
-			return true;
-		}
-		else
-		{
-			return false;
-		}
-	}
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
 
-	/**
-	 * @param BlogPostEntity $blogPost
-	 *
-	 * @return MoreLikeThisQuery
-	 */
-	public function getSimilarBlogPostsMltQuery(
-		BlogPostEntity $blogPost
-	): MoreLikeThisQuery
-	{
-		/** @var Search $searcher */
-		$searcher = $this->app()->search();
+    /**
+     * @param BlogPostEntity $blogPost
+     *
+     * @return MoreLikeThisQuery
+     */
+    public function getSimilarBlogPostsMltQuery(
+        BlogPostEntity $blogPost
+    ): MoreLikeThisQuery
+    {
+        /** @var Search $searcher */
+        $searcher = $this->app()->search();
 
-		$query = $searcher->getMoreLikeThisQuery();
-		$query
-			->like($blogPost)
-			->inType('taylorj_blogs_blog_post')
-			->allowHidden(false);
+        $query = $searcher->getMoreLikeThisQuery();
+        $query
+            ->like($blogPost)
+            ->inType('taylorj_blogs_blog_post')
+            ->allowHidden(false);
 
-		$boost = floatval($this->app()->options()->xfesSimilarThreads['forumBoost']);
-		if ($boost > 1)
-		{
-			$query->orderedBy(new FunctionOrder([
-				'filter' => ['term' => ['blogPost' => $blogPost->blog_post_id]],
-				'weight' => $boost,
-			]));
-		}
+        $boost = floatval($this->app()->options()->xfesSimilarThreads['forumBoost']);
+        if ($boost > 1)
+        {
+            $query->orderedBy(new FunctionOrder([
+                'filter' => ['term' => ['blogPost' => $blogPost->blog_post_id]],
+                'weight' => $boost,
+            ]));
+        }
 
-		return $query;
-	}
+        return $query;
+    }
 }

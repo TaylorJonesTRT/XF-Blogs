@@ -1,0 +1,22 @@
+{
+    "name": "taylorj/xf-blogs",
+    "description": "A user blogging system to allow your users to express themselves",
+    "type": "library",
+    "license": "proprietary",
+    "version": "1.6.0",
+    "require": {
+        "php": ">=7.2.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^10.0",
+        "hampel/xenforo-test-framework": "^3.0"
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "TaylorJ\\Blogs\\Tests\\": "tests/"
+        }
+    },
+    "config": {
+        "optimize-autoloader": true
+    }
+}
