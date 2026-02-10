@@ -188,6 +188,7 @@
   <phrase title="widget_def_desc.taylorj_blo_similar_posts" version_id="1050170" version_string="1.5.1"><![CDATA[Show a widget of other similar blog posts to the one being read (requires XFES)]]></phrase>
   <phrase title="widget_def_desc.taylorj_latest_blog_posts" version_id="1000035" version_string="1.0.0 Beta 5"><![CDATA[Displays latest blog posts]]></phrase>
   <phrase title="widget_def_desc.taylorj_other_blog_posts" version_id="1030070" version_string="1.3.0"><![CDATA[Show other random blog posts by the same author/user.]]></phrase>
+  <phrase title="widget_def_desc.taylorj_similar_posts" version_id="1040070" version_string="1.4.0"><![CDATA[Show a widget of other similar blog posts to the one being read (requires XFES)]]></phrase>
   <phrase title="widget_pos.taylorj_blogs_blog_post_below_post" version_id="1030070" version_string="1.3.0"><![CDATA[[TaylorJ] Blog Post View:Below]]></phrase>
   <phrase title="widget_pos_desc.taylorj_blogs_blog_post_below_post" version_id="1030070" version_string="1.3.0"><![CDATA[Position in the bottom of the taylorj_blogs_blog_post_view template. Widget templates rendered in this position can use the current blog post entity in the <code>{$context.blogPost}</code> param.]]></phrase>
 </phrases>
