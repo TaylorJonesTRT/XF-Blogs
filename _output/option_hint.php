@@ -20,6 +20,7 @@ namespace XF;
  * @property array{action: string, update_title: string, title_template: string, add_post: string}|null $taylorjBlogsBlogPostDeleteThreadAction Blog post deletion thread action
  * @property non-negative-int|null $taylorjBlogsBlogPostForum Forum for comment thread creation
  * @property bool|null $taylorjBlogsBlogPostOther Show other posts by blog post author
+ * @property int|null $taylorjBlogsBlogPostTitleLength Blog Post Title Length
  * @property positive-int|null $taylorjBlogsPerPage Blogs per page
  */
 class Options

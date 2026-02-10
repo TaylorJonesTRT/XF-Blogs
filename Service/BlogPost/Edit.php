@@ -18,7 +18,7 @@ class Edit extends AbstractService
 	/**
 	 * @var BlogPost
 	 */
-	protected $blogPost;
+	public $blogPost;
 
 	/**
 	 * @var BlogPost

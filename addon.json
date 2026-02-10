@@ -2,8 +2,8 @@
     "legacy_addon_id": "",
     "title": "[TaylorJ] Blogs",
     "description": "A user blogging system to allow your users to express themselves",
-    "version_id": 1050170,
-    "version_string": "1.5.1",
+    "version_id": 1060070,
+    "version_string": "1.6.0",
     "dev": "TaylorJ",
     "dev_url": "https://xenforo.com/community/members/taylor-j.657/",
 
@@ -16,5 +16,6 @@
             "XenForo 2.3.0"
         ]
     },
-    "icon": "fa-book"
+    "icon": "fa-book",
+    "composer_autoload": "vendor/composer"
 }

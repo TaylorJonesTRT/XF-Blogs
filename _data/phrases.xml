@@ -7,6 +7,7 @@
   <phrase title="cron_entry.userblogs" version_id="1000031" version_string="1.0.0 Beta 1"><![CDATA[Update Blog Post View Counter]]></phrase>
   <phrase title="member_stat.taylorj_blogs_most_blog_posts" version_id="1000036" version_string="1.0.0 Beta 6"><![CDATA[Most blog posts]]></phrase>
   <phrase title="nav.taylorjBlogs" version_id="1000031" version_string="1.0.0 Beta 1"><![CDATA[Blogs]]></phrase>
+  <phrase title="nav.taylorjUserBlogs" version_id="1000010" version_string="1.0.0 Alpha"><![CDATA[Blogs]]></phrase>
   <phrase title="nav.taylorjYourBlogPosts" version_id="1010070" version_string="1.1.0"><![CDATA[Your blog posts]]></phrase>
   <phrase title="nav.taylorjYourBlogs" version_id="1010070" version_string="1.1.0"><![CDATA[Your blogs]]></phrase>
   <phrase title="option.taylorjBlogPostsMinTagCount" version_id="1010070" version_string="1.1.0"><![CDATA[Minimum tag amount]]></phrase>
@@ -18,6 +19,7 @@
   <phrase title="option.taylorjBlogsBlogPostDeleteThreadAction" version_id="1030070" version_string="1.3.0"><![CDATA[Blog post deletion thread action]]></phrase>
   <phrase title="option.taylorjBlogsBlogPostForum" version_id="1000037" version_string="1.0.0 Beta 7"><![CDATA[Forum for comment thread creation]]></phrase>
   <phrase title="option.taylorjBlogsBlogPostOther" version_id="1010170" version_string="1.1.1"><![CDATA[Show other posts by blog post author]]></phrase>
+  <phrase title="option.taylorjBlogsBlogPostTitleLength" version_id="1060070" version_string="1.6.0"><![CDATA[Blog Post Title Length]]></phrase>
   <phrase title="option.taylorjBlogsPerPage" version_id="1000031" version_string="1.0.0 Beta 1"><![CDATA[Blogs per page]]></phrase>
   <phrase title="option_explain.taylorjBlogPostsMinTagCount" version_id="1010070" version_string="1.1.0"><![CDATA[How many tags must a blog post have to be able to be posted]]></phrase>
   <phrase title="option_explain.taylorjBlogPostsPerPage" version_id="1000031" version_string="1.0.0 Beta 1"><![CDATA[How many blog posts to show per page on the blog view]]></phrase>
@@ -28,9 +30,20 @@
   <phrase title="option_explain.taylorjBlogsBlogPostDeleteThreadAction" version_id="1030070" version_string="1.3.0"><![CDATA[When a blog post is deleted, take this action with any automatically created thread.]]></phrase>
   <phrase title="option_explain.taylorjBlogsBlogPostForum" version_id="1000035" version_string="1.0.0 Beta 5"><![CDATA[Pick a forum that will be used to automatically create threads in for blog posts to be used as comments.]]></phrase>
   <phrase title="option_explain.taylorjBlogsBlogPostOther" version_id="1010170" version_string="1.1.1"><![CDATA[If turned on this will show a random list of other blog posts by that author in any blog.]]></phrase>
+  <phrase title="option_explain.taylorjBlogsBlogPostTitleLength" version_id="1060070" version_string="1.6.0"><![CDATA[The length your users can make their blog post titles (including spaces)]]></phrase>
   <phrase title="option_explain.taylorjBlogsPerPage" version_id="1000031" version_string="1.0.0 Beta 1"><![CDATA[How many blogs to display per page on the blogs index page]]></phrase>
   <phrase title="option_group.taylorjBlogs" version_id="1000031" version_string="1.0.0 Beta 1"><![CDATA[[TaylorJ] Blogs - Options]]></phrase>
   <phrase title="option_group_description.taylorjBlogs" version_id="1000031" version_string="1.0.0 Beta 1"><![CDATA[Personalize the blog addon's options to fit your communities needs!]]></phrase>
+  <phrase title="permission.blogPost_canDeleteOwnPost" version_id="1000010" version_string="1.0.0 Alpha"><![CDATA[Can delete own blog post]]></phrase>
+  <phrase title="permission.blogPost_canEditOwnPost" version_id="1000010" version_string="1.0.0 Alpha"><![CDATA[Can edit own blog post]]></phrase>
+  <phrase title="permission.blogPost_canPost" version_id="1000010" version_string="1.0.0 Alpha"><![CDATA[Can create a new blog post]]></phrase>
+  <phrase title="permission.blogs_canCreate" version_id="1000010" version_string="1.0.0 Alpha"><![CDATA[Can create a blog]]></phrase>
+  <phrase title="permission.blogs_canDeleteAny" version_id="1000010" version_string="1.0.0 Alpha"><![CDATA[Can delete any blog]]></phrase>
+  <phrase title="permission.blogs_canDeleteOwn" version_id="1000010" version_string="1.0.0 Alpha"><![CDATA[Can delete own blog]]></phrase>
+  <phrase title="permission.blogs_canEditAny" version_id="1000010" version_string="1.0.0 Alpha"><![CDATA[Can edit any blog]]></phrase>
+  <phrase title="permission.blogs_canEditOwn" version_id="1000010" version_string="1.0.0 Alpha"><![CDATA[Can edit own blog]]></phrase>
+  <phrase title="permission.blogs_canUse" version_id="1000010" version_string="1.0.0 Alpha"><![CDATA[Can use the blog addon]]></phrase>
+  <phrase title="permission.blogs_viewAny" version_id="1000010" version_string="1.0.0 Alpha"><![CDATA[View others blogs]]></phrase>
   <phrase title="permission.blogs_viewOwn" version_id="1000034" version_string="1.0.0 Beta 4"><![CDATA[Can view own blogs']]></phrase>
   <phrase title="permission.taylorjBlogPost_canDeleteAny" version_id="1000031" version_string="1.0.0 Beta 1"><![CDATA[Can delete any blog post]]></phrase>
   <phrase title="permission.taylorjBlogPost_canDeleteOwnPost" version_id="1000031" version_string="1.0.0 Beta 1"><![CDATA[Can delete own blog post]]></phrase>
@@ -62,6 +75,8 @@
   <phrase title="permission.taylorjBlogs_viewOwn" version_id="1000031" version_string="1.0.0 Beta 1"><![CDATA[Can view own blog]]></phrase>
   <phrase title="permission_interface.taylorjBlogsModeratorPermissions" version_id="1000031" version_string="1.0.0 Beta 1"><![CDATA[[TaylorJ] Blogs Moderator Permissions]]></phrase>
   <phrase title="permission_interface.taylorjBlogsPermissions" version_id="1000031" version_string="1.0.0 Beta 1"><![CDATA[[TaylorJ] Blogs permissions]]></phrase>
+  <phrase title="permission_interface.userblogsModeratorPermissions" version_id="1000010" version_string="1.0.0 Alpha"><![CDATA[[TaylorJ] Blogs Moderator Permissions]]></phrase>
+  <phrase title="permission_interface.userblogsPermissions" version_id="1000010" version_string="1.0.0 Alpha"><![CDATA[[TaylorJ] Blogs Permissions]]></phrase>
   <phrase title="taylorj_blog_post_in_blog_x" version_id="1000036" version_string="1.0.0 Beta 6"><![CDATA[Blog post in blog '{title}']]></phrase>
   <phrase title="taylorj_blogs" version_id="1010070" version_string="1.1.0"><![CDATA[Blogs]]></phrase>
   <phrase title="taylorj_blogs_approve_blog_posts" version_id="1030070" version_string="1.3.0"><![CDATA[Approve blog posts]]></phrase>
@@ -121,6 +136,7 @@
   <phrase title="taylorj_blogs_blog_post_thread_delete" version_id="1030070" version_string="1.3.0"><![CDATA[This blog post has been removed and is no longer available.]]></phrase>
   <phrase title="taylorj_blogs_blog_post_thread_delete_reason_x" version_id="1030070" version_string="1.3.0"><![CDATA[This blog post has been removed and is no longer available. The following reason was provided:
 [quote][plain]{reason}[/plain][/quote]]]></phrase>
+  <phrase title="taylorj_blogs_blog_post_title_length_reached" version_id="1060070" version_string="1.6.0"><![CDATA[You have reached the max limit for post titles of {length}]]></phrase>
   <phrase title="taylorj_blogs_blog_post_title_verification_error" version_id="1000031" version_string="1.0.0 Beta 1"><![CDATA[Blog titles need to be at least 10 characters long]]></phrase>
   <phrase title="taylorj_blogs_blog_post_user_counts" version_id="1020170" version_string="1.2.1"><![CDATA[User blog post counts]]></phrase>
   <phrase title="taylorj_blogs_blog_posts" version_id="1000036" version_string="1.0.0 Beta 6"><![CDATA[Blog Posts]]></phrase>
@@ -138,6 +154,7 @@
   <phrase title="taylorj_blogs_no_change" version_id="1030070" version_string="1.3.0"><![CDATA[No change]]></phrase>
   <phrase title="taylorj_blogs_owned_blog_posts" version_id="1010070" version_string="1.1.0"><![CDATA[Your blog posts]]></phrase>
   <phrase title="taylorj_blogs_owned_blogs" version_id="1010070" version_string="1.1.0"><![CDATA[Your blogs]]></phrase>
+  <phrase title="taylorj_blogs_post_successful" version_id="1000034" version_string="1.0.0 Beta 4"><![CDATA[Blog post successful!]]></phrase>
   <phrase title="taylorj_blogs_scheduled_posts_button" version_id="1000037" version_string="1.0.0 Beta 7"><![CDATA[Scheduled blog posts]]></phrase>
   <phrase title="taylorj_blogs_search_blog_posts" version_id="1010170" version_string="1.1.1"><![CDATA[Search blog posts]]></phrase>
   <phrase title="taylorj_blogs_similar_blog_posts" version_id="1040070" version_string="1.4.0"><![CDATA[Similar blog posts]]></phrase>
@@ -147,18 +164,30 @@
   <phrase title="taylorj_blogs_undelete_blog_posts" version_id="1030070" version_string="1.3.0"><![CDATA[Undelete blog posts]]></phrase>
   <phrase title="taylorj_blogs_update_thread_title_on_blog_post_deletion" version_id="1030070" version_string="1.3.0"><![CDATA[Update thread title on blog post deletion]]></phrase>
   <phrase title="taylorj_blogs_user_tz" version_id="1000034" version_string="1.0.0 Beta 4"><![CDATA[This date/time value will be according to the <strong>{tz}</strong> timezone.]]></phrase>
+  <phrase title="taylorj_blogs_vendor_folder_missing" version_id="1060070" version_string="1.6.0"><![CDATA[The Blogs add-on vendofr folder does not exist. Please run `composer install` in the add-on directory or re-download the add-on.]]></phrase>
   <phrase title="taylorj_blogs_visible_posts_button" version_id="1000037" version_string="1.0.0 Beta 7"><![CDATA[Visible blog posts]]></phrase>
   <phrase title="taylorj_blogs_you_sure_you_want_to_delete_x_blog_posts" version_id="1030070" version_string="1.3.0"><![CDATA[Are you sure you want to delete {total} blog post(s)?]]></phrase>
+  <phrase title="taylorj_userblogs_blog_delete" version_id="1000010" version_string="1.0.0 Alpha"><![CDATA[Delete blog]]></phrase>
+  <phrase title="taylorj_userblogs_blog_edit" version_id="1000010" version_string="1.0.0 Alpha"><![CDATA[Edit blog]]></phrase>
+  <phrase title="taylorj_userblogs_blog_error_delete" version_id="1000010" version_string="1.0.0 Alpha"><![CDATA[You do not have permissions to delete this blog]]></phrase>
+  <phrase title="taylorj_userblogs_blog_error_edit" version_id="1000010" version_string="1.0.0 Alpha"><![CDATA[You do not have permissions to edit this blog]]></phrase>
+  <phrase title="taylorj_userblogs_blog_post_delete" version_id="1000010" version_string="1.0.0 Alpha"><![CDATA[Delete blog post]]></phrase>
+  <phrase title="taylorj_userblogs_blog_post_edit" version_id="1000010" version_string="1.0.0 Alpha"><![CDATA[Edit blog post]]></phrase>
+  <phrase title="taylorj_userblogs_blog_post_error_edit" version_id="1000010" version_string="1.0.0 Alpha"><![CDATA[You do not have permissions to edit this blog post]]></phrase>
+  <phrase title="taylorj_userblogs_blog_post_error_new" version_id="1000010" version_string="1.0.0 Alpha"><![CDATA[You do not have permissions to create a new blog post]]></phrase>
+  <phrase title="taylorj_userblogs_blog_post_title_verification_error" version_id="1000010" version_string="1.0.0 Alpha"><![CDATA[Blog titles need to be at least 10 characters long]]></phrase>
+  <phrase title="taylorj_userblogs_blogs_total" version_id="1000010" version_string="1.0.0 Alpha"><![CDATA[Blogs]]></phrase>
+  <phrase title="taylorj_userblogs_titile_verification_error" version_id="1000010" version_string="1.0.0 Alpha"><![CDATA[Blog titles need to be at least 10 characters long]]></phrase>
   <phrase title="taylorj_x_created_new_post_in_y" version_id="1000034" version_string="1.0.0 Beta 4"><![CDATA[{name} created a new blog post in <a {blog}>{blogTitle}</a>.]]></phrase>
   <phrase title="taylorj_x_reacted_to_your_blogpost" version_id="1000033" version_string="1.0.0 Beta 3"><![CDATA[{name} reacted to <a {posterParams}>your blog post</a> {title} with {reaction}.]]></phrase>
   <phrase title="widget.taylorj_blogs_latest_blog_posts" version_id="1000035" version_string="1.0.0 Beta 5"><![CDATA[Latest blog posts]]></phrase>
   <phrase title="widget.taylorj_blogs_other_author_blog_posts" version_id="1030070" version_string="1.3.0"><![CDATA[Other blog posts by this author]]></phrase>
+  <phrase title="widget_def.taylorj_blo_similar_posts" version_id="1050170" version_string="1.5.1"><![CDATA[[Taylor J] Similar Blog Posts]]></phrase>
   <phrase title="widget_def.taylorj_latest_blog_posts" version_id="1030070" version_string="1.3.0"><![CDATA[[TaylorJ] Latest Blog Posts]]></phrase>
   <phrase title="widget_def.taylorj_other_blog_posts" version_id="1030070" version_string="1.3.0"><![CDATA[[TaylorJ] Other blog posts by author]]></phrase>
-  <phrase title="widget_def.taylorj_similar_posts" version_id="1040070" version_string="1.4.0"><![CDATA[[Taylor J] Similar Blog Posts]]></phrase>
+  <phrase title="widget_def_desc.taylorj_blo_similar_posts" version_id="1050170" version_string="1.5.1"><![CDATA[Show a widget of other similar blog posts to the one being read (requires XFES)]]></phrase>
   <phrase title="widget_def_desc.taylorj_latest_blog_posts" version_id="1000035" version_string="1.0.0 Beta 5"><![CDATA[Displays latest blog posts]]></phrase>
   <phrase title="widget_def_desc.taylorj_other_blog_posts" version_id="1030070" version_string="1.3.0"><![CDATA[Show other random blog posts by the same author/user.]]></phrase>
-  <phrase title="widget_def_desc.taylorj_similar_posts" version_id="1040070" version_string="1.4.0"><![CDATA[Show a widget of other similar blog posts to the one being read (requires XFES)]]></phrase>
   <phrase title="widget_pos.taylorj_blogs_blog_post_below_post" version_id="1030070" version_string="1.3.0"><![CDATA[[TaylorJ] Blog Post View:Below]]></phrase>
   <phrase title="widget_pos_desc.taylorj_blogs_blog_post_below_post" version_id="1030070" version_string="1.3.0"><![CDATA[Position in the bottom of the taylorj_blogs_blog_post_view template. Widget templates rendered in this position can use the current blog post entity in the <code>{$context.blogPost}</code> param.]]></phrase>
 </phrases>
