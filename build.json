@@ -1,0 +1,10 @@
+{
+    "exec": [
+        "composer install --working-dir=_build/upload/src/addons/{addon_id}/ --no-dev --optimize-autoloader --no-interaction"
+    ],
+    "exclude": [
+        "tests",
+        "phpunit.xml",
+        ".phpunit.result.cache"
+    ]
+}

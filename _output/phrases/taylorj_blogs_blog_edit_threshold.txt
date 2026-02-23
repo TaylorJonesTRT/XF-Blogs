@@ -1,1 +1,1 @@
-Please keep it below the threshold
+Image will be resized to 500px by 500px

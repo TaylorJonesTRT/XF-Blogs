@@ -56,8 +56,10 @@ class BlogPosts extends AbstractHandler
         $visitor = \XF::visitor();
 
         /** @var \TaylorJ\Blogs\Finder\BlogPost $finder */
-        $finder = \XF::finder('TaylorJ\Blogs:BlogPost')
-            ->order('blog_post_date', 'DESC');
+        $finder = \XF::finder('TaylorJ\Blogs:BlogPost');
+        $finder
+            ->applyGlobalVisibilityChecks()
+            ->latestFirst();
 
         $this->applyFilters($finder, $filters);
 

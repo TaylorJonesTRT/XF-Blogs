@@ -13,9 +13,9 @@ class Edit extends AbstractService
 	use ValidateAndSavableTrait;
 
 	/**
-	 * @var BlogPost
+	 * @var Blog
 	 */
-	protected $blog;
+	public $blog;
 
 	public function __construct(App $app, Blog $blog)
 	{

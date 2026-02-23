@@ -18,7 +18,7 @@ class Edit extends AbstractService
 	/**
 	 * @var BlogPost
 	 */
-	protected $blogPost;
+	public $blogPost;
 
 	/**
 	 * @var BlogPost
@@ -63,7 +63,15 @@ class Edit extends AbstractService
 	{
 		$blogPost = $this->blogPost;
 
-		$blogPost->fastUpdate('blog_post_date', \XF::$time);
+		if ($blogPost->blog_post_state == 'visible' && $blogPost->isChanged('blog_post_state'))
+		{
+			$blogPost->fastUpdate('blog_post_date', \XF::$time);
+		}
+
+		if ($blogPost->blog_post_state == 'visible' && $blogPost->blog_post_date <= \XF::$time)
+		{
+			$blogPost->fastUpdate('blog_post_last_edit_date', \XF::$time);
+		}
 
 		$blogPost->save(true, false);
 
@@ -141,14 +149,17 @@ class Edit extends AbstractService
 		$blogPost->fastUpdate('blog_post_state', 'visible');
 		$blogPost->fastUpdate('blog_post_date', \XF::$time);
 
-		$creator = $this->setupBlogPostThreadCreation($blogPost);
-		if ($creator && $creator->validate())
+		if (\XF::options()->taylorjBlogsBlogPostComments)
 		{
-			$thread = $creator->save();
-			$blogPost->fastUpdate('discussion_thread_id', $thread->thread_id);
-			$this->threadCreator = $creator;
+			$creator = $this->setupBlogPostThreadCreation($blogPost);
+			if ($creator && $creator->validate())
+			{
+				$thread = $creator->save();
+				$blogPost->fastUpdate('discussion_thread_id', $thread->thread_id);
+				$this->threadCreator = $creator;
 
-			$this->afterResourceThreadCreated($thread);
+				$this->afterResourceThreadCreated($thread);
+			}
 		}
 
 		return $blogPost;
@@ -179,6 +190,7 @@ class Edit extends AbstractService
 		else
 		{
 			$this->blogPost->scheduled_post_date_time = 0;
+			$this->blogPost->blog_post_date = \XF::$time;
 			$this->blogPost->blog_post_state = $this->blogPost->getNewContentState();
 		}
 	}

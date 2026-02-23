@@ -23,11 +23,6 @@ class Create extends AbstractService
 	public $blogPost;
 
 	/**
-	 * @var TaylorJ\Blogs\Entity\Blog
-	 */
-	protected $update;
-
-	/**
 	 * @var Creator|null
 	 */
 	protected $threadCreator;
@@ -105,7 +100,7 @@ class Create extends AbstractService
 
 	public function setScheduledPostDateTime($scheduledPostTime)
 	{
-		$tz = new \DateTimeZone(\XF::$time);
+		$tz = new \DateTimeZone(\XF::options()->guestTimeZone);
 
 		$postDate = $scheduledPostTime['dd'];
 		$postHour = $scheduledPostTime['hh'];

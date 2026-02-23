@@ -12,7 +12,7 @@ class Approve extends AbstractService
 	/**
 	 * @var BlogPost
 	 */
-	protected $blogPost;
+	public $blogPost;
 
 	protected $notifyRunTime = 3;
 

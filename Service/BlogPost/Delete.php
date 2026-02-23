@@ -16,7 +16,7 @@ class Delete extends AbstractService
 	/**
 	 * @var BlogPost
 	 */
-	protected $blogPost;
+	public $blogPost;
 
 	/**
 	 * @var User|null

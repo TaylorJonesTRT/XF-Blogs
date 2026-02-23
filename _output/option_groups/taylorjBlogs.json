@@ -1,6 +1,6 @@
 {
     "icon": "fa-book",
-    "display_order": 9000,
+    "display_order": 20000,
     "advanced": false,
     "debug_only": false
 }
