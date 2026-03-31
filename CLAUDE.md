@@ -4,35 +4,35 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Add-on Overview
 
-[TaylorJ] Blogs — a XenForo 2.3.0+ add-on (v1.5.1) providing a user blogging system. Users can create blogs, publish/schedule/draft posts, and integrate with XenForo's thread system for comments. All commands below should be run from the XenForo root (`/Users/taylorjones/Herd/xf232`).
+[TaylorJ] Blogs — a XenForo 2.3.0+ add-on (v1.5.1) providing a user blogging system. Users can create blogs, publish/schedule/draft posts, and integrate with XenForo's thread system for comments. All XenForo CLI commands below should be run via Docker from `~/Development/XenForo/2.3.9/`.
 
 ## Common Commands
 
 ```bash
 # Rebuild add-on caches after data changes
-php cmd.php xf:addon-rebuild TaylorJ/Blogs
+cd ~/Development/XenForo/2.3.9 && docker compose exec php php cmd.php xf-addon:rebuild TaylorJ/Blogs
 
 # Export development output (templates, phrases, widgets, etc.)
-php cmd.php xf:dev-export --addon=TaylorJ/Blogs
+cd ~/Development/XenForo/2.3.9 && docker compose exec php php cmd.php xf-dev:export --addon=TaylorJ/Blogs
 
 # Import development data
-php cmd.php xf:dev-import --addon=TaylorJ/Blogs
+cd ~/Development/XenForo/2.3.9 && docker compose exec php php cmd.php xf-dev:import --addon=TaylorJ/Blogs
 
 # Format code
-php vendor/bin/php-cs-fixer fix src/addons/TaylorJ/Blogs/
+cd ~/Development/XenForo/2.3.9 && docker compose exec php php vendor/bin/php-cs-fixer fix src/addons/TaylorJ/Blogs/
 
 # Scaffolding (interactive — prompts for add-on selection)
-php cmd.php xf-make:entity
-php cmd.php xf-make:controller
-php cmd.php xf-make:service
-php cmd.php xf-make:repository
-php cmd.php xf-make:extension
-php cmd.php xf-make:job
-php cmd.php xf-make:listener
+cd ~/Development/XenForo/2.3.9 && docker compose exec php php cmd.php xf-make:entity
+cd ~/Development/XenForo/2.3.9 && docker compose exec php php cmd.php xf-make:controller
+cd ~/Development/XenForo/2.3.9 && docker compose exec php php cmd.php xf-make:service
+cd ~/Development/XenForo/2.3.9 && docker compose exec php php cmd.php xf-make:repository
+cd ~/Development/XenForo/2.3.9 && docker compose exec php php cmd.php xf-make:extension
+cd ~/Development/XenForo/2.3.9 && docker compose exec php php cmd.php xf-make:job
+cd ~/Development/XenForo/2.3.9 && docker compose exec php php cmd.php xf-make:listener
 
-# Testing
-cd /Users/taylorjones/Herd/xf232/src/addons/TaylorJ/Blogs
-XDEBUG_MODE=off ./vendor/bin/phpunit tests/Unit/Entity tests/Unit/Repository tests/Unit/Utils tests/Unit/Service
+# Testing (runs on host, not in Docker — XENFORO_HOST=1 switches DB to 127.0.0.1:3307)
+cd /Users/taylorjones/Development/XenForo/2.3.9/www/src/addons/TaylorJ/Blogs
+XENFORO_HOST=1 XDEBUG_MODE=off ./vendor/bin/phpunit tests/Unit/Entity tests/Unit/Repository tests/Unit/Utils tests/Unit/Service
 ```
 
 ## Architecture
@@ -127,15 +127,15 @@ The add-on includes a comprehensive unit test suite using PHPUnit 10+ and hampel
 
 ```bash
 # All working tests (Entity + Job)
-cd /Users/taylorjones/Herd/xf232/src/addons/TaylorJ/Blogs
-XDEBUG_MODE=off ./vendor/bin/phpunit tests/Unit/Entity/ tests/Unit/Job/
+cd /Users/taylorjones/Development/XenForo/2.3.9/www/src/addons/TaylorJ/Blogs
+XENFORO_HOST=1 XDEBUG_MODE=off ./vendor/bin/phpunit tests/Unit/Entity/ tests/Unit/Job/
 
 # Specific suites
-XDEBUG_MODE=off ./vendor/bin/phpunit tests/Unit/Entity/
-XDEBUG_MODE=off ./vendor/bin/phpunit tests/Unit/Job/
+XENFORO_HOST=1 XDEBUG_MODE=off ./vendor/bin/phpunit tests/Unit/Entity/
+XENFORO_HOST=1 XDEBUG_MODE=off ./vendor/bin/phpunit tests/Unit/Job/
 
 # Single test file
-XDEBUG_MODE=off ./vendor/bin/phpunit tests/Unit/Entity/BlogTest.php
+XENFORO_HOST=1 XDEBUG_MODE=off ./vendor/bin/phpunit tests/Unit/Entity/BlogTest.php
 ```
 
 ### Test Implementation Notes
@@ -154,4 +154,4 @@ See `tests/README.md` for complete testing documentation and examples.
 - **Class extension parent:** Always extend `XFCP_ClassName` (XenForo's class proxy pattern)
 - **Entity column definition:** Use `getStructure()` with XenForo's entity structure API
 - **Service pattern:** Use `ValidateAndSavableTrait` for services that validate and persist entities
-- After making changes to XML data files in `_data/`, run `xf:dev-import` to load them; after making changes in the admin panel, run `xf:dev-export` to persist them
+- After making changes to XML data files in `_data/`, run `xf-dev:import` to load them; after making changes in the admin panel, run `xf-dev:export` to persist them

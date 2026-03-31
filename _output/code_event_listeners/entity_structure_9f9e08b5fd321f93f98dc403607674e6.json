@@ -1,7 +1,7 @@
 {
     "event_id": "entity_structure",
     "execute_order": 10,
-    "callback_class": "TaylorJ\\UserBlogs\\Listener",
+    "callback_class": "TaylorJ\\Blogs\\Listener",
     "callback_method": "userEntityStructure",
     "active": true,
     "hint": "XF\\Entity\\User",

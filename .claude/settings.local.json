@@ -7,7 +7,10 @@
       "Bash(curl:*)",
       "WebSearch",
       "WebFetch(domain:packagist.org)",
-      "WebFetch(domain:raw.githubusercontent.com)"
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "Bash(cat:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)"
     ]
   }
 }
