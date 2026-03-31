@@ -5,7 +5,6 @@ namespace TaylorJ\Blogs\Job;
 use TaylorJ\Blogs\Entity\BlogPost;
 use XF\Job\AbstractRebuildJob;
 
-
 class BlogPostThreadCreation extends AbstractRebuildJob
 {
     protected function getNextIds($start, $batch)
@@ -23,7 +22,8 @@ class BlogPostThreadCreation extends AbstractRebuildJob
     {
         /** @var BlogPost $blogPost **/
         $blogPost = $this->app->em()->find('TaylorJ\Blogs:BlogPost', $id);
-        if ($blogPost) {
+        if ($blogPost)
+        {
             $blogPost->createCommentThreadsForOldBlogs();
             $blogPost->save();
         }

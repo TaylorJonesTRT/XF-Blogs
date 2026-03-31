@@ -6,12 +6,12 @@ use TaylorJ\Blogs\Repository\Blog as BlogRepo;
 
 class Blog
 {
-	public static function runBlogPostCountUpdate()
-	{
-		$app = \XF::app();
+    public static function runBlogPostCountUpdate()
+    {
+        $app = \XF::app();
 
-		/** @var BlogRepo $blogRepo */
-		$blogRepo = $app->repository('TaylorJ\Blogs:Blog');
-		$blogRepo->batchUpdateBlogPostCounts();
-	}
+        /** @var BlogRepo $blogRepo */
+        $blogRepo = $app->repository('TaylorJ\Blogs:Blog');
+        $blogRepo->batchUpdateBlogPostCounts();
+    }
 }

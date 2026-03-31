@@ -55,8 +55,7 @@ class BlogWatch extends AbstractWatch
         {
             $senderId = $update->User->user_id;
             $senderName = $update->User->username;
-        }
-        else
+        } else
         {
             $senderId = $update->User->user_id;
             $senderName = $update->User->username;
@@ -78,4 +77,3 @@ class BlogWatch extends AbstractWatch
     }
 
 }
-
