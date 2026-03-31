@@ -109,8 +109,7 @@ class BlogPost extends Entity implements RenderableContentInterface, DatableInte
             {
                 $this->error(\XF::phrase('taylorj_blogs_blog_post_scheduled_time_error'));
                 return false;
-            }
-            else
+            } else
             {
                 return true;
             }
@@ -130,8 +129,7 @@ class BlogPost extends Entity implements RenderableContentInterface, DatableInte
             {
                 return false;
             }
-        }
-        else if ($this->blog_post_state == 'deleted')
+        } else if ($this->blog_post_state == 'deleted')
         {
             if (!$visitor->hasPermission('taylorjBlogPost', 'canViewDeletedBlogPosts'))
             {
@@ -152,15 +150,13 @@ class BlogPost extends Entity implements RenderableContentInterface, DatableInte
                 $error = \XF::phrase('taylorj_blogs_blog_post_error_edit');
                 return false;
             }
-        }
-        else
+        } else
         {
             if ($visitor->hasPermission('taylorjBlogs', 'canEditAny'))
             {
                 $error = \XF::phrase('taylorj_blogs_blog_post_error_edit');
                 return false;
-            }
-            else
+            } else
             {
                 return false;
             }
@@ -282,12 +278,10 @@ class BlogPost extends Entity implements RenderableContentInterface, DatableInte
         if ($visitor->hasPermission('taylorjBlogPost', 'viewModerated'))
         {
             return true;
-        }
-        else if ($this->user_id == $visitor->user_id)
+        } else if ($this->user_id == $visitor->user_id)
         {
             return true;
-        }
-        else
+        } else
         {
             return false;
         }
@@ -342,6 +336,11 @@ class BlogPost extends Entity implements RenderableContentInterface, DatableInte
         $this->addEmbedRendererBbCodeOptions($renderOptions, $context, $type);
 
         return $renderOptions;
+    }
+
+    public function getReadTimeMinutes(int $wordsPerMinute = 225): int
+    {
+        return (int) ceil(str_word_count(strip_tags($this->blog_post_content)) / $wordsPerMinute);
     }
 
     public function getScheduled(): bool
@@ -526,8 +525,7 @@ class BlogPost extends Entity implements RenderableContentInterface, DatableInte
                     $this->fastUpdate('blog_post_date', \XF::$time);
                     $this->submitHamData();
                 }
-            }
-            else if ($deletionChange == 'enter' && !$this->DeletionLog)
+            } else if ($deletionChange == 'enter' && !$this->DeletionLog)
             {
                 $delLog = $this->getRelationOrDefault('DeletionLog', false);
                 $delLog->setFromVisitor();
@@ -636,6 +634,7 @@ class BlogPost extends Entity implements RenderableContentInterface, DatableInte
             'Unfurls' => true,
             'scheduled' => true,
             'cover_image' => true,
+            'read_time_minutes' => true,
         ];
         $structure->behaviors = [
             'XF:Taggable' => ['stateField' => 'blog_post_state'],
