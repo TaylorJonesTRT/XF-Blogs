@@ -16,4 +16,6 @@
   <field content_type="taylorj_blogs_blog_post" field_name="report_handler_class">TaylorJ\Blogs\Report\BlogPostHandler</field>
   <field content_type="taylorj_blogs_blog_post" field_name="search_handler_class">TaylorJ\Blogs\Search\Data\BlogPost</field>
   <field content_type="taylorj_blogs_blog_post" field_name="tag_handler_class">TaylorJ\Blogs\Tag\BlogPost</field>
+  <field content_type="taylorj_userblogs_post" field_name="attachment_handler_class">TaylorJ\UserBlogs\Attachment\BlogPost</field>
+  <field content_type="taylorj_userblogs_post" field_name="entity">TaylorJ\UserBlogs:BlogPost</field>
 </content_type_fields>

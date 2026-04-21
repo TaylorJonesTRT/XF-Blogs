@@ -7,7 +7,6 @@
   <phrase title="cron_entry.userblogs" version_id="1000031" version_string="1.0.0 Beta 1"><![CDATA[Update Blog Post View Counter]]></phrase>
   <phrase title="member_stat.taylorj_blogs_most_blog_posts" version_id="1000036" version_string="1.0.0 Beta 6"><![CDATA[Most blog posts]]></phrase>
   <phrase title="nav.taylorjBlogs" version_id="1000031" version_string="1.0.0 Beta 1"><![CDATA[Blogs]]></phrase>
-  <phrase title="nav.taylorjUserBlogs" version_id="1000010" version_string="1.0.0 Alpha"><![CDATA[Blogs]]></phrase>
   <phrase title="nav.taylorjYourBlogPosts" version_id="1010070" version_string="1.1.0"><![CDATA[Your blog posts]]></phrase>
   <phrase title="nav.taylorjYourBlogs" version_id="1010070" version_string="1.1.0"><![CDATA[Your blogs]]></phrase>
   <phrase title="option.taylorjBlogPostsMinTagCount" version_id="1010070" version_string="1.1.0"><![CDATA[Minimum tag amount]]></phrase>
@@ -30,7 +29,7 @@
   <phrase title="option_explain.taylorjBlogsBlogPostDeleteThreadAction" version_id="1030070" version_string="1.3.0"><![CDATA[When a blog post is deleted, take this action with any automatically created thread.]]></phrase>
   <phrase title="option_explain.taylorjBlogsBlogPostForum" version_id="1000035" version_string="1.0.0 Beta 5"><![CDATA[Pick a forum that will be used to automatically create threads in for blog posts to be used as comments.]]></phrase>
   <phrase title="option_explain.taylorjBlogsBlogPostOther" version_id="1010170" version_string="1.1.1"><![CDATA[If turned on this will show a random list of other blog posts by that author in any blog.]]></phrase>
-  <phrase title="option_explain.taylorjBlogsBlogPostTitleLength" version_id="1060070" version_string="1.6.0"><![CDATA[The length your users can make their blog post titles (including spaces)]]></phrase>
+  <phrase title="option_explain.taylorjBlogsBlogPostTitleLength" version_id="1060270" version_string="1.6.2"><![CDATA[The length your users can make their blog post titles (including spaces) (Minimum 10 chars)]]></phrase>
   <phrase title="option_explain.taylorjBlogsPerPage" version_id="1000031" version_string="1.0.0 Beta 1"><![CDATA[How many blogs to display per page on the blogs index page]]></phrase>
   <phrase title="option_group.taylorjBlogs" version_id="1000031" version_string="1.0.0 Beta 1"><![CDATA[[TaylorJ] Blogs - Options]]></phrase>
   <phrase title="option_group_description.taylorjBlogs" version_id="1000031" version_string="1.0.0 Beta 1"><![CDATA[Personalize the blog addon's options to fit your communities needs!]]></phrase>
@@ -188,7 +187,6 @@
   <phrase title="widget_def_desc.taylorj_blo_similar_posts" version_id="1050170" version_string="1.5.1"><![CDATA[Show a widget of other similar blog posts to the one being read (requires XFES)]]></phrase>
   <phrase title="widget_def_desc.taylorj_latest_blog_posts" version_id="1000035" version_string="1.0.0 Beta 5"><![CDATA[Displays latest blog posts]]></phrase>
   <phrase title="widget_def_desc.taylorj_other_blog_posts" version_id="1030070" version_string="1.3.0"><![CDATA[Show other random blog posts by the same author/user.]]></phrase>
-  <phrase title="widget_def_desc.taylorj_similar_posts" version_id="1040070" version_string="1.4.0"><![CDATA[Show a widget of other similar blog posts to the one being read (requires XFES)]]></phrase>
   <phrase title="widget_pos.taylorj_blogs_blog_post_below_post" version_id="1030070" version_string="1.3.0"><![CDATA[[TaylorJ] Blog Post View:Below]]></phrase>
   <phrase title="widget_pos_desc.taylorj_blogs_blog_post_below_post" version_id="1030070" version_string="1.3.0"><![CDATA[Position in the bottom of the taylorj_blogs_blog_post_view template. Widget templates rendered in this position can use the current blog post entity in the <code>{$context.blogPost}</code> param.]]></phrase>
 </phrases>

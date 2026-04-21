@@ -1,1 +1,1 @@
-The length your users can make their blog post titles (including spaces)
+The length your users can make their blog post titles (including spaces) (Minimum 10 chars)

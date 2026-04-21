@@ -242,7 +242,6 @@
 </xf:form>
 ]]></template>
   <template type="public" title="reaction_item_Taylorj_blogs_blog_post" version_id="1010070" version_string="1.1.0"><![CDATA[]]></template>
-  <template type="public" title="reaction_item_taylorj_blogs_blog_post" version_id="1010070" version_string="1.1.0"><![CDATA[]]></template>
   <template type="public" title="report_content_taylorj_blogs_blog_post" version_id="1000036" version_string="1.0.0 Beta 6"><![CDATA[<div class="block-row block-row--separated">
 	{{ bb_code($report.content_info.blogPost.blog_post_message, 'taylorj_blogs_blog_post', $content ?: $report.User) }}
 </div>
@@ -531,6 +530,10 @@
 	</xf:form>
 </div>
 ]]></template>
+  <template type="public" title="taylorj_blogs_blog_post_edit.less" version_id="1000034" version_string="1.0.0 Beta 4"><![CDATA[.taylorj-blogs-post-scheduler {
+    display: flex !important;
+    flex-direction: row !important;
+}]]></template>
   <template type="public" title="taylorj_blogs_blog_post_list_macros" version_id="1000035" version_string="1.0.0 Beta 5"><![CDATA[<xf:macro id="item_new_blog_posts" arg-blogPost="!">
 	<div class="contentRow">
 		<div class="contentRow-figure">
@@ -1343,6 +1346,41 @@
                 </div>
             </div>
 </xf:macro>]]></template>
+  <template type="public" title="taylorj_blogs_blog_watch" version_id="1000034" version_string="1.0.0 Beta 4"><![CDATA[<xf:if is="$isWatched">
+	<xf:title>{{ phrase('unwatch_thread') }}</xf:title>
+<xf:else />
+	<xf:title>{{ phrase('watch_thread') }}</xf:title>
+</xf:if>
+
+<xf:breadcrumb source="$blog.getBreadcrumbs()" />
+
+<xf:form action="{{ link('threads/watch', $thread) }}" class="block" ajax="true">
+	<div class="block-container">
+		<div class="block-body">
+			<xf:if is="$isWatched">
+				<xf:inforow rowtype="confirm">
+					{{ phrase('you_sure_you_want_to_unwatch_this_thread') }}
+				</xf:inforow>
+
+				<xf:hiddenval name="stop">1</xf:hiddenval>
+			<xf:else />
+				<xf:radiorow name="email_subscribe"
+					value="{{ $xf.visitor.Option.interaction_watch_state == 'watch_email' ? 1 : 0}}"
+					rowtype="noColon"
+					label="{{ phrase('watch_this_thread...') }}">
+
+					<xf:option value="1">{{ phrase('and_receive_email_notifications') }}</xf:option>
+					<xf:option value="0">{{ phrase('without_receiving_email_notifications') }}</xf:option>
+				</xf:radiorow>
+			</xf:if>
+		</div>
+		<xf:if is="$isWatched">
+			<xf:submitrow submit="{{ phrase('unwatch') }}" rowtype="simple" />
+		<xf:else />
+			<xf:submitrow submit="{{ phrase('watch') }}" />
+		</xf:if>
+	</div>
+</xf:form>]]></template>
   <template type="public" title="taylorj_blogs_index" version_id="1010070" version_string="1.1.0"><![CDATA[<xf:css src="taylorj_blogs_index.less" />
 
 <xf:title>
