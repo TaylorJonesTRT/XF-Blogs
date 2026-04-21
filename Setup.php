@@ -53,7 +53,7 @@ class Setup extends AbstractSetup
             $table->addColumn('blog_post_id', 'int')->autoIncrement();
             $table->addColumn('blog_id', 'int');
             $table->addColumn('user_id', 'int')->setDefault(0);
-            $table->addColumn('blog_post_title', 'varchar', 50);
+            $table->addColumn('blog_post_title', 'varchar', 300);
             $table->addColumn('blog_post_content', 'text');
             $table->addColumn('blog_post_date', 'int')->setDefault(0);
             $table->addColumn('blog_post_last_edit_date', 'int')->setDefault(0);
@@ -202,6 +202,22 @@ class Setup extends AbstractSetup
             $table->addColumn('pending_rebuild', 'tinyint')->setDefault(0);
             $table->addColumn('similar_blog_post_ids', 'blob');
             $table->addPrimaryKey('blog_post_id');
+        });
+    }
+
+    public function upgrade1060270Step1()
+    {
+        $this->alterTable('xf_taylorj_blogs_blog_post', function (Alter $table)
+        {
+            $table->changeColumn('blog_post_title', 'varchar', 300);
+        });
+    }
+
+    public function upgrade1060270Step2()
+    {
+        $this->alterTable('xf_taylorj_blogs_blog_watch', function (Alter $table)
+        {
+            $table->addPrimaryKey(['user_id', 'blog_id']);
         });
     }
 
