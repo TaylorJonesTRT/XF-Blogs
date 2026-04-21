@@ -181,9 +181,9 @@
     },
     "option_explain.taylorjBlogsBlogPostTitleLength.txt": {
         "global_cache": false,
-        "version_id": 1060070,
-        "version_string": "1.6.0",
-        "hash": "c461f257eeb3ac8eaa9ee62ff70ade0f"
+        "version_id": 1060270,
+        "version_string": "1.6.2",
+        "hash": "41e08b26077c8e522ad64b70064b245b"
     },
     "option_explain.taylorjBlogsPerPage.txt": {
         "global_cache": false,

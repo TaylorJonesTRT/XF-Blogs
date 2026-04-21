@@ -38,7 +38,7 @@ class User extends XFCP_User
 		}
 	}
 
-	public static function getStructure(Structure $structure)
+	public static function getStructure(Structure $structure): Structure
 	{
 		$structure = parent::getStructure($structure);
 
