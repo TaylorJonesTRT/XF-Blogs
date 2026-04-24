@@ -2,12 +2,13 @@
 
 namespace TaylorJ\Blogs\FindNew;
 
+use TaylorJ\Blogs\Finder\BlogPost;
+use TaylorJ\Blogs\XF\Entity\User;
 use XF\Entity\FindNew;
 use XF\FindNew\AbstractHandler;
 use XF\Http\Request;
 use XF\Mvc\Controller;
 use XF\Mvc\Entity\AbstractCollection;
-use TaylorJ\Blogs\XF\Entity\User;
 
 class BlogPosts extends AbstractHandler
 {
@@ -39,7 +40,8 @@ class BlogPosts extends AbstractHandler
         $visitor = \XF::visitor();
 
         $watched = $request->filter('watched', 'bool');
-        if ($watched && $visitor->user_id) {
+        if ($watched && $visitor->user_id)
+        {
             $filters['watched'] = true;
         }
 
@@ -55,7 +57,7 @@ class BlogPosts extends AbstractHandler
     {
         $visitor = \XF::visitor();
 
-        /** @var \TaylorJ\Blogs\Finder\BlogPost $finder */
+        /** @var BlogPost $finder */
         $finder = \XF::finder('TaylorJ\Blogs:BlogPost');
         $finder
             ->applyGlobalVisibilityChecks()
@@ -77,7 +79,7 @@ class BlogPosts extends AbstractHandler
 
         $ids = array_map('intval', $ids);
 
-        /** @var \TaylorJ\Blogs\Finder\BlogPost $finder */
+        /** @var BlogPost $finder */
         $finder = \XF::finder('TaylorJ\Blogs:BlogPost')
             ->where('blog_post_id', $ids);
 
@@ -88,15 +90,17 @@ class BlogPosts extends AbstractHandler
     {
         $visitor = \XF::visitor();
 
-        return $results->filter(function (\TaylorJ\Blogs\Entity\BlogPost $blogPost) use ($visitor) {
+        return $results->filter(function (\TaylorJ\Blogs\Entity\BlogPost $blogPost) use ($visitor)
+        {
             return ($blogPost->canView() && !$visitor->isIgnoring($blogPost->user_id));
         });
     }
 
-    protected function applyFilters(\TaylorJ\Blogs\Finder\BlogPost $finder, array $filters)
+    protected function applyFilters(BlogPost $finder, array $filters)
     {
         $visitor = \XF::visitor();
-        if (!empty($filters['watched'])) {
+        if (!empty($filters['watched']))
+        {
             $finder->watchedOnly($visitor->user_id);
         }
     }

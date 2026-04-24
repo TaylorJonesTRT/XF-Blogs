@@ -14,7 +14,6 @@ use XF\Mvc\ParameterBag;
 use XF\Pub\Controller\AbstractController;
 use XF\Repository\Attachment;
 use XF\Repository\AttachmentRepository;
-use XF\Repository\PostRepository;
 use XF\Service\Tag\ChangerService;
 
 /**
@@ -34,26 +33,7 @@ class BlogPost extends AbstractController
         $attachmentRepo = $this->repository(AttachmentRepository::class);
         $attachmentRepo->addAttachmentsToContent($blogPostContent->fetch(), 'taylorj_blogs_blog_post');
 
-        if ($blogPost->blog_post_state === 'visible')
-        {
-            $discussionThread = $this->finder('XF:Thread')->where('thread_id', $blogPost->discussion_thread_id)->fetchOne();
-        }
-        else
-        {
-            $discussionThread = null;
-        }
-
-        if ($discussionThread)
-        {
-            /** @var PostRepository $postRepo */
-            $postRepo = $this->getPostRepo();
-            $comments = $postRepo->findPostsForThreadView($discussionThread)
-                ->order('post_date', 'DESC');
-        }
-        else
-        {
-            $comments = null;
-        }
+        $discussion = $blogPostRepo->getDiscussionCommentsForPost($blogPost, 5);
 
         $isPrefetchRequest = $this->request->isPrefetch();
         if (!$isPrefetchRequest)
@@ -61,19 +41,14 @@ class BlogPost extends AbstractController
             $blogPostRepo->logThreadView($blogPost);
         }
 
-        $blogPostWordCount = str_word_count(strip_tags($blogPost->blog_post_content));
-        $readTime = ceil($blogPostWordCount / 225);
-
         $ownerOtherPosts = $blogPostRepo->findOtherPostsByOwnerRandom($blogPost->user_id);
 
         $viewParams = [
             'blogPost' => $blogPost,
-            'comments' => $comments ? $comments->fetch(5) : null,
-            'discussionThread' => $discussionThread,
-            'blogPostReadTime' => $readTime,
+            'blogPostReadTime' => $blogPost->read_time_minutes,
             'pendingApproval' => $this->filter('pending_approval', 'bool'),
             'ownerOtherPosts' => $ownerOtherPosts->fetch(4),
-        ];
+        ] + $discussion;
 
         return $this->view('TaylorJ\Blogs:BlogPost\Index', 'taylorj_blogs_blog_post_view', $viewParams);
     }
@@ -103,8 +78,7 @@ class BlogPost extends AbstractController
             $editor->finalSteps();
 
             return $this->redirect($this->buildLink('blogs/post', $blogPost));
-        }
-        else
+        } else
         {
             /** @var Attachment $attachmentRepo */
             $attachmentRepo = $this->repository('XF:Attachment');
@@ -113,30 +87,14 @@ class BlogPost extends AbstractController
                 $blogPost,
             );
 
-            $tz = new \DateTimeZone(\XF::visitor()->timezone);
-            $dt = new \DateTime();
-            $dt->setTimezone(new \DateTimeZone(\XF::visitor()->timezone));
-            $dt->setTimestamp($blogPost->scheduled_post_date_time);
-            /*$dt = new \DateTime($blogPost->scheduled_post_date_time);*/
-            $hh_value = $dt->format('H');
-            $mm_value = $dt->format('i');
-
-            $hours = Utils::hours();
-            $minutes = Utils::minutes();
-
-            $blogId = $blogPost->Blog->blog_id;
+            $schedulingParams = Utils::getSchedulingViewParams($blogPost->scheduled_post_date_time);
 
             $viewParams = [
                 'blogPost' => $blogPost,
                 'blog' => $blog,
                 'attachmentData' => $attachmentData,
-                'blog_id' => $blogId,
-                'hours' => $hours,
-                'minutes' => $minutes,
-                'dt' => $dt,
-                'hh_value' => $hh_value,
-                'mm_value' => $mm_value,
-            ];
+                'blog_id' => $blogPost->Blog->blog_id,
+            ] + $schedulingParams;
 
             return $this->view('TaylorJ\Blogs:BlogPost\Edit', 'taylorj_blogs_blog_post_edit', $viewParams);
         }
@@ -181,8 +139,7 @@ class BlogPost extends AbstractController
             $this->plugin('XF:InlineMod')->clearIdFromCookie('taylorj_blogs_blog_post', $blogPost->blog_post_id);
 
             return $this->redirect($this->buildLink('blogs/blog', $blogPost->Blog));
-        }
-        else
+        } else
         {
             $viewParams = [
                 'blogPost' => $blogPost,
@@ -298,13 +255,11 @@ class BlogPost extends AbstractController
                 $reply = $this->view('TaylorJ\Blogs:BlogPost\TagsInline', 'taylorj_blogs_blog_post_tags_list', $viewParams);
                 $reply->setJsonParam('message', \XF::phrase('your_changes_have_been_saved'));
                 return $reply;
-            }
-            else
+            } else
             {
                 return $this->redirect($this->buildLink('blogs/post', $blogPost));
             }
-        }
-        else
+        } else
         {
             $grouped = $tagger->getExistingTagsByEditability();
 
@@ -337,7 +292,7 @@ class BlogPost extends AbstractController
 
         return $this->plugin('XF:BbCodePreview')->actionPreview(
             $message,
-            'blog_post',
+            'taylorj_blogs_blog_post',
             \XF::visitor(),
             $attachments
         );
@@ -364,14 +319,6 @@ class BlogPost extends AbstractController
     }
 
     /**
-     * @return PostRepository
-     */
-    protected function getPostRepo()
-    {
-        return $this->repository(PostRepository::class);
-    }
-
-    /**
      * @param BlogPostEntity $blogPost
      *
      * @return Edit
@@ -386,6 +333,11 @@ class BlogPost extends AbstractController
 
         $editor->setTitle($title);
         $editor->setBlogPostContent($message);
+
+        if ($blogPost->canUploadAndManageAttachments())
+        {
+            $editor->setAttachmentHash($this->filter('attachment_hash', 'str'));
+        }
 
         $scheduledPostDateTime = $this->filter([
             'blog_post_schedule' => 'string',

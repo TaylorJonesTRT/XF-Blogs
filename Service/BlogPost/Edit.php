@@ -9,224 +9,267 @@ use XF\Entity\Thread;
 use XF\Entity\User;
 use XF\Repository\UserRepository;
 use XF\Service\AbstractService;
+use XF\Service\Attachment\PreparerService as AttachmentPreparerService;
+use XF\Service\Message\PreparerService as MessagePreparerService;
 use XF\Service\ValidateAndSavableTrait;
 
 class Edit extends AbstractService
 {
-	use ValidateAndSavableTrait;
+    use ValidateAndSavableTrait;
 
-	/**
-	 * @var BlogPost
-	 */
-	public $blogPost;
+    /**
+     * @var BlogPost
+     */
+    public $blogPost;
 
-	/**
-	 * @var BlogPost
-	 */
-	protected $blog;
+    /**
+     * @var BlogPost
+     */
+    protected $blog;
 
-	/**
-	 * @var Creator|null
-	 */
-	protected $threadCreator;
+    /**
+     * @var Creator|null
+     */
+    protected $threadCreator;
 
-	public function __construct(App $app, BlogPost $blogPost)
-	{
-		parent::__construct($app);
-		$this->blogPost = $blogPost;
-		$this->blog = $blogPost->Blog;
-	}
+    protected $attachmentHash;
 
-	public function setTitle($title)
-	{
-		$this->blogPost->blog_post_title = $title;
-	}
+    public function __construct(App $app, BlogPost $blogPost)
+    {
+        parent::__construct($app);
+        $this->blogPost = $blogPost;
+        $this->blog = $blogPost->Blog;
+    }
 
-	public function setBlogPostContent($content)
-	{
-		$this->blogPost->blog_post_content = $content;
-	}
+    public function setTitle($title)
+    {
+        $this->blogPost->blog_post_title = $title;
+    }
 
-	protected function finalSetup()
-	{
-	}
+    public function setBlogPostContent($content)
+    {
+        $preparer = \XF::service(
+            MessagePreparerService::class,
+            'taylorj_blogs_blog_post',
+            $this->blogPost
+        );
 
-	protected function _validate()
-	{
-		$this->blogPost->preSave();
-		$errors = $this->blogPost->getErrors();
+        $this->blogPost->blog_post_content = $preparer->prepare($content);
+        $this->blogPost->embed_metadata = $preparer->getEmbedMetadata();
+        $preparer->pushEntityErrorIfInvalid($this->blogPost, 'blog_post_content');
+    }
 
-		return $errors;
-	}
+    public function setAttachmentHash($hash)
+    {
+        $this->attachmentHash = $hash;
+    }
 
-	protected function _save()
-	{
-		$blogPost = $this->blogPost;
+    protected function finalSetup()
+    {
+    }
 
-		if ($blogPost->blog_post_state == 'visible' && $blogPost->isChanged('blog_post_state'))
-		{
-			$blogPost->fastUpdate('blog_post_date', \XF::$time);
-		}
+    protected function _validate()
+    {
+        $this->blogPost->preSave();
+        $errors = $this->blogPost->getErrors();
 
-		if ($blogPost->blog_post_state == 'visible' && $blogPost->blog_post_date <= \XF::$time)
-		{
-			$blogPost->fastUpdate('blog_post_last_edit_date', \XF::$time);
-		}
+        return $errors;
+    }
 
-		$blogPost->save(true, false);
+    protected function _save()
+    {
+        $blogPost = $this->blogPost;
+        $db = $this->db();
 
-		return $blogPost;
-	}
+        $db->beginTransaction();
 
-	public function finalSteps()
-	{
-		if ($this->blogPost->blog_post_state == 'visible' && $this->blogPost->discussion_thread_id == 0 && \XF::options()->taylorjBlogsBlogPostComments)
-		{
-			$creator = $this->setupBlogPostThreadCreation($this->blogPost);
-			if ($creator && $creator->validate())
-			{
-				$thread = $creator->save();
-				$this->blogPost->fastUpdate('discussion_thread_id', $thread->thread_id);
-				$this->threadCreator = $creator;
+        try
+        {
+            if ($blogPost->blog_post_state == 'visible' && $blogPost->isChanged('blog_post_state'))
+            {
+                $blogPost->fastUpdate('blog_post_date', \XF::$time);
+            }
 
-				$this->afterResourceThreadCreated($thread);
-			}
-		}
-	}
+            if ($blogPost->blog_post_state == 'visible' && $blogPost->blog_post_date <= \XF::$time)
+            {
+                $blogPost->fastUpdate('blog_post_last_edit_date', \XF::$time);
+            }
 
-	protected function setupBlogPostThreadCreation(BlogPost $blogPost)
-	{
-		$forumFinder = \XF::finder('XF:Forum')
-			->where('node_id', \XF::app()->options()->taylorjBlogsBlogPostForum)
-			->fetchOne();
+            $blogPost->save(true, false);
 
-		/** @var Forum $forum */
-		$forum = $forumFinder ? $forumFinder : \XF::finder('XF:Forum')->fetchOne();
+            if ($this->attachmentHash !== null && $this->attachmentHash !== '')
+            {
+                $inserter = $this->service(AttachmentPreparerService::class);
+                $associated = $inserter->associateAttachmentsWithContent(
+                    $this->attachmentHash,
+                    'taylorj_blogs_blog_post',
+                    $blogPost->blog_post_id
+                );
 
-		/** @var ThreadCreator $creator */
-		$creator = $this->service('TaylorJ\Blogs:BlogPost\ThreadCreator', $forum, $blogPost);
-		$creator->setIsAutomated();
+                if ($associated)
+                {
+                    $blogPost->fastUpdate('attach_count', $blogPost->attach_count + $associated);
+                }
+            }
 
-		$creator->setContent($this->blogPost->getExpectedThreadTitle(), $this->getThreadMessage(), false);
+            $db->commit();
+        }
+        catch (\Throwable $e)
+        {
+            $db->rollback();
+            throw $e;
+        }
 
-		$creator->setDiscussionTypeAndDataRaw('blogPost');
+        return $blogPost;
+    }
 
-		$thread = $creator->getThread();
-		$thread->discussion_state = $this->blogPost->blog_post_state;
+    public function finalSteps()
+    {
+        if ($this->blogPost->blog_post_state == 'visible' && $this->blogPost->discussion_thread_id == 0 && \XF::options()->taylorjBlogsBlogPostComments)
+        {
+            $creator = $this->setupBlogPostThreadCreation($this->blogPost);
+            if ($creator && $creator->validate())
+            {
+                $thread = $creator->save();
+                $this->blogPost->fastUpdate('discussion_thread_id', $thread->thread_id);
+                $this->threadCreator = $creator;
 
-		return $creator;
-	}
+                $this->afterResourceThreadCreated($thread);
+            }
+        }
+    }
 
-	protected function getThreadMessage()
-	{
-		$blogPost = $this->blogPost;
+    protected function setupBlogPostThreadCreation(BlogPost $blogPost)
+    {
+        $forumFinder = \XF::finder('XF:Forum')
+            ->where('node_id', \XF::app()->options()->taylorjBlogsBlogPostForum)
+            ->fetchOne();
 
-		$snippet = $this->app->bbCode()->render(
-			$this->app->stringFormatter()->wholeWordTrim($this->blogPost->blog_post_content, 500),
-			'bbCodeClean',
-			'post',
-			null
-		);
+        /** @var Forum $forum */
+        $forum = $forumFinder ? $forumFinder : \XF::finder('XF:Forum')->fetchOne();
 
-		$phrase = \XF::phrase('taylorj_blogs_blog_post_thread_create', [
-			'title' => $blogPost->blog_post_title_,
-			'username' => $blogPost->User->username,
-			'snippet' => $snippet,
-			'blog_post_link' => $this->app->router('public')->buildLink('canonical:blogs/post', $blogPost),
-		]);
+        /** @var ThreadCreator $creator */
+        $creator = $this->service('TaylorJ\Blogs:BlogPost\ThreadCreator', $forum, $blogPost);
+        $creator->setIsAutomated();
 
-		return $phrase->render('raw');
-	}
+        $creator->setContent($this->blogPost->getExpectedThreadTitle(), $this->getThreadMessage(), false);
 
-	protected function afterResourceThreadCreated(Thread $thread)
-	{
-		$this->repository('XF:Thread')->markThreadReadByVisitor($thread);
-		$this->repository('XF:ThreadWatch')->autoWatchThread($thread, \XF::visitor(), true);
-	}
+        $creator->setDiscussionTypeAndDataRaw('blogPost');
 
-	public function handlePostStateChange(BlogPost $blogPost)
-	{
-		$blogPost->fastUpdate('blog_post_state', 'visible');
-		$blogPost->fastUpdate('blog_post_date', \XF::$time);
+        $thread = $creator->getThread();
+        $thread->discussion_state = $this->blogPost->blog_post_state;
 
-		if (\XF::options()->taylorjBlogsBlogPostComments)
-		{
-			$creator = $this->setupBlogPostThreadCreation($blogPost);
-			if ($creator && $creator->validate())
-			{
-				$thread = $creator->save();
-				$blogPost->fastUpdate('discussion_thread_id', $thread->thread_id);
-				$this->threadCreator = $creator;
+        return $creator;
+    }
 
-				$this->afterResourceThreadCreated($thread);
-			}
-		}
+    protected function getThreadMessage()
+    {
+        $blogPost = $this->blogPost;
 
-		return $blogPost;
-	}
+        $snippet = $this->app->bbCode()->render(
+            $this->app->stringFormatter()->wholeWordTrim($this->blogPost->blog_post_content, 500),
+            'bbCodeClean',
+            'post',
+            null
+        );
 
-	public function setScheduledPostDateTime($scheduledPostTime)
-	{
-		$tz = new \DateTimeZone(\XF::visitor()->timezone);
+        $phrase = \XF::phrase('taylorj_blogs_blog_post_thread_create', [
+            'title' => $blogPost->blog_post_title_,
+            'username' => $blogPost->User->username,
+            'snippet' => $snippet,
+            'blog_post_link' => $this->app->router('public')->buildLink('canonical:blogs/post', $blogPost),
+        ]);
 
-		$postDate = $scheduledPostTime['dd'];
-		$postHour = $scheduledPostTime['hh'];
-		$postMinute = $scheduledPostTime['mm'];
+        return $phrase->render('raw');
+    }
 
-		$dateTime = new \DateTime("$postDate $postHour:$postMinute", $tz);
+    protected function afterResourceThreadCreated(Thread $thread)
+    {
+        $this->repository('XF:Thread')->markThreadReadByVisitor($thread);
+        $this->repository('XF:ThreadWatch')->autoWatchThread($thread, \XF::visitor(), true);
+    }
 
-		if ($scheduledPostTime['blog_post_schedule'] == 'scheduled')
-		{
-			$this->blogPost->scheduled_post_date_time = $dateTime->format('U');
-			$this->blogPost->blog_post_state = 'scheduled';
-			/*}*/
-		}
-		else if ($scheduledPostTime['blog_post_schedule'] == 'draft')
-		{
-			$this->blogPost->scheduled_post_date_time = 0;
-			$this->blogPost->blog_post_date = 0;
-			$this->blogPost->blog_post_state = 'draft';
-		}
-		else
-		{
-			$this->blogPost->scheduled_post_date_time = 0;
-			$this->blogPost->blog_post_date = \XF::$time;
-			$this->blogPost->blog_post_state = $this->blogPost->getNewContentState();
-		}
-	}
+    public function handlePostStateChange(BlogPost $blogPost)
+    {
+        $blogPost->fastUpdate('blog_post_state', 'visible');
+        $blogPost->fastUpdate('blog_post_date', \XF::$time);
 
-	public function checkForSpam()
-	{
-		$blogPost = $this->blogPost;
-		$blog = $this->blogPost->Blog;
+        if (\XF::options()->taylorjBlogsBlogPostComments)
+        {
+            $creator = $this->setupBlogPostThreadCreation($blogPost);
+            if ($creator && $creator->validate())
+            {
+                $thread = $creator->save();
+                $blogPost->fastUpdate('discussion_thread_id', $thread->thread_id);
+                $this->threadCreator = $creator;
 
-		/** @var User $user */
-		$user = $blogPost->User ?: $this->repository(UserRepository::class)->getGuestUser($blogPost->Blog->blog_user_id);
+                $this->afterResourceThreadCreated($thread);
+            }
+        }
 
-		$message = $blogPost->blog_post_content;
-		$contentType = 'taylorj_blogs_blog_post';
-		$contentId = $blogPost->blog_post_id;
+        return $blogPost;
+    }
 
-		$checker = $this->app->spam()->contentChecker();
-		$checker->check($user, $message, [
-			'permalink' => $this->app->router('public')->buildLink('canonical:threads', $blog),
-			'content_type' => $contentType,
-			'content_id' => $contentId,
-		]);
+    public function setScheduledPostDateTime($scheduledPostTime)
+    {
+        $tz = new \DateTimeZone(\XF::visitor()->timezone);
 
-		$decision = $checker->getFinalDecision();
-		switch ($decision)
-		{
-			case 'moderated':
+        $postDate = $scheduledPostTime['dd'];
+        $postHour = $scheduledPostTime['hh'];
+        $postMinute = $scheduledPostTime['mm'];
 
-				$blogPost->blog_post_state = 'moderated';
-				break;
+        $dateTime = new \DateTime("$postDate $postHour:$postMinute", $tz);
 
-			case 'denied':
-				$checker->logSpamTrigger('taylorj_blogs_blog_post', null);
-				$blogPost->error(\XF::phrase('your_content_cannot_be_submitted_try_later'));
-				break;
-		}
-	}
+        if ($scheduledPostTime['blog_post_schedule'] == 'scheduled')
+        {
+            $this->blogPost->scheduled_post_date_time = $dateTime->format('U');
+            $this->blogPost->blog_post_state = 'scheduled';
+            /*}*/
+        } else if ($scheduledPostTime['blog_post_schedule'] == 'draft')
+        {
+            $this->blogPost->scheduled_post_date_time = 0;
+            $this->blogPost->blog_post_date = 0;
+            $this->blogPost->blog_post_state = 'draft';
+        } else
+        {
+            $this->blogPost->scheduled_post_date_time = 0;
+            $this->blogPost->blog_post_date = \XF::$time;
+            $this->blogPost->blog_post_state = $this->blogPost->getNewContentState();
+        }
+    }
+
+    public function checkForSpam()
+    {
+        $blogPost = $this->blogPost;
+        $blog = $this->blogPost->Blog;
+
+        /** @var User $user */
+        $user = $blogPost->User ?: $this->repository(UserRepository::class)->getGuestUser($blogPost->Blog->blog_user_id);
+
+        $message = $blogPost->blog_post_content;
+        $contentType = 'taylorj_blogs_blog_post';
+        $contentId = $blogPost->blog_post_id;
+
+        $checker = $this->app->spam()->contentChecker();
+        $checker->check($user, $message, [
+            'permalink' => $this->app->router('public')->buildLink('canonical:threads', $blog),
+            'content_type' => $contentType,
+            'content_id' => $contentId,
+        ]);
+
+        $decision = $checker->getFinalDecision();
+        switch ($decision)
+        {
+            case 'moderated':
+
+                $blogPost->blog_post_state = 'moderated';
+                break;
+
+            case 'denied':
+                $checker->logSpamTrigger('taylorj_blogs_blog_post', null);
+                $blogPost->error(\XF::phrase('your_content_cannot_be_submitted_try_later'));
+                break;
+        }
+    }
 
 }

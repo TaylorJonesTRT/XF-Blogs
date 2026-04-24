@@ -27,8 +27,7 @@ class Blog extends AbstractController
         if (!$blog->canView() && $blog->user_id == \XF::visitor()->user_id)
         {
             throw $this->exception($this->noPermission(\XF::phrase('permission.taylorjBlogs_viewOwn')));
-        }
-        else if (!$blog->canView())
+        } else if (!$blog->canView())
         {
             throw $this->exception($this->noPermission(\XF::phrase('permission.taylorjBlogs_viewAny')));
         }
@@ -37,8 +36,11 @@ class Blog extends AbstractController
     public function actionIndex(ParameterBag $params)
     {
         $blog = $this->assertBlogExists($params->blog_id);
-        return $this->view('TaylorJ\Blogs:Blog\Index', 'taylorj_blogs_blog_view',
-            $this->renderBlogPostList($blog, 'visible'));
+        return $this->view(
+            'TaylorJ\Blogs:Blog\Index',
+            'taylorj_blogs_blog_view',
+            $this->renderBlogPostList($blog, 'visible')
+        );
     }
 
     public function actionScheduledPosts(ParameterBag $params)
@@ -48,8 +50,11 @@ class Blog extends AbstractController
         {
             return $this->noPermission();
         }
-        return $this->view('TaylorJ\Blogs:Blog\Index', 'taylorj_blogs_blog_view',
-            $this->renderBlogPostList($blog, 'scheduled'));
+        return $this->view(
+            'TaylorJ\Blogs:Blog\Index',
+            'taylorj_blogs_blog_view',
+            $this->renderBlogPostList($blog, 'scheduled')
+        );
     }
 
     public function actionDraftPosts(ParameterBag $params)
@@ -60,8 +65,11 @@ class Blog extends AbstractController
         {
             return $this->noPermission();
         }
-        return $this->view('TaylorJ\Blogs:Blog\Index', 'taylorj_blogs_blog_view',
-            $this->renderBlogPostList($blog, 'draft'));
+        return $this->view(
+            'TaylorJ\Blogs:Blog\Index',
+            'taylorj_blogs_blog_view',
+            $this->renderBlogPostList($blog, 'draft')
+        );
     }
 
     public function actionDeletedPosts(ParameterBag $params)
@@ -71,8 +79,11 @@ class Blog extends AbstractController
         {
             return $this->noPermission();
         }
-        return $this->view('TaylorJ\Blogs:Blog\Index', 'taylorj_blogs_blog_view',
-            $this->renderBlogPostList($blog, 'deleted'));
+        return $this->view(
+            'TaylorJ\Blogs:Blog\Index',
+            'taylorj_blogs_blog_view',
+            $this->renderBlogPostList($blog, 'deleted')
+        );
     }
 
     protected function renderBlogPostList(BlogEntity $blog, string $viewType)
@@ -133,9 +144,9 @@ class Blog extends AbstractController
 
     public function actionEdit(ParameterBag $params)
     {
-        $blogFinder = $this->finder('TaylorJ\Blogs:Blog')->where('blog_id', $params->blog_id)->fetchOne();
+        $blog = $this->assertBlogExists($params->blog_id);
 
-        return $this->blogEdit($blogFinder);
+        return $this->blogEdit($blog);
     }
 
     public function actionDelete(ParameterBag $params)
@@ -145,10 +156,7 @@ class Blog extends AbstractController
         /** @var BlogEntity $blog */
         $blog = $this->assertBlogExists($params->blog_id);
 
-        $type = $this->filter('hard_delete', 'bool') ? 'hard' : 'soft';
-        $reason = $this->filter('reason', 'str');
-
-        if (!$blog->canDelete($type, $error))
+        if (!$blog->canDelete('soft', $error))
         {
             return $this->noPermission($error);
         }
@@ -158,8 +166,7 @@ class Blog extends AbstractController
             if ($visitor->user_id == $blog->user_id)
             {
                 $type = 'soft';
-            }
-            else
+            } else
             {
                 $type = $this->filter('hard_delete', 'bool') ? 'hard' : 'soft';
             }
@@ -189,8 +196,7 @@ class Blog extends AbstractController
             $this->plugin('XF:InlineMod')->clearIdFromCookie('taylorj_blogs_blog', $blog->blog_id);
 
             return $this->redirect($this->buildLink('blogs'));
-        }
-        else
+        } else
         {
             $viewParams = [
                 'blog' => $blog,
@@ -226,8 +232,7 @@ class Blog extends AbstractController
             if (!$visitor->hasPermission('taylorjBlogPost', 'canPost'))
             {
                 return $this->noPermission(\XF::phrase('taylorj_blogs_blog_post_error_new'));
-            }
-            else
+            } else
             {
                 $blogPost = $this->em()->create('TaylorJ\Blogs:BlogPost');
                 return $this->blogPostAdd($blogPost, $params->blog_id);
@@ -253,27 +258,15 @@ class Blog extends AbstractController
             $blogPost,
         );
 
-        $dt = new \DateTime();
-        $dt->setTimezone(new \DateTimeZone(\XF::visitor()->timezone));
-        $hh_value = $dt->format('H');
-        $mm_value = $dt->format('i');
-
-        $hours = Utils::hours();
-        $minutes = Utils::minutes();
-
         $blog = $this->assertBlogExists($blog_id);
+        $schedulingParams = Utils::getSchedulingViewParams();
 
         $viewParams = [
             'blogPost' => $blogPost,
             'blog' => $blog,
             'attachmentData' => $attachmentData,
             'blogId' => $blog_id,
-            'hours' => $hours,
-            'minutes' => $minutes,
-            'dt' => $dt,
-            'hh_value' => $hh_value,
-            'mm_value' => $mm_value,
-        ];
+        ] + $schedulingParams;
 
         return $this->view('TaylorJ\Blogs:BlogPost\Edit', 'taylorj_blogs_blog_post_new_edit', $viewParams);
     }

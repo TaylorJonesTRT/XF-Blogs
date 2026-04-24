@@ -8,11 +8,39 @@ use TaylorJ\Blogs\Finder\BlogPost as BlogPostFinder;
 use XF\Entity\Thread;
 use XF\Entity\User;
 use XF\Mvc\Entity\Repository;
+use XF\Repository\PostRepository;
 use XFES\Search\Query\FunctionOrder;
 use XFES\Search\Query\MoreLikeThisQuery;
 
 class BlogPost extends Repository
 {
+    public function getDiscussionCommentsForPost(BlogPostEntity $blogPost, int $limit = 5): array
+    {
+        $discussionThread = null;
+        $comments = null;
+
+        if ($blogPost->blog_post_state === 'visible' && $blogPost->discussion_thread_id)
+        {
+            $discussionThread = \XF::finder('XF:Thread')
+                ->where('thread_id', $blogPost->discussion_thread_id)
+                ->fetchOne();
+        }
+
+        if ($discussionThread)
+        {
+            /** @var PostRepository $postRepo */
+            $postRepo = \XF::app()->repository(PostRepository::class);
+            $comments = $postRepo->findPostsForThreadView($discussionThread)
+                ->order('post_date', 'DESC')
+                ->fetch($limit);
+        }
+
+        return [
+            'discussionThread' => $discussionThread,
+            'comments' => $comments,
+        ];
+    }
+
     public function logThreadView(BlogPostEntity $blogPost)
     {
         $this->db()->query("

@@ -2,6 +2,7 @@
 
 namespace TaylorJ\Blogs\Entity;
 
+use XF\Entity\User;
 use XF\Mvc\Entity\Entity;
 use XF\Mvc\Entity\Structure;
 
@@ -11,8 +12,8 @@ use XF\Mvc\Entity\Structure;
  * @property int $blog_id
  *
  * RELATIONS
- * @property \TaylorJ\Blogs\Entity\Blog $Blog
- * @property \XF\Entity\User $User
+ * @property Blog $Blog
+ * @property User $User
  */
 class BlogWatch extends Entity
 {
@@ -27,18 +28,18 @@ class BlogWatch extends Entity
             'blog_id' => ['type' => self::UINT],
         ];
         $structure->relations = [
-			'Blog' => [
-				'entity' => 'TaylorJ\Blogs:Blog',
-				'type' => self::TO_ONE,
-				'conditions' => 'blog_id',
-				'primary' => true
-			],
-			'User' => [
-				'entity' => 'XF:User',
-				'type' => self::TO_ONE,
-				'conditions' => 'user_id',
-				'primary' => true
-			],
+            'Blog' => [
+                'entity' => 'TaylorJ\Blogs:Blog',
+                'type' => self::TO_ONE,
+                'conditions' => 'blog_id',
+                'primary' => true,
+            ],
+            'User' => [
+                'entity' => 'XF:User',
+                'type' => self::TO_ONE,
+                'conditions' => 'user_id',
+                'primary' => true,
+            ],
         ];
         $structure->defaultWith = [];
         $structure->getters = [];

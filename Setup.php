@@ -104,6 +104,7 @@ class Setup extends AbstractSetup
         {
             $table->addColumn('user_id', 'int');
             $table->addColumn('blog_id', 'int');
+            $table->addPrimaryKey(['user_id', 'blog_id']);
         });
     }
 
