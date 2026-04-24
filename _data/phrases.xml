@@ -163,7 +163,6 @@
   <phrase title="taylorj_blogs_undelete_blog_posts" version_id="1030070" version_string="1.3.0"><![CDATA[Undelete blog posts]]></phrase>
   <phrase title="taylorj_blogs_update_thread_title_on_blog_post_deletion" version_id="1030070" version_string="1.3.0"><![CDATA[Update thread title on blog post deletion]]></phrase>
   <phrase title="taylorj_blogs_user_tz" version_id="1000034" version_string="1.0.0 Beta 4"><![CDATA[This date/time value will be according to the <strong>{tz}</strong> timezone.]]></phrase>
-  <phrase title="taylorj_blogs_vendor_folder_missing" version_id="1060070" version_string="1.6.0"><![CDATA[The Blogs add-on vendofr folder does not exist. Please run `composer install` in the add-on directory or re-download the add-on.]]></phrase>
   <phrase title="taylorj_blogs_visible_posts_button" version_id="1000037" version_string="1.0.0 Beta 7"><![CDATA[Visible blog posts]]></phrase>
   <phrase title="taylorj_blogs_you_sure_you_want_to_delete_x_blog_posts" version_id="1030070" version_string="1.3.0"><![CDATA[Are you sure you want to delete {total} blog post(s)?]]></phrase>
   <phrase title="taylorj_userblogs_blog_delete" version_id="1000010" version_string="1.0.0 Alpha"><![CDATA[Delete blog]]></phrase>

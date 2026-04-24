@@ -9,6 +9,14 @@ This file provides AI agent guidance when working with this add-on.
 ## Common Commands
 
 ```bash
+# Bump add-on version before starting work on a new release
+cd /Users/taylorjones/Development/XenForo/2.3.9/www
+../scripts/run_in_container.sh php cmd.php xf-addon:bump-version TaylorJ/Blogs --version-id=<new_version_id> --version-string="<new_version_string>"
+
+# Force a version change when validation must allow a downgrade/hotfix realignment
+cd /Users/taylorjones/Development/XenForo/2.3.9/www
+../scripts/run_in_container.sh php cmd.php xf-addon:bump-version TaylorJ/Blogs --version-id=<new_version_id> --version-string="<new_version_string>" -f
+
 # Rebuild add-on caches after data changes
 cd /Users/taylorjones/Development/XenForo/2.3.9/www
 ../scripts/run_in_container.sh php cmd.php xf-addon:rebuild TaylorJ/Blogs
@@ -39,6 +47,14 @@ cd /Users/taylorjones/Development/XenForo/2.3.9/www
 cd /Users/taylorjones/Development/XenForo/2.3.9/www/src/addons/TaylorJ/Blogs
 XENFORO_HOST=1 XDEBUG_MODE=off ./vendor/bin/phpunit tests/Unit/Entity tests/Unit/Repository tests/Unit/Utils tests/Unit/Service
 ```
+
+## Release Versioning Workflow
+
+- Version bumps must be completed before any implementation work begins for a new release or hotfix.
+- Always and only use `xf-addon:bump-version` to change the add-on version.
+- Do not manually edit `addon.json` version fields for routine version bumps.
+- Use `-f` with `xf-addon:bump-version` when a downgrade or hotfix realignment requires bypassing version validation.
+- Run all version bump commands from the XenForo web root via `../scripts/run_in_container.sh`.
 
 ## Architecture
 

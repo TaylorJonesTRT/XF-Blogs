@@ -11,21 +11,12 @@ use XF\Db\Schema\Create;
 
 class Setup extends AbstractSetup
 {
-    use StepRunnerInstallTrait;
-    use StepRunnerUpgradeTrait;
-    use StepRunnerUninstallTrait;
+	use StepRunnerInstallTrait;
+	use StepRunnerUpgradeTrait;
+	use StepRunnerUninstallTrait;
 
-    public function checkRequirements(&$errors = [], &$warnings = [])
-    {
-        $vendorDirectory = \sprintf("%s/vendor", $this->addOn->getAddOnDirectory());
-        if (!\file_exists($vendorDirectory))
-        {
-            $errors[] = \XF::phrase('taylorj_blogs_vendor_folder_missing');
-        }
-    }
-
-    public function installStep1()
-    {
+	public function installStep1()
+	{
         $this->createTable('xf_taylorj_blogs_blog', function (Create $table)
         {
             $table->addColumn('blog_id', 'int')->autoIncrement();

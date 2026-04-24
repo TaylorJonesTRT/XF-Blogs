@@ -1,1 +1,0 @@
-The Blogs add-on vendofr folder does not exist. Please run `composer install` in the add-on directory or re-download the add-on.
