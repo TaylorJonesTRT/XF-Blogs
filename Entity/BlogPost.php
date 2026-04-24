@@ -212,7 +212,7 @@ class BlogPost extends Entity implements RenderableContentInterface, DatableInte
             $attachmentId = $attachmentId->attachment_id;
         }
 
-        return in_array($attachmentId, $this->embed_metadata);
+        return isset($this->embed_metadata['attachments'][$attachmentId]);
     }
 
     public function canViewAttachments(&$error = null)

@@ -2,8 +2,6 @@
 
 namespace TaylorJ\Blogs\XF\Entity;
 
-use XF\Mvc\Entity\Structure;
-
 class User extends XFCP_User
 {
     public function canViewBlogs(&$error = null)
@@ -19,13 +17,6 @@ class User extends XFCP_User
     public function canCreateBlog(&$error = null)
     {
         return $this->hasPermission('taylorjBlogs', 'canCreate');
-    }
-
-    public static function getStructure(Structure $structure): Structure
-    {
-        $structure = parent::getStructure($structure);
-
-        return $structure;
     }
 
     public function hasBlogPermission($contentId, $permission)

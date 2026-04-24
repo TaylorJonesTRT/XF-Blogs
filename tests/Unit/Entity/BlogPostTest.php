@@ -247,12 +247,16 @@ class BlogPostTest extends TestCase
 
     public function testIsAttachmentEmbeddedReturnsTrueWhenIdInMetadata()
     {
-        $this->assertTrue($this->makeBlogPost(['embed_metadata' => json_encode([42, 43, 44])])->isAttachmentEmbedded(42));
+        $this->assertTrue($this->makeBlogPost(['embed_metadata' => json_encode([
+            'attachments' => [42 => 42],
+        ])])->isAttachmentEmbedded(42));
     }
 
     public function testIsAttachmentEmbeddedReturnsFalseWhenIdNotInMetadata()
     {
-        $this->assertFalse($this->makeBlogPost(['embed_metadata' => json_encode([42, 43, 44])])->isAttachmentEmbedded(99));
+        $this->assertFalse($this->makeBlogPost(['embed_metadata' => json_encode([
+            'attachments' => [42 => 42],
+        ])])->isAttachmentEmbedded(99));
     }
 
     // ---- canApproveUnapprove() ----

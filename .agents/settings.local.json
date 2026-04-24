@@ -1,6 +1,8 @@
 {
-  "permissions": {
-    "allow": [
+  "migrationNotes": {
+    "source": ".claude/settings.local.json",
+    "note": "Claude-specific local permissions preserved for reference only. This file is not an active permission policy for GPT/Codex or other agents.",
+    "claudePermissionsAllow": [
       "Bash(XDEBUG_MODE=off php:*)",
       "Bash(XDEBUG_MODE=off ./vendor/bin/phpunit:*)",
       "WebFetch(domain:github.com)",

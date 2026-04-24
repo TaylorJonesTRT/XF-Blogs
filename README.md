@@ -85,3 +85,22 @@ Cron Entries
 | Update the blog post count to reflect visible posts | Any day of the month | 12AM | 0 |
 | \[TaylorJ\] Blogs Update Similar Blog Posts | Any day of the week | Any | 30 |
 | Update Blog Post View Counter | Any day of the month | Any | 30 |
+
+Release Build
+-------------
+
+Build releases only with XenForo's release builder from the XenForo web root:
+
+```bash
+cd /Users/taylorjones/Development/XenForo/2.3.9/www
+../scripts/run_in_container.sh php cmd.php xf-addon:build-release TaylorJ/Blogs
+```
+
+Do not manually zip the add-on directory. The release build removes development-only test and tooling files from XenForo's temporary `_build` copy.
+
+Before publishing, inspect the generated zip and rebuild if this command prints any path:
+
+```bash
+ZIP="$(ls -t _releases/TaylorJ-Blogs-*.zip | head -n 1)"
+zipinfo -1 "$ZIP" | grep -E '(^|/)(vendor/|tests/|phpunit\.xml$|\.phpunit\.cache/|\.phpunit\.result\.cache$|\.php-cs-fixer\.cache$|\.idea/|\.agents/|\.claude/|AGENTS\.md$|CLAUDE\.md$)'
+```

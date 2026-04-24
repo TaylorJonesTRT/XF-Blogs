@@ -9,6 +9,8 @@ use XF\Entity\Thread;
 use XF\Entity\User;
 use XF\Repository\UserRepository;
 use XF\Service\AbstractService;
+use XF\Service\Attachment\PreparerService as AttachmentPreparerService;
+use XF\Service\Message\PreparerService as MessagePreparerService;
 use XF\Service\ValidateAndSavableTrait;
 
 class Edit extends AbstractService
@@ -30,6 +32,8 @@ class Edit extends AbstractService
      */
     protected $threadCreator;
 
+    protected $attachmentHash;
+
     public function __construct(App $app, BlogPost $blogPost)
     {
         parent::__construct($app);
@@ -44,7 +48,20 @@ class Edit extends AbstractService
 
     public function setBlogPostContent($content)
     {
-        $this->blogPost->blog_post_content = $content;
+        $preparer = \XF::service(
+            MessagePreparerService::class,
+            'taylorj_blogs_blog_post',
+            $this->blogPost
+        );
+
+        $this->blogPost->blog_post_content = $preparer->prepare($content);
+        $this->blogPost->embed_metadata = $preparer->getEmbedMetadata();
+        $preparer->pushEntityErrorIfInvalid($this->blogPost, 'blog_post_content');
+    }
+
+    public function setAttachmentHash($hash)
+    {
+        $this->attachmentHash = $hash;
     }
 
     protected function finalSetup()
@@ -62,18 +79,46 @@ class Edit extends AbstractService
     protected function _save()
     {
         $blogPost = $this->blogPost;
+        $db = $this->db();
 
-        if ($blogPost->blog_post_state == 'visible' && $blogPost->isChanged('blog_post_state'))
+        $db->beginTransaction();
+
+        try
         {
-            $blogPost->fastUpdate('blog_post_date', \XF::$time);
-        }
+            if ($blogPost->blog_post_state == 'visible' && $blogPost->isChanged('blog_post_state'))
+            {
+                $blogPost->fastUpdate('blog_post_date', \XF::$time);
+            }
 
-        if ($blogPost->blog_post_state == 'visible' && $blogPost->blog_post_date <= \XF::$time)
+            if ($blogPost->blog_post_state == 'visible' && $blogPost->blog_post_date <= \XF::$time)
+            {
+                $blogPost->fastUpdate('blog_post_last_edit_date', \XF::$time);
+            }
+
+            $blogPost->save(true, false);
+
+            if ($this->attachmentHash !== null && $this->attachmentHash !== '')
+            {
+                $inserter = $this->service(AttachmentPreparerService::class);
+                $associated = $inserter->associateAttachmentsWithContent(
+                    $this->attachmentHash,
+                    'taylorj_blogs_blog_post',
+                    $blogPost->blog_post_id
+                );
+
+                if ($associated)
+                {
+                    $blogPost->fastUpdate('attach_count', $blogPost->attach_count + $associated);
+                }
+            }
+
+            $db->commit();
+        }
+        catch (\Throwable $e)
         {
-            $blogPost->fastUpdate('blog_post_last_edit_date', \XF::$time);
+            $db->rollback();
+            throw $e;
         }
-
-        $blogPost->save(true, false);
 
         return $blogPost;
     }

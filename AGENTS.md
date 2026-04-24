@@ -1,34 +1,39 @@
-# CLAUDE.md
+# AGENTS.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+This file provides AI agent guidance when working with this add-on.
 
 ## Add-on Overview
 
-[TaylorJ] Blogs — a XenForo 2.3.0+ add-on (v1.5.1) providing a user blogging system. Users can create blogs, publish/schedule/draft posts, and integrate with XenForo's thread system for comments. All XenForo CLI commands below should be run via Docker from `~/Development/XenForo/2.3.9/`.
+[TaylorJ] Blogs — a XenForo 2.3.0+ add-on (v1.5.1) providing a user blogging system. Users can create blogs, publish/schedule/draft posts, and integrate with XenForo's thread system for comments. All XenForo CLI commands below should be run from the XenForo web root via `../scripts/run_in_container.sh`.
 
 ## Common Commands
 
 ```bash
 # Rebuild add-on caches after data changes
-cd ~/Development/XenForo/2.3.9 && docker compose exec php php cmd.php xf-addon:rebuild TaylorJ/Blogs
+cd /Users/taylorjones/Development/XenForo/2.3.9/www
+../scripts/run_in_container.sh php cmd.php xf-addon:rebuild TaylorJ/Blogs
 
-# Export development output (templates, phrases, widgets, etc.)
-cd ~/Development/XenForo/2.3.9 && docker compose exec php php cmd.php xf-dev:export --addon=TaylorJ/Blogs
+# Export development output only for explicit release/admin-panel persistence tasks
+cd /Users/taylorjones/Development/XenForo/2.3.9/www
+../scripts/run_in_container.sh php cmd.php xf-dev:export --addon=TaylorJ/Blogs
 
 # Import development data
-cd ~/Development/XenForo/2.3.9 && docker compose exec php php cmd.php xf-dev:import --addon=TaylorJ/Blogs
+cd /Users/taylorjones/Development/XenForo/2.3.9/www
+../scripts/run_in_container.sh php cmd.php xf-dev:import --addon=TaylorJ/Blogs
 
 # Format code
-cd ~/Development/XenForo/2.3.9 && docker compose exec php php vendor/bin/php-cs-fixer fix src/addons/TaylorJ/Blogs/
+cd /Users/taylorjones/Development/XenForo/2.3.9/www
+../scripts/run_in_container.sh php vendor/bin/php-cs-fixer fix src/addons/TaylorJ/Blogs/
 
 # Scaffolding (interactive — prompts for add-on selection)
-cd ~/Development/XenForo/2.3.9 && docker compose exec php php cmd.php xf-make:entity
-cd ~/Development/XenForo/2.3.9 && docker compose exec php php cmd.php xf-make:controller
-cd ~/Development/XenForo/2.3.9 && docker compose exec php php cmd.php xf-make:service
-cd ~/Development/XenForo/2.3.9 && docker compose exec php php cmd.php xf-make:repository
-cd ~/Development/XenForo/2.3.9 && docker compose exec php php cmd.php xf-make:extension
-cd ~/Development/XenForo/2.3.9 && docker compose exec php php cmd.php xf-make:job
-cd ~/Development/XenForo/2.3.9 && docker compose exec php php cmd.php xf-make:listener
+cd /Users/taylorjones/Development/XenForo/2.3.9/www
+../scripts/run_in_container.sh php cmd.php xf-make:entity
+../scripts/run_in_container.sh php cmd.php xf-make:controller
+../scripts/run_in_container.sh php cmd.php xf-make:service
+../scripts/run_in_container.sh php cmd.php xf-make:repository
+../scripts/run_in_container.sh php cmd.php xf-make:extension
+../scripts/run_in_container.sh php cmd.php xf-make:job
+../scripts/run_in_container.sh php cmd.php xf-make:listener
 
 # Testing (runs on host, not in Docker — XENFORO_HOST=1 switches DB to 127.0.0.1:3307)
 cd /Users/taylorjones/Development/XenForo/2.3.9/www/src/addons/TaylorJ/Blogs

@@ -1,10 +1,9 @@
 {
     "exec": [
-        "composer install --working-dir=_build/upload/src/addons/{addon_id}/ --no-dev --optimize-autoloader --no-interaction"
-    ],
-    "exclude": [
-        "tests",
-        "phpunit.xml",
-        ".phpunit.result.cache"
+        "rm -rf _build/upload/src/addons/{addon_id}/vendor",
+        "rm -rf _build/upload/src/addons/{addon_id}/tests",
+        "rm -f _build/upload/src/addons/{addon_id}/phpunit.xml _build/upload/src/addons/{addon_id}/composer.json _build/upload/src/addons/{addon_id}/composer.lock",
+        "rm -rf _build/upload/src/addons/{addon_id}/.phpunit.cache _build/upload/src/addons/{addon_id}/.idea _build/upload/src/addons/{addon_id}/.agents _build/upload/src/addons/{addon_id}/.claude",
+        "rm -f _build/upload/src/addons/{addon_id}/.phpunit.result.cache _build/upload/src/addons/{addon_id}/.php-cs-fixer.cache _build/upload/src/addons/{addon_id}/AGENTS.md _build/upload/src/addons/{addon_id}/CLAUDE.md"
     ]
 }

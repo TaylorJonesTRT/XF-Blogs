@@ -58,6 +58,31 @@ class EditTest extends TestCase
         $this->assertEquals('Updated blog post content', $service->blogPost->blog_post_content);
     }
 
+    public function testSetBlogPostContentStoresPreparedContent()
+    {
+        $service = $this->createService();
+        $service->setBlogPostContent('Updated blog post content');
+
+        $this->assertSame('Updated blog post content', $service->blogPost->blog_post_content);
+        $this->assertSame([], $service->blogPost->embed_metadata);
+    }
+
+    public function testSetBlogPostContentPopulatesEmbeddedAttachmentMetadata()
+    {
+        $service = $this->createService();
+        $service->setBlogPostContent('[ATTACH=full]123[/ATTACH]');
+
+        $this->assertArrayHasKey('attachments', $service->blogPost->embed_metadata);
+        $this->assertArrayHasKey(123, $service->blogPost->embed_metadata['attachments']);
+    }
+
+    public function testSetAttachmentHashIsPublic()
+    {
+        $reflection = new \ReflectionMethod(Edit::class, 'setAttachmentHash');
+
+        $this->assertTrue($reflection->isPublic());
+    }
+
     // ---- validate() ----
 
     public function testValidateReturnsEmptyArrayWhenValid()

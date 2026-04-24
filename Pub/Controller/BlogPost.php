@@ -292,7 +292,7 @@ class BlogPost extends AbstractController
 
         return $this->plugin('XF:BbCodePreview')->actionPreview(
             $message,
-            'blog_post',
+            'taylorj_blogs_blog_post',
             \XF::visitor(),
             $attachments
         );
@@ -333,6 +333,11 @@ class BlogPost extends AbstractController
 
         $editor->setTitle($title);
         $editor->setBlogPostContent($message);
+
+        if ($blogPost->canUploadAndManageAttachments())
+        {
+            $editor->setAttachmentHash($this->filter('attachment_hash', 'str'));
+        }
 
         $scheduledPostDateTime = $this->filter([
             'blog_post_schedule' => 'string',
