@@ -12,65 +12,65 @@ use XF\Mvc\Entity\Entity;
  */
 class BlogPost extends AbstractHandler
 {
-	use FeaturableTrait;
+    use FeaturableTrait;
 
-	public function getPossibleActions()
-	{
-		$actions = [];
+    public function getPossibleActions()
+    {
+        $actions = [];
 
-		$actions['delete'] = $this->getActionHandler('TaylorJ\Blogs:BlogPost\Delete');
+        $actions['delete'] = $this->getActionHandler('TaylorJ\Blogs:BlogPost\Delete');
 
-		$actions['undelete'] = $this->getSimpleActionHandler(
-			\XF::phrase('taylorj_blogs_undelete_blog_posts'),
-			'canUndelete',
-			function (Entity $entity)
-			{
-				/** @var \TaylorJ\Blogs\Entity\BlogPost $entity */
-				if ($entity->blog_post_state == 'deleted')
-				{
-					$entity->blog_post_state = 'visible';
-					$entity->save();
-				}
-			}
-		);
+        $actions['undelete'] = $this->getSimpleActionHandler(
+            \XF::phrase('taylorj_blogs_undelete_blog_posts'),
+            'canUndelete',
+            function (Entity $entity)
+            {
+                /** @var \TaylorJ\Blogs\Entity\BlogPost $entity */
+                if ($entity->blog_post_state == 'deleted')
+                {
+                    $entity->blog_post_state = 'visible';
+                    $entity->save();
+                }
+            }
+        );
 
-		$actions['approve'] = $this->getSimpleActionHandler(
-			\XF::phrase('taylorj_blogs_approve_blog_posts'),
-			'canApproveUnapprove',
-			function (Entity $entity)
-			{
-				/** @var \TaylorJ\Blogs\Entity\BlogPost $entity */
-				if ($entity->blog_post_state == 'moderated')
-				{
-					/** @var Approve $approver */
-					$approver = \XF::service('TaylorJ\Blogs:BlogPost\Approve', $entity);
-					$approver->setNotifyRunTime(1); // may be a lot happening
-					$approver->approve();
-				}
-			}
-		);
+        $actions['approve'] = $this->getSimpleActionHandler(
+            \XF::phrase('taylorj_blogs_approve_blog_posts'),
+            'canApproveUnapprove',
+            function (Entity $entity)
+            {
+                /** @var \TaylorJ\Blogs\Entity\BlogPost $entity */
+                if ($entity->blog_post_state == 'moderated')
+                {
+                    /** @var Approve $approver */
+                    $approver = \XF::service('TaylorJ\Blogs:BlogPost\Approve', $entity);
+                    $approver->setNotifyRunTime(1); // may be a lot happening
+                    $approver->approve();
+                }
+            }
+        );
 
-		$actions['unapprove'] = $this->getSimpleActionHandler(
-			\XF::phrase('taylorj_blogs_unapprove_blog_posts'),
-			'canApproveUnapprove',
-			function (Entity $entity)
-			{
-				/** @var \TaylorJ\Blogs\Entity\BlogPost $entity */
-				if ($entity->blog_post_state == 'visible')
-				{
-					$entity->blog_post_state = 'moderated';
-					$entity->save();
-				}
-			}
-		);
+        $actions['unapprove'] = $this->getSimpleActionHandler(
+            \XF::phrase('taylorj_blogs_unapprove_blog_posts'),
+            'canApproveUnapprove',
+            function (Entity $entity)
+            {
+                /** @var \TaylorJ\Blogs\Entity\BlogPost $entity */
+                if ($entity->blog_post_state == 'visible')
+                {
+                    $entity->blog_post_state = 'moderated';
+                    $entity->save();
+                }
+            }
+        );
 
-		return $actions;
-	}
+        return $actions;
+    }
 
-	public function getEntityWith()
-	{
-		$visitor = \XF::visitor();
+    public function getEntityWith()
+    {
+        $visitor = \XF::visitor();
 
-		return ['Blog'];
-	}
+        return ['Blog'];
+    }
 }

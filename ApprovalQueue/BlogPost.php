@@ -2,9 +2,9 @@
 
 namespace TaylorJ\Blogs\ApprovalQueue;
 
+use TaylorJ\Blogs\Service\BlogPost\Approve;
 use XF\ApprovalQueue\AbstractHandler;
 use XF\Mvc\Entity\Entity;
-use TaylorJ\Blogs\Service\BlogPost\Approve;
 
 class BlogPost extends AbstractHandler
 {

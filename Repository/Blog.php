@@ -47,6 +47,22 @@ class Blog extends Repository
         File::deleteFromAbstractedPath($blog->getAbstractedHeaderImagePath());
     }
 
+    public function handleHeaderImageFromInput(BlogEntity $blog, ?string $headerAction, ?Upload $upload): void
+    {
+        if ($headerAction === 'upload_header' || $headerAction === null)
+        {
+            if ($upload)
+            {
+                $this->setBlogHeaderImagePath($blog->blog_id, $upload);
+                $blog->fastUpdate('blog_has_header', '1');
+            }
+        } else if ($headerAction === 'delete_header')
+        {
+            $this->deleteBlogHeaderImage($blog);
+            $blog->fastUpdate('blog_has_header', '0');
+        }
+    }
+
     public function findBlogsByUser(int $userId)
     {
         return $this->finder(BlogFinder::class)

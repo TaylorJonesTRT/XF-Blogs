@@ -1,0 +1,20 @@
+{
+    "legacy_addon_id": "",
+    "title": "[TaylorJ] Blogs",
+    "description": "A user blogging system to allow your users to express themselves",
+    "version_id": 1060270,
+    "version_string": "1.6.2",
+    "dev": "TaylorJ",
+    "dev_url": "https://xenforo.com/community/members/taylor-j.657/",
+    "faq_url": "",
+    "support_url": "https://xenforo.com/community/threads/taylorj-blogs.224049/",
+    "extra_urls": [],
+    "require": {
+        "XF": [
+            "2.3.0",
+            "XenForo 2.3.0"
+        ]
+    },
+    "icon": "fa-book",
+    "composer_autoload": "vendor/composer"
+}

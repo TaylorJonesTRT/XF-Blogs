@@ -36,8 +36,8 @@ tests/
 ### All Tests
 
 ```bash
-cd /Users/taylorjones/Herd/xf232/src/addons/TaylorJ/Blogs
-XDEBUG_MODE=off ./vendor/bin/phpunit
+cd /Users/taylorjones/Development/XenForo/2.3.9/www/src/addons/TaylorJ/Blogs
+XENFORO_HOST=1 XDEBUG_MODE=off ./vendor/bin/phpunit
 ```
 
 **Expected output:** Tests: 253, Assertions: 298, Skipped: 4
@@ -46,22 +46,22 @@ XDEBUG_MODE=off ./vendor/bin/phpunit
 
 ```bash
 # Entity tests (Blog + BlogPost permissions, state machine)
-XDEBUG_MODE=off ./vendor/bin/phpunit tests/Unit/Entity/
+XENFORO_HOST=1 XDEBUG_MODE=off ./vendor/bin/phpunit tests/Unit/Entity/
 
 # Job tests (PostBlogPost scheduled publishing)
-XDEBUG_MODE=off ./vendor/bin/phpunit tests/Unit/Job/
+XENFORO_HOST=1 XDEBUG_MODE=off ./vendor/bin/phpunit tests/Unit/Job/
 ```
 
 ### Single Test File
 
 ```bash
-XDEBUG_MODE=off ./vendor/bin/phpunit tests/Unit/Entity/BlogTest.php
+XENFORO_HOST=1 XDEBUG_MODE=off ./vendor/bin/phpunit tests/Unit/Entity/BlogTest.php
 ```
 
 ### Single Test Method
 
 ```bash
-XDEBUG_MODE=off ./vendor/bin/phpunit --filter testCanViewReturnsTrueWhenVisitorHasBothPermissions tests/Unit/Entity/BlogTest.php
+XENFORO_HOST=1 XDEBUG_MODE=off ./vendor/bin/phpunit --filter testCanViewReturnsTrueWhenVisitorHasBothPermissions tests/Unit/Entity/BlogTest.php
 ```
 
 ## Test Coverage

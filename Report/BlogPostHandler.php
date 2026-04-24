@@ -2,11 +2,11 @@
 
 namespace TaylorJ\Blogs\Report;
 
+use TaylorJ\Blogs\Entity\BlogPost;
+use TaylorJ\Blogs\XF\Entity\User;
 use XF\Entity\Report;
 use XF\Mvc\Entity\Entity;
 use XF\Report\AbstractHandler;
-use TaylorJ\Blogs\Entity\BlogPost;
-use TaylorJ\Blogs\XF\Entity\User;
 
 class BlogPostHandler extends AbstractHandler
 {
@@ -39,7 +39,7 @@ class BlogPostHandler extends AbstractHandler
                 'blog_post_title' => $blogPostTitle,
                 'blog_post_message' => $content->blog_post_content,
                 'user_id' => $content->user_id,
-                'username' => $content->User->username
+                'username' => $content->User->username,
             ],
         ];
     }
@@ -58,9 +58,11 @@ class BlogPostHandler extends AbstractHandler
 
     public function getContentLink(Report $report)
     {
-        if (!empty($report->content_info['blog_post_id'])) {
+        if (!empty($report->content_info['blog_post_id']))
+        {
             $linkData = $report->content_info;
-        } else {
+        } else
+        {
             $linkData = ['post_id' => $report->content_id];
         }
 

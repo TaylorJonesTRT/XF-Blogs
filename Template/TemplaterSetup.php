@@ -2,8 +2,8 @@
 
 namespace TaylorJ\Blogs\Template;
 
-use XF\Template\Templater;
 use TaylorJ\Blogs\Entity\Blog;
+use XF\Template\Templater;
 
 class TemplaterSetup
 {
@@ -13,10 +13,12 @@ class TemplaterSetup
 
         $size = preg_replace('#[^a-zA-Z0-9_-]#s', '', $size);
 
-        if ($href) {
+        if ($href)
+        {
             $tag = 'a';
             $hrefAttr = 'href="' . htmlspecialchars($href) . '"';
-        } else {
+        } else
+        {
             $tag = 'span';
             $hrefAttr = '';
         }
@@ -24,9 +26,11 @@ class TemplaterSetup
         /** @var Templater $templater */
         $attributesString = $templater->getAttributesAsString($attributes);
 
-        if (!$blog->blog_header_image) {
+        if (!$blog->blog_header_image)
+        {
             return "<{$tag} {$hrefAttr} class=\"avatar avatar--{$size} avatar--resourceIconDefault\"><span></span><span class=\"u-srOnly\">" . \XF::phrase('xfrm_resource_icon') . "</span></{$tag}>";
-        } else {
+        } else
+        {
             $src = $blog->getIconUrl($size);
 
             return "<{$tag} {$hrefAttr} class=\"avatar avatar--{$size}\"{$attributesString}>"

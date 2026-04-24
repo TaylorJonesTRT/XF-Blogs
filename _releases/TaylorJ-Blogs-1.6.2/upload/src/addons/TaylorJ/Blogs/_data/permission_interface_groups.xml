@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<permission_interface_groups>
+  <interface_group interface_group_id="taylorjBlogsModeratorPermissions" display_order="9001" is_moderator="1"/>
+  <interface_group interface_group_id="taylorjBlogsPermissions" display_order="9000" is_moderator="0"/>
+</permission_interface_groups>

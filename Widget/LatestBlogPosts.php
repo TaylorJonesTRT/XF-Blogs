@@ -2,12 +2,11 @@
 
 namespace TaylorJ\Blogs\Widget;
 
+use TaylorJ\Blogs\Utils;
 use XF\Entity\Thread;
 use XF\Http\Request;
 use XF\Repository\NodeRepository;
 use XF\Repository\ThreadRepository;
-
-use TaylorJ\Blogs\Utils;
 
 use function in_array;
 
@@ -23,7 +22,8 @@ class LatestBlogPosts extends AbstractWidget
     protected function getDefaultTemplateParams($context)
     {
         $params = parent::getDefaultTemplateParams($context);
-        if ($context == 'options') {
+        if ($context == 'options')
+        {
             $nodeRepo = $this->app->repository(NodeRepository::class);
             $params['nodeTree'] = $nodeRepo->createNodeTree($nodeRepo->getFullNodeList());
         }
@@ -39,7 +39,8 @@ class LatestBlogPosts extends AbstractWidget
         $filter = $options['filter'];
         $nodeIds = $options['node_ids'];
 
-        if (!$visitor->user_id) {
+        if (!$visitor->user_id)
+        {
             $filter = 'latest';
         }
 
@@ -49,7 +50,8 @@ class LatestBlogPosts extends AbstractWidget
         $threadRepo = $this->repository(ThreadRepository::class);
         $blogPostRepo = Utils::getBlogPostRepo();
 
-        switch ($filter) {
+        switch ($filter)
+        {
             default:
             case 'latest':
                 $blogPostFinder = $blogPostRepo->findLatestBlogPosts();
@@ -59,11 +61,13 @@ class LatestBlogPosts extends AbstractWidget
         }
 
         /** @var Thread $thread */
-        foreach ($blogPosts = $blogPostFinder->fetch() as $blogPostId => $blogPost) {
+        foreach ($blogPosts = $blogPostFinder->fetch() AS $blogPostId => $blogPost)
+        {
             if (
                 !$blogPost->canView()
                 || $visitor->isIgnoring($blogPost->user_id)
-            ) {
+            )
+            {
                 unset($blogPosts[$blogPostId]);
             }
         }
@@ -89,10 +93,12 @@ class LatestBlogPosts extends AbstractWidget
             'filter' => 'str',
             'node_ids' => 'array-uint',
         ]);
-        if (in_array(0, $options['node_ids'])) {
+        if (in_array(0, $options['node_ids']))
+        {
             $options['node_ids'] = [0];
         }
-        if ($options['limit'] < 1) {
+        if ($options['limit'] < 1)
+        {
             $options['limit'] = 1;
         }
 

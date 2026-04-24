@@ -10,166 +10,184 @@ use XF\Util\File;
 
 class Utils
 {
-	/**
-	 * @var BlogPost
-	 */
-	protected $blogPost;
+    /**
+     * @var BlogPost
+     */
+    protected $blogPost;
 
-	/**
-	 * @var Blog
-	 */
-	protected $blog;
+    /**
+     * @var Blog
+     */
+    protected $blog;
 
-	/**
-	 * @var Creator|null
-	 */
-	protected $threadCreator;
+    /**
+     * @var Creator|null
+     */
+    protected $threadCreator;
 
-	public static function hours()
-	{
-		$hours = [];
-		for ($i = 0; $i < 24; $i++)
-		{
-			$hh = str_pad($i, 2, '0', STR_PAD_LEFT);
-			$hours[$hh] = $hh;
-		}
+    public static function hours()
+    {
+        $hours = [];
+        for ($i = 0; $i < 24; $i++)
+        {
+            $hh = str_pad($i, 2, '0', STR_PAD_LEFT);
+            $hours[$hh] = $hh;
+        }
 
-		return $hours;
-	}
+        return $hours;
+    }
 
-	public static function minutes()
-	{
-		$minutes = [];
-		for ($i = 0; $i < 60; $i += 1)
-		{
-			$mm = str_pad($i, 2, '0', STR_PAD_LEFT);
-			$minutes[$mm] = $mm;
-		}
+    public static function minutes()
+    {
+        $minutes = [];
+        for ($i = 0; $i < 60; $i += 1)
+        {
+            $mm = str_pad($i, 2, '0', STR_PAD_LEFT);
+            $minutes[$mm] = $mm;
+        }
 
-		return $minutes;
-	}
+        return $minutes;
+    }
 
-	public static function repo($class)
-	{
-		return \XF::app()->repository($class);
-	}
+    public static function getSchedulingViewParams(?int $timestamp = null): array
+    {
+        $dt = new \DateTime();
+        $dt->setTimezone(new \DateTimeZone(\XF::visitor()->timezone));
+        if ($timestamp !== null)
+        {
+            $dt->setTimestamp($timestamp);
+        }
 
-	public static function log($msg)
-	{
-		\XF::logError('[TaylorJ\Blogs] --> ' . $msg);
-	}
+        return [
+            'hours' => static::hours(),
+            'minutes' => static::minutes(),
+            'dt' => $dt,
+            'hh_value' => $dt->format('H'),
+            'mm_value' => $dt->format('i'),
+        ];
+    }
 
-	/**
-	 * @return Repository\BlogPost
-	 */
-	public static function getBlogPostRepo()
-	{
-		return \XF::app()->repository('TaylorJ\Blogs:BlogPost');
-	}
+    public static function repo($class)
+    {
+        return \XF::app()->repository($class);
+    }
 
-	/**
-	 * @return Repository\Blog
-	 */
-	public static function getBlogRepo()
-	{
-		return \XF::app()->repository('TaylorJ\Blogs:Blog');
-	}
+    public static function log($msg)
+    {
+        \XF::logError('[TaylorJ\Blogs] --> ' . $msg);
+    }
 
-	/**
-	 * @return PostRepository
-	 */
-	public function getPostRepo()
-	{
-		return \XF::app()->repository(PostRepository::class);
-	}
+    /**
+     * @return Repository\BlogPost
+     */
+    public static function getBlogPostRepo()
+    {
+        return \XF::app()->repository('TaylorJ\Blogs:BlogPost');
+    }
 
-	public static function setupBlogPostThreadCreation(BlogPost $blogPost)
-	{
-		$forumFinder = \XF::finder('XF:Forum')
-			->where('node_id', \XF::app()->options()->taylorjBlogsBlogPostForum)
-			->fetchOne();
+    /**
+     * @return Repository\Blog
+     */
+    public static function getBlogRepo()
+    {
+        return \XF::app()->repository('TaylorJ\Blogs:Blog');
+    }
 
-		$forum = $forumFinder ? $forumFinder : 1;
+    /**
+     * @return PostRepository
+     */
+    public function getPostRepo()
+    {
+        return \XF::app()->repository(PostRepository::class);
+    }
 
-		/** @var Creator $creator */
-		$creator = \XF::app()->service('TaylorJ\Blogs:BlogPost\ThreadCreator', $forum, $blogPost);
-		$creator->setIsAutomated();
+    public static function setupBlogPostThreadCreation(BlogPost $blogPost)
+    {
+        $forumFinder = \XF::finder('XF:Forum')
+            ->where('node_id', \XF::app()->options()->taylorjBlogsBlogPostForum)
+            ->fetchOne();
 
-		$creator->setContent($blogPost->getExpectedThreadTitle(), Utils::getThreadMessage($blogPost), false);
+        $forum = $forumFinder ? $forumFinder : 1;
 
-		$creator->setDiscussionTypeAndDataRaw('blogPost');
+        /** @var Creator $creator */
+        $creator = \XF::app()->service('TaylorJ\Blogs:BlogPost\ThreadCreator', $forum, $blogPost);
+        $creator->setIsAutomated();
 
-		$thread = $creator->getThread();
-		$thread->discussion_state = $blogPost->blog_post_state;
+        $creator->setContent($blogPost->getExpectedThreadTitle(), Utils::getThreadMessage($blogPost), false);
 
-		return $creator;
-	}
+        $creator->setDiscussionTypeAndDataRaw('blogPost');
 
-	public static function afterResourceThreadCreated(Thread $thread)
-	{
-		\XF::app()->repository('XF:Thread')->markThreadReadByVisitor($thread);
-		\XF::app()->repository('XF:ThreadWatch')->autoWatchThread($thread, \XF::visitor(), true);
-	}
+        $thread = $creator->getThread();
+        $thread->discussion_state = $blogPost->blog_post_state;
 
-	public static function getThreadMessage(BlogPost $blogPost)
-	{
-		$app = \XF::app();
+        return $creator;
+    }
 
-		$snippet = \XF::app()->bbCode()->render(
-			$app->stringFormatter()->wholeWordTrim($blogPost->blog_post_content, 500),
-			'bbCodeClean',
-			'post',
-			null
-		);
+    public static function afterResourceThreadCreated(Thread $thread)
+    {
+        \XF::app()->repository('XF:Thread')->markThreadReadByVisitor($thread);
+        \XF::app()->repository('XF:ThreadWatch')->autoWatchThread($thread, \XF::visitor(), true);
+    }
 
-		$phrase = \XF::phrase('taylorj_blogs_blog_post_thread_create', [
-			'title' => $blogPost->blog_post_title_,
-			'username' => $blogPost->User->username,
-			'snippet' => $snippet,
-			'blog_post_link' => $app->router('public')->buildLink('canonical:blogs/post', $blogPost),
-		]);
+    public static function getThreadMessage(BlogPost $blogPost)
+    {
+        $app = \XF::app();
 
-		return $phrase->render('raw');
-	}
+        $snippet = \XF::app()->bbCode()->render(
+            $app->stringFormatter()->wholeWordTrim($blogPost->blog_post_content, 500),
+            'bbCodeClean',
+            'post',
+            null
+        );
 
-	public function adjustBlogPostCount(Blog $blog, $amount)
-	{
-		if (
-			$blog->user_id
-			&& $blog->User
-		)
-		{
-			$blog->fastUpdate('blog_post_count', max(0, $blog->blog_post_count + $amount));
-		}
-	}
+        $phrase = \XF::phrase('taylorj_blogs_blog_post_thread_create', [
+            'title' => $blogPost->blog_post_title_,
+            'username' => $blogPost->User->username,
+            'snippet' => $snippet,
+            'blog_post_link' => $app->router('public')->buildLink('canonical:blogs/post', $blogPost),
+        ]);
 
-	public function adjustUserBlogPostCount(Blog $blog, $amount)
-	{
-		if (
-			$blog->user_id
-			&& $blog->User
-		)
-		{
-			$blog->User->fastUpdate('taylorj_blogs_blog_post_count', max(0, $blog->User->taylorj_blogs_blog_post_count + $amount));
-		}
-	}
+        return $phrase->render('raw');
+    }
 
-	public function adjustUserBlogCount(Blog $blog, $amount)
-	{
-		if (
-			$blog->user_id
-			&& $blog->User
-		)
-		{
-			$blog->User->fastUpdate('taylorj_blogs_blog_count', max(0, $blog->User->taylorj_blogs_blog_count + $amount));
-		}
-	}
+    public function adjustBlogPostCount(Blog $blog, $amount)
+    {
+        if (
+            $blog->user_id
+            && $blog->User
+        )
+        {
+            $blog->fastUpdate('blog_post_count', max(0, $blog->blog_post_count + $amount));
+        }
+    }
 
-	protected function deleteBlogHeaderFiles(Blog $blog)
-	{
-		if ($blog->avatar_date)
-		{
-			File::deleteFromAbstractedPath($blog->blog_header_image);
-		}
-	}
+    public function adjustUserBlogPostCount(Blog $blog, $amount)
+    {
+        if (
+            $blog->user_id
+            && $blog->User
+        )
+        {
+            $blog->User->fastUpdate('taylorj_blogs_blog_post_count', max(0, $blog->User->taylorj_blogs_blog_post_count + $amount));
+        }
+    }
+
+    public function adjustUserBlogCount(Blog $blog, $amount)
+    {
+        if (
+            $blog->user_id
+            && $blog->User
+        )
+        {
+            $blog->User->fastUpdate('taylorj_blogs_blog_count', max(0, $blog->User->taylorj_blogs_blog_count + $amount));
+        }
+    }
+
+    protected function deleteBlogHeaderFiles(Blog $blog)
+    {
+        if ($blog->avatar_date)
+        {
+            File::deleteFromAbstractedPath($blog->blog_header_image);
+        }
+    }
 }

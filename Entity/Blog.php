@@ -51,12 +51,12 @@ class Blog extends Entity implements DatableInterface
     {
         $visitor = \XF::visitor();
 
-        if (!$visitor->hasPermission('taylorjBlogs', 'viewOwn') || !$visitor->hasPermission('taylorjBlogs', 'viewAny'))
+        if ($visitor->user_id == $this->user_id)
         {
-            return false;
+            return $visitor->hasPermission('taylorjBlogs', 'viewOwn');
         }
 
-        return true;
+        return $visitor->hasPermission('taylorjBlogs', 'viewAny');
     }
 
     public function canEdit(&$error = null)
@@ -70,16 +70,11 @@ class Blog extends Entity implements DatableInterface
                 $error = \XF::phrase('taylorj_blogs_blog_error_edit');
                 return false;
             }
-        }
-        else
+        } else
         {
-            if ($visitor->hasPermission('taylorjBlogs', 'canEditAny'))
+            if (!$visitor->hasPermission('taylorjBlogs', 'canEditAny'))
             {
                 $error = \XF::phrase('taylorj_blogs_blog_error_edit');
-                return false;
-            }
-            else
-            {
                 return false;
             }
         }
@@ -132,8 +127,7 @@ class Blog extends Entity implements DatableInterface
             {
                 $error = \XF::phrase('taylorj_blogs_blog_post_error_new');
                 return false;
-            }
-            else
+            } else
             {
                 return true;
             }
@@ -252,19 +246,10 @@ class Blog extends Entity implements DatableInterface
                 "taylorj_blogs/blog_header_images/{$this->blog_id}.jpg?{$this->blog_creation_date}",
                 $canonical
             );
-        }
-        else
+        } else
         {
             return null;
         }
-    }
-
-    public function getTotalBlogPosts()
-    {
-        $test = $this->finder('TaylorJ\Blogs:Post')
-            ->where('blog_id', '=', $this->id);
-
-        return $test;
     }
 
     protected function verifyTitle(&$value)
@@ -329,7 +314,7 @@ class Blog extends Entity implements DatableInterface
 
     protected function blogMadeVisible()
     {
-        if ($this->BlogPosts)
+        if ($this->BlogPosts->count())
         {
             foreach ($this->BlogPosts AS $blogPost)
             {
@@ -390,8 +375,7 @@ class Blog extends Entity implements DatableInterface
                 {
                     $this->submitHamData();
                 }
-            }
-            else if ($deletionChange == 'enter' && !$this->DeletionLog)
+            } else if ($deletionChange == 'enter' && !$this->DeletionLog)
             {
                 $delLog = $this->getRelationOrDefault('DeletionLog', false);
                 $delLog->setFromVisitor();
