@@ -6,7 +6,7 @@ use XF\Entity\Thread;
 use XF\Http\Request;
 use XF\ThreadType\AbstractHandler;
 
-class BlogPost extends AbstractHandler
+class BlogPostHandler extends AbstractHandler
 {
     public function getTypeIconClass(): string
     {

@@ -26,25 +26,6 @@ class User extends XFCP_User
 		return $this->PermissionSet->hasContentPermission('resource_category', $contentId, $permission);
 	}
 
-	public function cacheResourceCategoryPermissions(?array $categoryIds = null)
-	{
-		if (is_array($categoryIds))
-		{
-			\XF::permissionCache()->cacheContentPermsByIds($this->permission_combination_id, 'resource_category', $categoryIds);
-		}
-		else
-		{
-			\XF::permissionCache()->cacheAllContentPerms($this->permission_combination_id, 'resource_category');
-		}
-	}
-
-	public static function getStructure(Structure $structure): Structure
-	{
-		$structure = parent::getStructure($structure);
-
-		return $structure;
-	}
-
 	public function hasBlogPermission($contentId, $permission)
 	{
 		return $this->PermissionSet->hasContentPermission('taylorjBlogsPermissions', $contentId, $permission);

@@ -217,11 +217,14 @@ class Setup extends AbstractSetup
     {
         $sm = $this->schemaManager();
 
+        $this->removePendingJobs();
         $this->changeDiscussionType();
+        $this->removeThreadType();
 
         $sm->dropTable('xf_taylorj_blogs_blog');
         $sm->dropTable('xf_taylorj_blogs_blog_post');
         $sm->dropTable('xf_taylorj_blogs_blog_post_view');
+        $sm->dropTable('xf_taylorj_blogs_blog_post_similar');
     }
 
     public function uninstallStep2()
@@ -242,9 +245,31 @@ class Setup extends AbstractSetup
 
     public function uninstallStep4()
     {
-        $contentTypes = ['blogPost'];
+        $db = $this->db();
+        $contentTypes = [
+            'taylorj_blogs_blog',
+            'taylorj_blogs_blog_post',
+            'taylorj_userblogs_post'
+        ];
 
         $this->uninstallContentTypeData($contentTypes);
+
+        $db->beginTransaction();
+
+        $db->delete(
+            'xf_permission_cache_content',
+            "content_type IN ('taylorj_blogs_blog', 'taylorj_blogs_blog_post', 'taylorj_userblogs_post')"
+        );
+        $db->delete(
+            'xf_permission_entry',
+            "permission_group_id IN ('taylorjBlogs', 'taylorjBlogPost')"
+        );
+        $db->delete(
+            'xf_permission_entry_content',
+            "permission_group_id IN ('taylorjBlogs', 'taylorjBlogPost')"
+        );
+
+        $db->commit();
     }
 
     public function giveBlogPostComments()
@@ -272,5 +297,33 @@ class Setup extends AbstractSetup
         $db->query("
             UPDATE xf_thread SET discussion_type = '' WHERE discussion_type = 'blogPost'
 		");
+    }
+
+    private function removePendingJobs()
+    {
+        $jobManager = $this->app->jobManager();
+        $jobManager->cancelUniqueJob('taylorjBlogsSimilarPosts');
+
+        $jobs = $this->db()->fetchAll("
+            SELECT *
+            FROM xf_job
+            WHERE unique_key LIKE 'taylorjblogs\\_scheduledpost\\_%'
+        ");
+
+        foreach ($jobs AS $job)
+        {
+            $jobManager->cancelJob($job);
+        }
+    }
+
+    private function removeThreadType()
+    {
+        $db = $this->db();
+        $db->delete(
+            'xf_thread_type',
+            "thread_type_id = 'blogPost' AND addon_id = 'TaylorJ/Blogs'"
+        );
+
+        $this->app->repository(\XF\Repository\ThreadTypeRepository::class)->rebuildThreadTypeCache();
     }
 }
