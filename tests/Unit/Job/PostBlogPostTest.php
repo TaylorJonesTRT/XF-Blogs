@@ -7,12 +7,6 @@ use TaylorJ\Blogs\Tests\TestCase;
 
 class PostBlogPostTest extends TestCase
 {
-    protected function setUp(): void
-    {
-        parent::setUp();
-        $this->setUpEntityManager();
-    }
-
     // ---- getStatusMessage() ----
 
     public function testGetStatusMessageReturnsExpectedString()

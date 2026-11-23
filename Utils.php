@@ -6,7 +6,6 @@ use TaylorJ\Blogs\Entity\Blog;
 use TaylorJ\Blogs\Entity\BlogPost;
 use XF\Entity\Thread;
 use XF\Repository\PostRepository;
-use XF\Util\File;
 
 class Utils
 {
@@ -157,7 +156,8 @@ class Utils
             && $blog->User
         )
         {
-            $blog->fastUpdate('blog_post_count', max(0, $blog->blog_post_count + $amount));
+            // blog_post_count has a getter that returns a live count, so read the stored column
+            $blog->fastUpdate('blog_post_count', max(0, $blog->getValue('blog_post_count') + $amount));
         }
     }
 
@@ -180,14 +180,6 @@ class Utils
         )
         {
             $blog->User->fastUpdate('taylorj_blogs_blog_count', max(0, $blog->User->taylorj_blogs_blog_count + $amount));
-        }
-    }
-
-    protected function deleteBlogHeaderFiles(Blog $blog)
-    {
-        if ($blog->avatar_date)
-        {
-            File::deleteFromAbstractedPath($blog->blog_header_image);
         }
     }
 }

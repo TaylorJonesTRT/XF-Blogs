@@ -1,38 +1,58 @@
 <xf:css src="taylorj_blogs_index.less" />
 
 <xf:title>
-    {{ phrase('taylorj_blogs') }}
+	{{ phrase('taylorj_blogs') }}
 </xf:title>
 
-<xf:pageaction>
-    <xf:button href="{{ link('blogs/add') }}" icon="add" overlay="true" class="button--cta">
-        {{ phrase('taylorj_blogs_create_blog') }}
-    </xf:button>
-</xf:pageaction>
+<xf:if is="$xf.visitor.hasPermission('taylorjBlogs', 'canCreate')">
+	<xf:pageaction>
+		<xf:button href="{{ link('blogs/add') }}" icon="add" overlay="true" class="button--cta">
+			{{ phrase('taylorj_blogs_create_blog') }}
+		</xf:button>
+	</xf:pageaction>
+</xf:if>
 
-<div class="block taylorjBlogs">
-    <xf:foreach loop="{$blogs}" key="$blog_id" value="$blog">
-        <div class="taylorjBlogs-main">
-            <div class="block-container taylorjBlogs">
-                <div class="block-body taylorjBlogs">
-                    <div class="blog-header-image taylorjBlogs">
-                        <xf:if is="$blog.blog_header_image">
-                            <img src="{$blog.blog_header_image}" alt="Header Image" />
-                            <xf:else />
-                            <xf:fa icon="fad fa-book" class="taylorjBlogs-noImage" />
-                        </xf:if>
-                    </div>
-                    <xf:avatar user="$blog.User" size="s" class="avatar taylorjBlogs" />
-                    <div class="taylorjBlogs-blog-container">
-                        <a href="{{ link('blogs/blog', $blog) }}">
-                            <h1>{$blog.blog_title}</h1>
-                        </a>
-                        <p class="taylorjBlogs-blog-description">{$blog.blog_description}</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </xf:foreach>
-    <xf:pagenav page="{$page}" perpage="{$perPage}" total="{$total}" link="blogs/" data="{$blog}"
-        wrapperclass="block-outer block-outer--after" />
+<div class="block">
+	<xf:if is="$blogs is not empty">
+		<div class="taylorjBlogsIndex">
+			<xf:foreach loop="{$blogs}" value="$blog">
+				<article class="taylorjBlogsCard" data-xf-init="touch-proxy">
+					<div class="taylorjBlogsCard-image">
+						<xf:if is="$blog.blog_header_image">
+							<img src="{$blog.blog_header_image}" alt="" loading="lazy" />
+						<xf:else />
+							<xf:fa icon="fa-book" />
+						</xf:if>
+					</div>
+					<div class="taylorjBlogsCard-avatar">
+						<xf:avatar user="{$blog.User}" size="s" defaultname="{{ phrase('deleted_member') }}" />
+					</div>
+					<div class="taylorjBlogsCard-body">
+						<h2 class="taylorjBlogsCard-title">
+							<a href="{{ link('blogs/blog', $blog) }}" data-tp-primary="on">{$blog.blog_title}</a>
+						</h2>
+						<xf:if is="$blog.blog_description">
+							<p class="taylorjBlogsCard-description">{$blog.blog_description}</p>
+						</xf:if>
+						<ul class="listInline listInline--bullet taylorjBlogsCard-meta">
+							<li><xf:username user="{$blog.User}" defaultname="{{ phrase('deleted_member') }}" /></li>
+							<xf:if is="$blog.getValue('blog_post_count')">
+								<li>{{ phrase('taylorj_blogs_x_posts', {'count': $blog.getValue('blog_post_count')|number}) }}</li>
+								<xf:if is="$blog.blog_last_post_date">
+									<li><xf:date time="{$blog.blog_last_post_date}" /></li>
+								</xf:if>
+							<xf:else />
+								<li>{{ phrase('taylorj_blogs_no_posts_yet') }}</li>
+							</xf:if>
+						</ul>
+					</div>
+				</article>
+			</xf:foreach>
+		</div>
+
+		<xf:pagenav page="{$page}" perpage="{$perPage}" total="{$total}" link="blogs/"
+			wrapperclass="block-outer block-outer--after" />
+	<xf:else />
+		<div class="blockMessage">{{ phrase('taylorj_blogs_no_blogs_to_display') }}</div>
+	</xf:if>
 </div>

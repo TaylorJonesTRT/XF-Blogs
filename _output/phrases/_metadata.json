@@ -857,11 +857,23 @@
         "version_string": "1.0.0 Beta 6",
         "hash": "fd82960a34ce66c424a65b59f4405eb9"
     },
+    "taylorj_blogs_no_blogs_to_display.txt": {
+        "global_cache": false,
+        "version_id": 1080070,
+        "version_string": "1.8.0",
+        "hash": "2ebc0bf4ef7c2384b2fc47ae24f67330"
+    },
     "taylorj_blogs_no_change.txt": {
         "global_cache": false,
         "version_id": 1030070,
         "version_string": "1.3.0",
         "hash": "7b44391e916811603c318ffd2caaf1b1"
+    },
+    "taylorj_blogs_no_posts_yet.txt": {
+        "global_cache": false,
+        "version_id": 1080070,
+        "version_string": "1.8.0",
+        "hash": "4828976dcd5b4813e42326f9661dd032"
     },
     "taylorj_blogs_owned_blog_posts.txt": {
         "global_cache": false,
@@ -940,6 +952,12 @@
         "version_id": 1000037,
         "version_string": "1.0.0 Beta 7",
         "hash": "67e50589be97e0f6b1006e739baf7939"
+    },
+    "taylorj_blogs_x_posts.txt": {
+        "global_cache": false,
+        "version_id": 1080070,
+        "version_string": "1.8.0",
+        "hash": "edd418490cfb7c2c0464da1dfa768a23"
     },
     "taylorj_blogs_you_sure_you_want_to_delete_x_blog_posts.txt": {
         "global_cache": false,

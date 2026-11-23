@@ -115,8 +115,7 @@ class EditTest extends TestCase
 
     public function testSetScheduledPostDateTimeForScheduledState()
     {
-        $visitor = $this->mockVisitor([], 1);
-        $visitor->timezone = 'UTC';
+        $this->actingAsMember(['user_id' => 1, 'timezone' => 'UTC']);
         $this->setOption('guestTimeZone', 'UTC');
 
         $service = $this->createService();
@@ -133,8 +132,7 @@ class EditTest extends TestCase
 
     public function testSetScheduledPostDateTimeForDraftState()
     {
-        $visitor = $this->mockVisitor([], 1);
-        $visitor->timezone = 'UTC';
+        $this->actingAsMember(['user_id' => 1, 'timezone' => 'UTC']);
 
         $service = $this->createService();
         $service->setScheduledPostDateTime([
@@ -151,8 +149,7 @@ class EditTest extends TestCase
 
     public function testSetScheduledPostDateTimeForVisibleState()
     {
-        $visitor = $this->mockVisitor([], 1);
-        $visitor->timezone = 'UTC';
+        $this->actingAsMember(['user_id' => 1, 'timezone' => 'UTC']);
 
         $service = $this->createService();
         $service->setScheduledPostDateTime([

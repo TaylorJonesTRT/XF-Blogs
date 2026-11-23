@@ -135,10 +135,4 @@ class EditTest extends TestCase
         // finalSteps() is empty but should be callable without error
         $this->assertNull($service->finalSteps());
     }
-
-    // Skip testDeleteBlogHeaderImageFiles - Flysystem incompatibility
-    public function testDeleteBlogHeaderImageFilesIsSkipped()
-    {
-        $this->markTestSkipped('deleteBlogHeaderImageFiles() skipped due to Flysystem v1/v3 incompatibility');
-    }
 }

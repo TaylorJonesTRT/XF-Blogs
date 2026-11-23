@@ -39,7 +39,7 @@ class Blog extends AbstractController
         return $this->view(
             'TaylorJ\Blogs:Blog\Index',
             'taylorj_blogs_blog_view',
-            $this->renderBlogPostList($blog, 'visible')
+            $this->renderBlogPostList($blog, 'visible', $params->page)
         );
     }
 
@@ -53,7 +53,7 @@ class Blog extends AbstractController
         return $this->view(
             'TaylorJ\Blogs:Blog\Index',
             'taylorj_blogs_blog_view',
-            $this->renderBlogPostList($blog, 'scheduled')
+            $this->renderBlogPostList($blog, 'scheduled', $params->page)
         );
     }
 
@@ -68,7 +68,7 @@ class Blog extends AbstractController
         return $this->view(
             'TaylorJ\Blogs:Blog\Index',
             'taylorj_blogs_blog_view',
-            $this->renderBlogPostList($blog, 'draft')
+            $this->renderBlogPostList($blog, 'draft', $params->page)
         );
     }
 
@@ -82,11 +82,11 @@ class Blog extends AbstractController
         return $this->view(
             'TaylorJ\Blogs:Blog\Index',
             'taylorj_blogs_blog_view',
-            $this->renderBlogPostList($blog, 'deleted')
+            $this->renderBlogPostList($blog, 'deleted', $params->page)
         );
     }
 
-    protected function renderBlogPostList(BlogEntity $blog, string $viewType)
+    protected function renderBlogPostList(BlogEntity $blog, string $viewType, $page)
     {
         /** @var \TaylorJ\Blogs\Finder\BlogPost $blogPostFinder */
         $blogPostFinder = $this->finder('TaylorJ\Blogs:BlogPost');
@@ -96,21 +96,25 @@ class Blog extends AbstractController
             case 'visible':
                 // inBlog() applies permission-based visibility checks
                 $blogPostFinder->inBlog($blog);
+                $pageNavLink = 'blogs/blog';
                 break;
             case 'scheduled':
                 $blogPostFinder->inBlogId($blog->blog_id)->scheduledPosts();
+                $pageNavLink = 'blogs/blog/scheduled-posts';
                 break;
             case 'draft':
                 $blogPostFinder->inBlogId($blog->blog_id)->draftPosts();
+                $pageNavLink = 'blogs/blog/draft-posts';
                 break;
             case 'deleted':
                 $blogPostFinder->inBlogId($blog->blog_id)->deletedPosts();
+                $pageNavLink = 'blogs/blog/deleted-posts';
                 break;
         }
 
         $blogPostFinder->latestFirst();
 
-        $page = $this->filterPage();
+        $page = $this->filterPage($page);
         $perPage = $this->options()->taylorjBlogPostsPerPage;
         $blogPostFinder->limitByPage($page, $perPage);
 
@@ -135,6 +139,7 @@ class Blog extends AbstractController
             'blogPosts'      => $allBlogPosts,
             'page'           => $page,
             'perPage'        => $perPage,
+            'pageNavLink'    => $pageNavLink,
             'total'          => $blogPostFinder->total(),
             'allowInlineMod' => !$this->request->get('_xfDisableInlineMod'),
             'canInlineMod'   => $canInlineMod,

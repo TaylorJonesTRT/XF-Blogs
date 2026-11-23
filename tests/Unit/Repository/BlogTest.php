@@ -2,14 +2,27 @@
 
 namespace TaylorJ\Blogs\Tests\Unit\Repository;
 
+use TaylorJ\Blogs\Entity\Blog as BlogEntity;
+use TaylorJ\Blogs\Finder\Blog as BlogFinder;
 use TaylorJ\Blogs\Tests\TestCase;
+use XF\Http\Upload;
+use XF\PrintableException;
 
 class BlogTest extends TestCase
 {
-    protected function setUp(): void
+    /**
+     * Write a real JPEG of the given size and wrap it as an upload.
+     *
+     * @return Upload
+     */
+    protected function makeImageUpload(int $width, int $height)
     {
-        parent::setUp();
-        $this->setUpEntityManager();
+        $path = $this->createTempDirectory() . '/header.jpg';
+
+        $image = imagecreatetruecolor($width, $height);
+        imagejpeg($image, $path);
+
+        return new Upload($path, 'header.jpg');
     }
 
     // ---- findBlogsByUser() ----
@@ -18,14 +31,14 @@ class BlogTest extends TestCase
     {
         $mockFinder = $this->mockFinder('TaylorJ\Blogs:Blog', function ($mock)
         {
-            $mock->shouldReceive('where')->with('user_id', 42)->andReturnSelf();
-            $mock->shouldReceive('setDefaultOrder')->with('blog_last_post_date', 'desc')->andReturnSelf();
+            $mock->shouldReceive('byUser')->with(42)->once()->andReturnSelf();
+            $mock->shouldReceive('latestFirst')->once()->andReturnSelf();
         });
 
         $repo = $this->mockRepository('TaylorJ\Blogs:Blog', function ($mock) use ($mockFinder)
         {
             $mock->shouldReceive('findBlogsByUser')->with(42)->passthru();
-            $mock->shouldReceive('finder')->with('TaylorJ\Blogs:Blog')->andReturn($mockFinder);
+            $mock->shouldReceive('finder')->with(BlogFinder::class)->andReturn($mockFinder);
         });
 
         $result = $repo->findBlogsByUser(42);
@@ -34,27 +47,48 @@ class BlogTest extends TestCase
 
     // ---- deleteBlogHeaderImage() ----
 
-    /**
-     * @skip Skipped due to Flysystem version incompatibility between XenForo (v1) and test framework (v3)
-     */
-    public function testDeleteBlogHeaderImageCallsDeleteFromAbstractedPath()
+    public function testDeleteBlogHeaderImageRemovesHeaderFile()
     {
-        $this->markTestSkipped('Flysystem version incompatibility - XenForo uses v1, framework requires v3');
+        $this->swapFs('data');
+        $this->app()->fs()->write('data://taylorj_blogs/blog_header_images/100.jpg', 'header');
+        $this->assertFsHas('data://taylorj_blogs/blog_header_images/100.jpg');
 
-        $blog = \Mockery::mock('TaylorJ\Blogs\Entity\Blog');
-        $blog->shouldReceive('getAbstractedHeaderImagePath')->andReturn('data://taylorj_blogs/blog_header_images/100.jpg');
+        /** @var BlogEntity $blog */
+        $blog = $this->app()->em()->instantiateEntity('TaylorJ\Blogs:Blog', ['blog_id' => 100]);
 
+        $this->app()->repository('TaylorJ\Blogs:Blog')->deleteBlogHeaderImage($blog);
+
+        $this->assertFsHasNot('data://taylorj_blogs/blog_header_images/100.jpg');
+    }
+
+    public function testDeleteBlogHeaderImageIgnoresMissingFile()
+    {
         $this->swapFs('data');
 
-        $repo = $this->mockRepository('TaylorJ\Blogs:Blog', function ($mock)
-        {
-            $mock->shouldReceive('deleteBlogHeaderImage')->passthru();
-        });
+        /** @var BlogEntity $blog */
+        $blog = $this->app()->em()->instantiateEntity('TaylorJ\Blogs:Blog', ['blog_id' => 101]);
 
-        // The method calls File::deleteFromAbstractedPath which will use the swapped filesystem
-        // No exception means it ran successfully
-        $repo->deleteBlogHeaderImage($blog);
-        $this->assertTrue(true);
+        $this->app()->repository('TaylorJ\Blogs:Blog')->deleteBlogHeaderImage($blog);
+
+        $this->assertFsHasNot('data://taylorj_blogs/blog_header_images/101.jpg');
+    }
+
+    // ---- handleHeaderImageFromInput() ----
+
+    public function testHandleHeaderImageFromInputDeleteHeaderRemovesFileAndClearsFlag()
+    {
+        $this->swapFs('data');
+        $this->app()->fs()->write('data://taylorj_blogs/blog_header_images/102.jpg', 'header');
+        $this->assertFsHas('data://taylorj_blogs/blog_header_images/102.jpg');
+
+        $blog = \Mockery::mock(BlogEntity::class);
+        $blog->shouldReceive('getAbstractedHeaderImagePath')
+            ->andReturn('data://taylorj_blogs/blog_header_images/102.jpg');
+        $blog->shouldReceive('fastUpdate')->with('blog_has_header', '0')->once();
+
+        $this->app()->repository('TaylorJ\Blogs:Blog')->handleHeaderImageFromInput($blog, 'delete_header', null);
+
+        $this->assertFsHasNot('data://taylorj_blogs/blog_header_images/102.jpg');
     }
 
     // ---- batchUpdateBlogPostCounts() ----
@@ -75,10 +109,35 @@ class BlogTest extends TestCase
         $this->assertCount(0, $reflection->getParameters());
     }
 
-    // ---- setBlogHeaderImagePath() - SKIP (Flysystem) ----
+    // ---- setBlogHeaderImagePath() ----
 
-    public function testSetBlogHeaderImagePathIsSkipped()
+    public function testSetBlogHeaderImagePathWritesCroppedJpeg()
     {
-        $this->markTestSkipped('setBlogHeaderImagePath() skipped due to Flysystem v1/v3 incompatibility');
+        $this->swapFs('data');
+
+        $this->app()->repository('TaylorJ\Blogs:Blog')->setBlogHeaderImagePath(7, $this->makeImageUpload(800, 600));
+
+        $this->assertFsHas('data://taylorj_blogs/blog_header_images/7.jpg');
+
+        $size = getimagesizefromstring($this->app()->fs()->read('data://taylorj_blogs/blog_header_images/7.jpg'));
+        $this->assertSame([500, 500], [$size[0], $size[1]]);
+    }
+
+    public function testSetBlogHeaderImagePathRejectsNonImage()
+    {
+        $this->swapFs('data');
+
+        $path = $this->createTempDirectory() . '/header.jpg';
+        file_put_contents($path, 'not an image');
+
+        try
+        {
+            $this->app()->repository('TaylorJ\Blogs:Blog')->setBlogHeaderImagePath(8, new Upload($path, 'header.jpg'));
+            $this->fail('Expected a PrintableException for a non-image upload');
+        }
+        catch (PrintableException $e)
+        {
+            $this->assertFsHasNot('data://taylorj_blogs/blog_header_images/8.jpg');
+        }
     }
 }

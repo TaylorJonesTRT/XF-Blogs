@@ -152,12 +152,9 @@ class BlogPost extends Entity implements RenderableContentInterface, DatableInte
             }
         } else
         {
-            if ($visitor->hasPermission('taylorjBlogs', 'canEditAny'))
+            if (!$visitor->hasPermission('taylorjBlogPost', 'canEditAny'))
             {
                 $error = \XF::phrase('taylorj_blogs_blog_post_error_edit');
-                return false;
-            } else
-            {
                 return false;
             }
         }
@@ -484,12 +481,35 @@ class BlogPost extends Entity implements RenderableContentInterface, DatableInte
 
     protected function _postDelete()
     {
-        (new Utils())->adjustUserBlogPostCount($this->Blog, -1);
-        (new Utils())->adjustBlogPostCount($this->Blog, -1);
+        if ($this->blog_post_state == 'visible')
+        {
+            (new Utils())->adjustUserBlogPostCount($this->Blog, -1);
+            (new Utils())->adjustBlogPostCount($this->Blog, -1);
+        }
 
         /** @var AttachmentRepository $attachRepo */
         $attachRepo = $this->repository(AttachmentRepository::class);
         $attachRepo->fastDeleteContentAttachments('taylorj_blogs_blog_post', $this->blog_post_id);
+    }
+
+    /**
+     * How much the pending save changes the blog and user post counts. Only visible posts are counted,
+     * and isStateChanged() returns 'enter' for a visible insert too.
+     */
+    public function getPostCountChange(): int
+    {
+        $visibilityChange = $this->isStateChanged('blog_post_state', 'visible');
+
+        if ($visibilityChange == 'enter')
+        {
+            return 1;
+        }
+        if ($visibilityChange == 'leave')
+        {
+            return -1;
+        }
+
+        return 0;
     }
 
     protected function _postSave()
@@ -507,25 +527,26 @@ class BlogPost extends Entity implements RenderableContentInterface, DatableInte
 
         $blogPostRepo = Utils::getBlogPostRepo();
 
-        if (!$this->isUpdate())
+        $postCountChange = $this->getPostCountChange();
+        if ($postCountChange)
         {
-            (new Utils())->adjustBlogPostCount($this->Blog, 1);
-            (new Utils())->adjustUserBlogPostCount($this->Blog, 1);
-            $this->Blog->fastUpdate('blog_last_post_date', \XF::$time);
+            (new Utils())->adjustBlogPostCount($this->Blog, $postCountChange);
+            (new Utils())->adjustUserBlogPostCount($this->Blog, $postCountChange);
         }
+
+        if ($visibilityChange == 'enter')
+        {
+            $this->Blog->fastUpdate('blog_last_post_date', \XF::$time);
+            if ($approvalChange)
+            {
+                $this->fastUpdate('blog_post_date', \XF::$time);
+                $this->submitHamData();
+            }
+        }
+
         if ($this->isUpdate())
         {
-            if ($visibilityChange == 'enter')
-            {
-                (new Utils())->adjustBlogPostCount($this->Blog, 1);
-                (new Utils())->adjustUserBlogPostCount($this->Blog, 1);
-                $this->Blog->fastUpdate('blog_last_post_date', \XF::$time);
-                if ($approvalChange)
-                {
-                    $this->fastUpdate('blog_post_date', \XF::$time);
-                    $this->submitHamData();
-                }
-            } else if ($deletionChange == 'enter' && !$this->DeletionLog)
+            if ($deletionChange == 'enter' && !$this->DeletionLog)
             {
                 $delLog = $this->getRelationOrDefault('DeletionLog', false);
                 $delLog->setFromVisitor();

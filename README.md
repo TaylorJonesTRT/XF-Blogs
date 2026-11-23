@@ -89,11 +89,10 @@ Cron Entries
 Release Build
 -------------
 
-Build releases only with XenForo's release builder from the XenForo web root:
+Build releases only with XenForo's release builder, run through the `xf` CLI from the add-on directory:
 
 ```bash
-cd /Users/taylorjones/Development/XenForo/2.3.9/www
-../scripts/run_in_container.sh php cmd.php xf-addon:build-release TaylorJ/Blogs
+xf xf-addon:build-release TaylorJ/Blogs
 ```
 
 Do not manually zip the add-on directory. The release build removes development-only test and tooling files from XenForo's temporary `_build` copy.
@@ -102,5 +101,5 @@ Before publishing, inspect the generated zip and rebuild if this command prints 
 
 ```bash
 ZIP="$(ls -t _releases/TaylorJ-Blogs-*.zip | head -n 1)"
-zipinfo -1 "$ZIP" | grep -E '(^|/)(vendor/|tests/|phpunit\.xml$|\.phpunit\.cache/|\.phpunit\.result\.cache$|\.php-cs-fixer\.cache$|\.idea/|\.agents/|\.claude/|AGENTS\.md$|CLAUDE\.md$)'
+zipinfo -1 "$ZIP" | grep -E '(^|/)(vendor/|tests/|phpunit\.xml$|\.phpunit\.cache/|\.phpunit\.result\.cache$|\.php-cs-fixer\.cache$|\.idea/|\.agents/|\.claude/|docs/|AGENTS\.md$|CLAUDE\.md$|CONTEXT\.md$)'
 ```

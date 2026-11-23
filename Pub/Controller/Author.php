@@ -14,7 +14,7 @@ class Author extends AbstractController
 {
     protected function preDispatchController($action, ParameterBag $params)
     {
-        /** @var \XFRM\XF\Entity\User $visitor */
+        /** @var \TaylorJ\Blogs\XF\Entity\User $visitor */
         $visitor = \XF::visitor();
 
         if (!$visitor->canViewBlogs($error))

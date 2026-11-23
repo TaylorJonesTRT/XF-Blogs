@@ -2,39 +2,27 @@
 
 namespace TaylorJ\Blogs\Tests\Unit\Repository;
 
+use TaylorJ\Blogs\Finder\BlogPost as BlogPostFinder;
 use TaylorJ\Blogs\Repository\BlogPost;
 use TaylorJ\Blogs\Tests\TestCase;
 use XF\Mvc\Entity\Repository;
 
 class BlogPostTest extends TestCase
 {
-    protected function setUp(): void
-    {
-        parent::setUp();
-        $this->storeOriginalDbAndEm();
-        $this->setUpEntityManager();
-    }
-
-    protected function tearDown(): void
-    {
-        $this->restoreEntityManager();
-        parent::tearDown();
-    }
-
     // ---- findLatestBlogPosts() ----
 
     public function testFindLatestBlogPostsReturnsFinderForVisiblePosts()
     {
         $mockFinder = $this->mockFinder('TaylorJ\Blogs:BlogPost', function ($mock)
         {
-            $mock->shouldReceive('where')->with('blog_post_state', 'visible')->andReturnSelf();
-            $mock->shouldReceive('order')->with('blog_post_date', 'DESC')->andReturnSelf();
+            $mock->shouldReceive('visiblePosts')->once()->andReturnSelf();
+            $mock->shouldReceive('latestFirst')->once()->andReturnSelf();
         });
 
         $repo = $this->mockRepository('TaylorJ\Blogs:BlogPost', function ($mock) use ($mockFinder)
         {
             $mock->shouldReceive('findLatestBlogPosts')->passthru();
-            $mock->shouldReceive('finder')->andReturn($mockFinder);
+            $mock->shouldReceive('finder')->with(BlogPostFinder::class)->andReturn($mockFinder);
         });
 
         $result = $repo->findLatestBlogPosts();
@@ -47,14 +35,15 @@ class BlogPostTest extends TestCase
     {
         $mockFinder = $this->mockFinder('TaylorJ\Blogs:BlogPost', function ($mock)
         {
-            $mock->shouldReceive('where')->with('user_id', 42)->andReturnSelf();
-            $mock->shouldReceive('setDefaultOrder')->with('blog_post_date', 'desc')->andReturnSelf();
+            $mock->shouldReceive('byUser')->with(42)->once()->andReturnSelf();
+            $mock->shouldReceive('visiblePosts')->once()->andReturnSelf();
+            $mock->shouldReceive('latestFirst')->once()->andReturnSelf();
         });
 
         $repo = $this->mockRepository('TaylorJ\Blogs:BlogPost', function ($mock) use ($mockFinder)
         {
             $mock->shouldReceive('findBlogPostsByUser')->with(42)->passthru();
-            $mock->shouldReceive('finder')->with('TaylorJ\Blogs:BlogPost')->andReturn($mockFinder);
+            $mock->shouldReceive('finder')->with(BlogPostFinder::class)->andReturn($mockFinder);
         });
 
         $result = $repo->findBlogPostsByUser(42);
@@ -71,13 +60,13 @@ class BlogPostTest extends TestCase
 
         $mockFinder = $this->mockFinder('TaylorJ\Blogs:BlogPost', function ($mock)
         {
-            $mock->shouldReceive('where')->with('discussion_thread_id', 500)->andReturnSelf();
+            $mock->shouldReceive('forThread')->with(500)->once()->andReturnSelf();
         });
 
         $repo = $this->mockRepository('TaylorJ\Blogs:BlogPost', function ($mock) use ($mockFinder)
         {
             $mock->shouldReceive('findBlogPostForThread')->passthru();
-            $mock->shouldReceive('finder')->with('TaylorJ\Blogs:BlogPost')->andReturn($mockFinder);
+            $mock->shouldReceive('finder')->with(BlogPostFinder::class)->andReturn($mockFinder);
         });
 
         $result = $repo->findBlogPostForThread($thread);

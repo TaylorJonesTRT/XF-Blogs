@@ -8,8 +8,11 @@
         "php": ">=7.2.0"
     },
     "require-dev": {
-        "phpunit/phpunit": "^10.0",
-        "hampel/xenforo-test-framework": "^3.0"
+        "phpunit/phpunit": "^12.0",
+        "hampel/xenforo-test-framework": "^5.41",
+        "mockery/mockery": "^1.6",
+        "league/flysystem": "^1.1.4",
+        "league/flysystem-memory": "^1.0"
     },
     "autoload-dev": {
         "psr-4": {
@@ -17,6 +20,13 @@
         }
     },
     "config": {
-        "optimize-autoloader": true
+        "optimize-autoloader": true,
+        "policy": {
+            "advisories": {
+                "ignore-id": {
+                    "PKSA-w9tt-7782-78jx": "no patched flysystem 1.x exists; XenForo 2.3 ships 1.x. Dev-only, for swapFs() in the test suite (see ADR 0009)"
+                }
+            }
+        }
     }
 }

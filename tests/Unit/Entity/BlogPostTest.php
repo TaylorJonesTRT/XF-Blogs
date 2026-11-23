@@ -2,6 +2,7 @@
 
 namespace TaylorJ\Blogs\Tests\Unit\Entity;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use TaylorJ\Blogs\Entity\BlogPost;
 use TaylorJ\Blogs\Tests\TestCase;
 
@@ -130,7 +131,25 @@ class BlogPostTest extends TestCase
     public function testCanEditReturnsFalseForNonOwner()
     {
         $this->mockVisitor([
-            'taylorjBlogs' => ['canEditAny' => false],
+            'taylorjBlogPost' => ['canEditAny' => false],
+        ], 999);
+
+        $this->assertFalse($this->makeBlogPost(['user_id' => 1])->canEdit());
+    }
+
+    public function testCanEditReturnsTrueForNonOwnerWithEditAny()
+    {
+        $this->mockVisitor([
+            'taylorjBlogPost' => ['canEditAny' => true],
+        ], 999);
+
+        $this->assertTrue($this->makeBlogPost(['user_id' => 1])->canEdit());
+    }
+
+    public function testCanEditReturnsFalseForNonOwnerWithOnlyBlogEditAny()
+    {
+        $this->mockVisitor([
+            'taylorjBlogs' => ['canEditAny' => true],
         ], 999);
 
         $this->assertFalse($this->makeBlogPost(['user_id' => 1])->canEdit());
@@ -404,5 +423,59 @@ class BlogPostTest extends TestCase
     public function testGetContentDateColumnReturnsBlogPostDate()
     {
         $this->assertEquals('blog_post_date', $this->makeBlogPost()->getContentDateColumn());
+    }
+
+    // ---- getPostCountChange() ----
+
+    public static function newPostCountChangeProvider(): array
+    {
+        return [
+            'visible' => ['visible', 1],
+            'draft' => ['draft', 0],
+            'scheduled' => ['scheduled', 0],
+            'moderated' => ['moderated', 0],
+        ];
+    }
+
+    #[DataProvider('newPostCountChangeProvider')]
+    public function testGetPostCountChangeForNewPost(string $state, int $expected)
+    {
+        /** @var BlogPost $blogPost */
+        $blogPost = $this->app()->em()->create('TaylorJ\Blogs:BlogPost');
+        $blogPost->blog_post_state = $state;
+
+        $this->assertSame($expected, $blogPost->getPostCountChange());
+    }
+
+    public static function stateTransitionCountChangeProvider(): array
+    {
+        return [
+            'publish draft' => ['draft', 'visible', 1],
+            'publish scheduled' => ['scheduled', 'visible', 1],
+            'approve' => ['moderated', 'visible', 1],
+            'undelete' => ['deleted', 'visible', 1],
+            'soft delete' => ['visible', 'deleted', -1],
+            'unapprove' => ['visible', 'moderated', -1],
+            'back to draft' => ['visible', 'draft', -1],
+            'schedule draft' => ['draft', 'scheduled', 0],
+            'delete draft' => ['draft', 'deleted', 0],
+        ];
+    }
+
+    #[DataProvider('stateTransitionCountChangeProvider')]
+    public function testGetPostCountChangeForStateTransition(string $from, string $to, int $expected)
+    {
+        $blogPost = $this->makeBlogPost(['blog_post_state' => $from]);
+        $blogPost->blog_post_state = $to;
+
+        $this->assertSame($expected, $blogPost->getPostCountChange());
+    }
+
+    public function testGetPostCountChangeIsZeroWhenVisiblePostIsEdited()
+    {
+        $blogPost = $this->makeBlogPost(['blog_post_state' => 'visible']);
+        $blogPost->blog_post_title = 'An Edited Blog Post Title';
+
+        $this->assertSame(0, $blogPost->getPostCountChange());
     }
 }

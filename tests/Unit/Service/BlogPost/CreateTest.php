@@ -230,10 +230,10 @@ class CreateTest extends TestCase
         $this->assertTrue($method->isProtected());
     }
 
-    public function testAfterResourceThreadCreatedIsProtected()
+    public function testAfterBlogPostThreadCreatedIsProtected()
     {
         $reflection = new \ReflectionClass(Create::class);
-        $method = $reflection->getMethod('afterResourceThreadCreated');
+        $method = $reflection->getMethod('afterBlogPostThreadCreated');
 
         $this->assertTrue($method->isProtected());
     }

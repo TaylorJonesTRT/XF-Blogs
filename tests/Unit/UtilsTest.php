@@ -8,12 +8,6 @@ use XF\Mvc\Entity\Repository;
 
 class UtilsTest extends TestCase
 {
-    protected function setUp(): void
-    {
-        parent::setUp();
-        $this->setUpEntityManager();
-    }
-
     // ---- hours() ----
 
     public function testHoursReturns24Entries()
@@ -122,8 +116,11 @@ class UtilsTest extends TestCase
         $blog->shouldReceive('get')->with('user_id')->andReturn(1);
         $blog->shouldReceive('offsetGet')->with('User')->andReturn($mockUser);
         $blog->shouldReceive('get')->with('User')->andReturn($mockUser);
-        $blog->shouldReceive('offsetGet')->with('blog_post_count')->andReturn(5);
-        $blog->shouldReceive('get')->with('blog_post_count')->andReturn(5);
+        // The getter returns a live count that already includes the new post;
+        // the adjustment must work from the stored column instead.
+        $blog->shouldReceive('offsetGet')->with('blog_post_count')->andReturn(6);
+        $blog->shouldReceive('get')->with('blog_post_count')->andReturn(6);
+        $blog->shouldReceive('getValue')->with('blog_post_count')->andReturn(5);
         $blog->shouldReceive('fastUpdate')->with('blog_post_count', 6)->once();
 
         $utils = new Utils();
@@ -139,8 +136,7 @@ class UtilsTest extends TestCase
         $blog->shouldReceive('get')->with('user_id')->andReturn(1);
         $blog->shouldReceive('offsetGet')->with('User')->andReturn($mockUser);
         $blog->shouldReceive('get')->with('User')->andReturn($mockUser);
-        $blog->shouldReceive('offsetGet')->with('blog_post_count')->andReturn(0);
-        $blog->shouldReceive('get')->with('blog_post_count')->andReturn(0);
+        $blog->shouldReceive('getValue')->with('blog_post_count')->andReturn(0);
         $blog->shouldReceive('fastUpdate')->with('blog_post_count', 0)->once();
 
         $utils = new Utils();
@@ -258,12 +254,5 @@ class UtilsTest extends TestCase
         // Complex method that interacts with Thread and ThreadWatch repositories
         // Testing full functionality would require mocking these repositories
         $this->assertTrue(method_exists(Utils::class, 'afterResourceThreadCreated'));
-    }
-
-    // ---- deleteBlogHeaderFiles() - SKIP (Flysystem) ----
-
-    public function testDeleteBlogHeaderFilesIsSkipped()
-    {
-        $this->markTestSkipped('deleteBlogHeaderFiles() skipped due to Flysystem v1/v3 incompatibility');
     }
 }

@@ -125,7 +125,7 @@
             <xf:macro id="taylorj_blogs_blog_view_macros::blogPost" arg-blogPost="{$blogPost}"
                 arg-canInlineMod="{$canInlineMod}" arg-allowInlineMod="!" />
         </xf:foreach>
-        <xf:pagenav page="{$page}" perpage="{$perPage}" total="{$total}" link="blogs/blog/" data="{$blogPost}"
+        <xf:pagenav page="{$page}" perpage="{$perPage}" total="{$total}" link="{$pageNavLink}" data="{$blog}"
             wrapperclass="block-outer block-outer--after" />
     </div>
 </div>
